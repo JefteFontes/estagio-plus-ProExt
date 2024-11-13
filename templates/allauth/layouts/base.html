@@ -11,29 +11,6 @@
         {% block extra_head %}
         {% endblock extra_head %}
         {{ block.super }}
-            <style>
-                .Header {
-                    background-color: RGB(238, 255, 238);
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding: 0 25px;
-                }
-
-                .navbar-li li a {
-                    text-decoration: none;
-                    color: RGB(20, 174, 92);
-                }
-
-                .navbar-li{
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    list-style-type: none;
-                    gap: 30px;
-                    
-                }
-            </style>
     </head>
     <body>
         {% block body %}
