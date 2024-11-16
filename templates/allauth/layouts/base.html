@@ -1,9 +1,10 @@
-{% load i18n %}
 <!DOCTYPE html>
 <html>
     <head>
+        {% load static %}
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% load i18n %}
         <title>
             {% block head_title %}
             {% endblock head_title %}
@@ -12,7 +13,7 @@
         {% endblock extra_head %}
         {{ block.super }}
             <style>
-                .Header {
+                .header {
                     background-color: RGB(238, 255, 238);
                     display: flex;
                     align-items: center;
@@ -31,23 +32,17 @@
                     justify-content: center;
                     list-style-type: none;
                     gap: 30px;
-                    
+                }
+                .header img{
+                    width: 150px;
+                    height: 63px;
                 }
             </style>
     </head>
     <body>
         {% block body %}
-            {% if messages %}
-                <div>
-                    <strong>{% trans "Messages:" %}</strong>
-                    <ul>
-                        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-            <div class="Header">
-                
-                <strong style="font-size: 30px;">{% trans "+Estágio" %}</strong>
+            <div class="header">
+                <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
                 <ul class = "navbar-li">
                     {% if user.is_authenticated %}
                         {% url 'account_email' as email_url_ %}
