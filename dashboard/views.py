@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+
 # Create your views here.
 def get_vagas():
     vagas = [
@@ -10,6 +11,8 @@ def get_vagas():
         {'nome': 'Nome do Estágio 5', 'empresa': 'Empresa 5', 'data': '15/01/2050', 'status': 'Pendente'},
     ]
     return vagas
+
+
 def dashboard_instituicao(request):
     # Lógica para exibir dados do dashboard da instituição
     estagios = get_vagas()
