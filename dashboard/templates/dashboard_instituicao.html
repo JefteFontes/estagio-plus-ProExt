@@ -32,4 +32,10 @@
         </div>
     {% endfor %}
 </div>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="pdf_file">Importar dados do PDF:</label>
+    <input type="file" name="pdf_file" accept=".pdf" />
+    <button type="submit">Enviar</button>
+  </form>
 {% endblock %}
