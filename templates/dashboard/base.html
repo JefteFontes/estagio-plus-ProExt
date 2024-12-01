@@ -16,14 +16,14 @@
             <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
         </div>
         <nav class="navbar-nav">
-            {% comment %} <div class="navbar-menu">
+            <div class="navbar-menu">
                 <a href="#">Inicio</a>
                 <a href="#">Contato</a>
                 <a href="#">Sobre</a>
-            </div> {% endcomment %}
+            </div> 
             <div class = "divider"></div>
             <div class="navbar-user">
-                {% comment %} <a title="Notificação" href="#" class="notif-btn"><i class="fa-regular fa-bell"></i></a> {% endcomment %}
+                <a title="Notificação" href="#" class="notif-btn"><i class="fa-regular fa-bell"></i></a>
                 <div class="user-info">
                     <img src="{% static 'img/default.png' %}" alt="Foto de perfil">
                     <span class="user-name">{{ request.user.username }}</span>

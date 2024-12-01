@@ -563,3 +563,62 @@ body {
     color: #dc3545;
 }
 
+.import-from-pdf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #E1F3E2;
+    border: 1px solid #C1F9C1;
+    border-radius: 10px;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 400px;
+}
+
+.import-from-pdf form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    align-items: center;
+}
+
+.import-from-pdf label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2D8538;
+    text-align: center;
+}
+
+.import-from-pdf input[type="file"] {
+    padding: 10px;
+    border: 1px solid #C1F9C1;
+    border-radius: 5px;
+    background-color: #FFF;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.import-from-pdf input[type="file"]:hover {
+    border-color: #2D8538;
+    transition: border-color 0.3s ease;
+}
+
+.import-from-pdf button {
+    background-color: #2D8538;
+    color: #FFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.import-from-pdf button:hover {
+    background-color: #1A5722;
+    transition: background-color 0.3s ease;
+}

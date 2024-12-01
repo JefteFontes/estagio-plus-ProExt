@@ -31,8 +31,8 @@ def extract_vaga_from_pdf(file_path):
 
     vaga['nome'] = re.search(r'Curso:\s*(.+)', text).group(1).strip()
     vaga['empresa'] = re.search(r'Razão Social:\s*(.+)', text).group(1).strip()
-    vaga['data'] = "01/01/2050" 
-    vaga['status'] = "Pendente" 
+    vaga['data'] = "01/01/2050"
+    vaga['status'] = "Pendente"
     return vaga
 
 
