@@ -1,0 +1,41 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="welcome-container">
+    <div class="welcome-section">
+        <h2>Bem-vindo ao +Estágio</h2>
+        <p>Vamos começar!</p>
+    </div>
+    <div class="summary">
+        <div class="summary-item">
+            <p>Estágios ativos</p>
+            <span>{{ estagios_ativos }}</span>
+        </div>
+        <div class="summary-item">
+            <p>Alunos estagiando</p>
+            <span>{{ alunos_estagi }}</span>
+        </div>
+    </div>
+</div>
+    {% for vaga in estagios %}
+        <div class="vaga-item">
+            <p><strong>{{ vaga.nome }}</strong></p>
+            <p>{{ vaga.empresa }}</p>
+            <p><i class="fa fa-calendar"></i> {{ vaga.data }}</p>
+            {% if vaga.status == 'Concluído' %}
+                <span class="status concluido">{{ vaga.status }}</span>
+            {% else %}
+                <span class="status">{{ vaga.status }}</span>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <div class="import-from-pdf">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="pdf_file">Importar dados do PDF:</label>
+            <input type="file" name="pdf_file" accept=".pdf" />
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

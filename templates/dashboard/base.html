@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>+Estágio</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+    <script src="https://kit.fontawesome.com/073115d401.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <!-- Navbar horizontal com Bootstrap no topo -->
+    <header class="navbar">
+        <div class="logo">
+            <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
+        </div>
+        <nav class="navbar-nav">
+            <div class="navbar-menu">
+                <a href="#">Inicio</a>
+                <a href="#">Contato</a>
+                <a href="#">Sobre</a>
+            </div> 
+            <div class = "divider"></div>
+            <div class="navbar-user">
+                <a title="Notificação" href="#" class="notif-btn"><i class="fa-regular fa-bell"></i></a>
+                <div class="user-info">
+                    <img src="{% static 'img/default.png' %}" alt="Foto de perfil">
+                    <span class="user-name">{{ request.user.username }}</span>
+                    <div class="user-dropdown">
+                        <button title="User logout-edit" class="user-button" onclick="toggleDropdown()" id="userDropdownButton">
+                            <i class="fa-solid fa-chevron-down"></i> <!-- Ícone de usuário -->
+                        </button>
+                        <div id="myDropdown" class="dropdown-content">
+                            <button class="btn-logout" id="openModal">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal"></span>
+            <h2>Confirmar Logout</h2>
+            <p>Tem certeza de que deseja sair?</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelLogout">Cancelar</button>
+                <form method="post" action="{% url 'account_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger">Confirmar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container principal com sidebar e conteúdo -->
+    <div class="container-main">
+        <!-- Barra lateral -->
+        <div class="sidebar" id="sidebar">
+            <div class="side-elements">
+                <div class="sidebar-top">
+                    <ul>
+                        <li class="actived">
+                            <span class="icon"><i class="fa-solid fa-house"></i></span>
+                            <span class="text">Dashboard</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="sidebar-bottom">
+                    
+                </div>
+            </div>
+            <!-- Botão para esconder/mostrar a sidebar -->
+            <div class="toggle">
+                <button type="button" onclick="toggleSidebar()" class="toggle-btn" title="Toggle Sidebar">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+
+    <script src="{% static 'dashboard/js/script.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+</body>
+</html>

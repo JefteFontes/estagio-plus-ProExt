@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'allauth',
     'allauth.account',
+    'dashboard',
 ]
 
 SITE_ID = 1
@@ -133,7 +134,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+<<<<<<< HEAD
 STATICFILES_DIRS = [BASE_DIR / "static",]
+=======
+STATICFILES_DIRS = (
+    BASE_DIR / 'static',
+)
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstatic
+>>>>>>> 77ac252bb01d1d6f93f83f0be4f5a3ed9dd4537d
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -141,3 +149,5 @@ STATICFILES_DIRS = [BASE_DIR / "static",]
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/'

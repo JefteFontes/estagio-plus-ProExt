@@ -3,11 +3,14 @@
 {% load allauth account %}
 {% load static %} 
 {% block head_title %}
-    {% trans "+Estagio" %}
+    <div class="logo">
+        <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
+    </div>
 {% endblock head_title %}
 
 {% block extra_head %}
 <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+{{ block.super }}
 {{ block.super }}
 {% endblock extra_head %}
 
@@ -16,7 +19,7 @@
 <div class="container">
     <div class="content">
         {% element h1 %}
-            {% trans "+Estágio" %}
+            {% trans "Login" %}
         {% endelement %}
         {% setvar link %}
             <a href="{{ signup_url }}">
@@ -37,7 +40,7 @@
                 {% endslot %}
                 {% slot actions %}
                 {% element p %}
-                    {% blocktranslate %}Não tem uma conta? {{ link }}cadastre-se{{ end_link }}.{% endblocktranslate %}
+                    {% blocktranslate %}Não tem uma conta? {{ link }}Cadastre-se{{ end_link }}.{% endblocktranslate %}
                 {% endelement %}
                     <div class="button-container">
                         {% element button type="submit" tags="prominent,login" %}
