@@ -23,7 +23,6 @@
             {% setvar end_link %}
             </a>
         {% endsetvar %}
-    
             {% if not SOCIALACCOUNT_ONLY %}
                 {% url 'account_signup' as action_url %}
                 {% element form form=form method="post" action=action_url tags="entrance,signup" %}
@@ -39,6 +38,7 @@
                                 {% trans "Cadastre-se" %}
                             {% endelement %}
                         </div>                    
+                        
                     {% endslot %}
                 {% endelement %}
             {% endif %}
@@ -56,6 +56,6 @@
             {% element p %}
                 {% blocktranslate %}Já tem uma conta? {{ link }}Entrar{{ end_link }}.{% endblocktranslate %}
             {% endelement %}
-        {% endblock content %}
     </div>
 </div>
+{% endblock content %}
