@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'dashboard',
+    'home',
 ]
 
 SITE_ID = 1
@@ -141,6 +142,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstatic
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

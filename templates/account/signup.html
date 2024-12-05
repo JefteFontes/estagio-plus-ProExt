@@ -1,3 +1,4 @@
+
 {% extends "account/base_entrance.html" %}
 {% load i18n %}
 {% load allauth account %}
@@ -7,6 +8,7 @@
 {% endblock head_title %}
 
 {% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
 {{ block.super }}
 {% endblock extra_head %}
 
