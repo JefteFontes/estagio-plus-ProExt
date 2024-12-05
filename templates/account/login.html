@@ -3,9 +3,7 @@
 {% load allauth account %}
 {% load static %} 
 {% block head_title %}
-    <div class="logo">
-        <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
-    </div>
+    {% trans "+Estagio" %}
 {% endblock head_title %}
 
 {% block extra_head %}

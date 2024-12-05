@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    {%load static %}
+    <link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
+        </div>
+        <nav class="navbar-nav">
+            <div class="navbar-menu">
+                <a href="#">Inicio</a>
+                <a href="#">Contato</a>
+                <a href="#">Sobre</a>
+            </div> 
+        </nav>
+    </header>
+
+    <div class="content">
+        <div class="content-left">
+            <h2>
+                Um sistema para<br>
+                gerenciamento eficiente de<br>
+                estágios
+            </h2>
+            <img class = "image"src="{% static 'img/img_home.png' %}" alt="">
+        </div>
+        
+        <div class="content-right">
+            <button class="btn-user">Para Empresa</button>
+            <button class="btn-user">Para Aluno</button>
+            <button class="btn-user">Para Instituição</button>
+        </div>
+    </div> 
+
+</body>
+</html>
