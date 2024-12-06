@@ -622,3 +622,7 @@ body {
     background-color: #1A5722;
     transition: background-color 0.3s ease;
 }
+
+.details-link a {
+    text-decoration: none;
+}
