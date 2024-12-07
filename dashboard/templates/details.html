@@ -9,6 +9,14 @@
 </head>
 <body>
     <div class="content">
+
+        <ul class="breadcrumb">
+            <li><a href="{% url 'dashboard_instituicao' %}">dashboard</a></li>
+            <li><a href="{% url 'details' %}">vaga</a></li>
+        </ul>
+        
+        
+
         <div class="header">
             <h1>Nome do Estágio</h1>
 
@@ -75,7 +83,7 @@
             </div>
             <hr>
             <div class="return">
-                <button class="btn-return">Voltar</button>
+                <a href="{% url 'dashboard_instituicao' %}" class="btn-return">Voltar</a>
             </div>
         </div>
     </div>
