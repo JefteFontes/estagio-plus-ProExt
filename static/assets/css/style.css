@@ -1,111 +1,22 @@
-/* Ajuste do conteúdo principal */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 body {
     font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column; /* Garante que o header esteja na parte superior */
-    align-items: center;
-    background-color: rgb(245, 245, 245);
+}   
+.navbar, .sidebar {
+    position: fixed;
+    z-index: 10; /* Garante que a navbar e a sidebar fiquem acima do conteúdo */
 }
 
-/* Adiciona margem ao conteúdo para não sobrepor o header */
-.container {
-    margin-top: 80px; /* Espaço suficiente para compensar a altura do header */
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 20px;
-}
-
-/* Estilo para conteúdo */
-.content {
-    width: 100%;
-    max-width: 500px; /* Define um limite claro para o conteúdo */
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
-    background-color: rgb(238, 255, 238);
-    border: 3px solid rgb(204, 237, 201);
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgb(227, 236, 227);  
-    text-align: center; /* Centraliza textos automaticamente */
-}
-
-/* Inputs */
-input[type="text"], 
-input[type="email"], 
-input[type="password"] {
-    width: 85%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid rgb(204, 237, 201);
-    border-radius: 5px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-size: 16px;
-    font-family: 'Inter', sans-serif;
-}
-
-/* Títulos */
-h1 {
-    color: #14AE5C;
-    font-size: 28px;
-    margin-bottom: 20px;
-}
-
-/* Links */
-a {
-    text-decoration: none;
-    color: rgb(20, 174, 92); 
-    font-weight: bold;
-}
-
-/* Botões */
-button {
-    width: 80%;
-    padding: 10px;
-    background-color: rgb(20, 174, 92);
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: rgb(16, 140, 75); /* Cor ao passar o mouse */
-}
-
-/* Botões no container */
-.button-container {
-    width: 100%;
-    display: flex;
-    justify-content: center; 
-    margin-top: 20px;
-}
-
-/* Ajuste do header */
-.Header {
-    background-color: RGB(238, 255, 238);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 5px 20px;
-    width: 100%;
-    position: fixed; /* Garante que o header fique fixo no topo */
-    top: 0; /* Posiciona no topo */
+.navbar {
+    top: 0;
     left: 0;
-    right: 0; /* Alinha à esquerda */
-    z-index: 10; /* Garante que esteja acima de outros elementos */
-    height: 60px; /* Altura padrão */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #E3FFE3;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
@@ -120,31 +31,84 @@ button:hover {
     margin-right: 10px;
 }
 
-/* Navbar */
-.navbar-li {
-    position: relative;
+.navbar-nav {
     display: flex;
     align-items: center;
-    justify-content: center;
-    list-style: none;
     gap: 20px;
-    margin: 0; /* Remove margens extras */
-    padding: 0; /* Remove padding extra */
-    right: 20px;
 }
 
-.navbar-li li a {
-    text-decoration: none; /* Remove sublinhado dos links */
-    color: RGB(20, 174, 92); /* Define a cor do texto */
-    font-size: 16px; /* Tamanho da fonte */
-    font-weight: bold; /* Deixa o texto em negrito */
-    padding: 5px 10px; /* Adiciona espaço interno para os links */
-    border-radius: 5px; /* Arredonda levemente os links */
-    transition: background-color 0.3s ease; /* Efeito ao passar o mouse */
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
 }
 
-.navbar-li li a:hover {
-    background-color: RGB(204, 237, 201); /* Fundo ao passar o mouse */
+.navbar-menu a {
+    position: relative;
+    color: #000000;
+    font-size: 18px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.navbar-menu a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background-color: #000000;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.navbar-menu a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.divider {
+    width: 2px;
+    height: 25px;
+    background-color: #000000;
+}
+
+.notif-btn {
+    background-color: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 20px;
+    color: #000000;
+    border-radius: 20%;
+    transition: background-color 0.3s ease;
+}
+
+.notif-btn:hover{
+    text-decoration: underline;
+    background-color: #ade9ad;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-user a i {
+    text-decoration: none;
+    font-size: 20px;
+    color: #000000;
+    font-weight: 500;
 }
 
 /* Para centralizar ainda mais no mobile */

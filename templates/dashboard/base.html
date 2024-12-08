@@ -37,7 +37,21 @@
                     <ul>
                         <li class="actived">
                             <span class="icon"><i class="fa-solid fa-house"></i></span>
-                            <span class="text">Dashboard</span>
+                            <span class="text">
+                                {% url 'dashboard_instituicao' as dashboard_instituicao_url %}
+                                {% if dashboard_instituicao_url %}
+                                    <a href="{{ dashboard_instituicao_url }}">Dashboard</a>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li>
+                            <span class="icon"><i class="fa-solid fa-user"></i></span>
+                            <span class="text">
+                                {% url 'cadastrar_estagiario' as cadastro_estagiario_url_ %}
+                                {% if cadastro_estagiario_url_ %}
+                                    <a href="{{ cadastro_estagiario_url_ }}">Cadastro de Estagiário</a>
+                                {% endif %}
+                            </span> 
                         </li>
                     </ul>
                 </div>

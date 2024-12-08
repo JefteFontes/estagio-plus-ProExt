@@ -14,7 +14,6 @@ class Empresa(models.Model):
     nome = models.CharField(max_length=250)
     cnpj = models.CharField(max_length=250)
     razao_social = models.CharField(max_length=250)
-    endereco = models.CharField(max_length=250)
     email = models.EmailField(unique=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
 

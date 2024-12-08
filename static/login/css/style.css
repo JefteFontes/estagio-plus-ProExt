@@ -1,0 +1,92 @@
+/* Ajuste do conteúdo principal */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Garante que o header esteja na parte superior */
+    align-items: center;
+    background-color: rgb(245, 245, 245);
+}
+
+/* Adiciona margem ao conteúdo para não sobrepor o header */
+.container {
+    margin-top: 80px; /* Espaço suficiente para compensar a altura do header */
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+/* Estilo para conteúdo */
+.content {
+    width: 100%;
+    max-width: 500px; /* Define um limite claro para o conteúdo */
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    background-color: rgb(238, 255, 238);
+    border: 3px solid rgb(204, 237, 201);
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgb(227, 236, 227);  
+    text-align: center; /* Centraliza textos automaticamente */
+}
+
+/* Inputs */
+input[type="text"], 
+input[type="email"], 
+input[type="password"] {
+    width: 85%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid rgb(204, 237, 201);
+    border-radius: 5px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Títulos */
+h1 {
+    color: #14AE5C;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+    color: rgb(20, 174, 92); 
+    font-weight: bold;
+}
+
+/* Botões */
+button {
+    width: 80%;
+    padding: 10px;
+    background-color: rgb(20, 174, 92);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: rgb(16, 140, 75); /* Cor ao passar o mouse */
+}
+
+/* Botões no container */
+.button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px;
+}

@@ -19,6 +19,7 @@
         {% element h1 %}
             {% trans "Login" %}
         {% endelement %}
+        {% url 'cadastro_instituicao' as signup_url %}
         {% setvar link %}
             <a href="{{ signup_url }}">
         {% endsetvar %}
