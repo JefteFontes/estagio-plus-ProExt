@@ -28,6 +28,13 @@ def get_vagas(new_vaga=None):
         vagas.append(new_vaga)
     return vagas
 
+def detalhes_vaga(request):
+    nome_vaga = request.GET.get('nome', None)
+    vagas = get_vagas() 
+    vaga = next((v for v in vagas if v["nome"] == nome_vaga), None)
+    return render(request, 'details.html', {"vaga": vaga}) 
+
+
 
 def extract_vaga_from_pdf(file_path):
     vaga = {}

@@ -18,12 +18,12 @@
         
 
         <div class="header">
-            <h1>Nome do Estágio</h1>
+            <h1>{{ vaga.nome }}</h1>
 
             <div class="info-right">
-                <span class="date">11/01/2050</span>
+                <span class="date">{{ vaga.data }}</span>
 
-                <span class="status">Pendente</span>
+                <span class="status">{{ vaga.status }}</span>
             </div>
         </div>
         
@@ -37,7 +37,7 @@
 
                 <div class="info-right">
                     <strong>Empresa Concedente</strong>
-                    <span>Nome da Empresa</span>
+                    <span>{{ vaga.empresa }}</span>
                 </div>
             </div>
             <hr>

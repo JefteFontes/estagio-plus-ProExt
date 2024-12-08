@@ -27,7 +27,7 @@
             {% else %}
                 <span class="status">{{ vaga.status }}</span>
             {% endif %}
-            <a class="details-link" href="details">Ver detalhes</a>
+            <a class="details-link" href="{% url 'detalhes_vaga' %}?nome={{ vaga.nome|urlencode }}">Ver detalhes</a>
         </div>
     {% endfor %}
     <div class="import-from-pdf">
