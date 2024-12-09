@@ -17,7 +17,6 @@
         </div>
     </div>
 </div>
-<div class="vagas-list">
     {% for vaga in estagios %}
         <div class="vaga-item">
             <p><strong>{{ vaga.nome }}</strong></p>
@@ -28,8 +27,15 @@
             {% else %}
                 <span class="status">{{ vaga.status }}</span>
             {% endif %}
-            <a href="#" class="details-link">Ver detalhes</a>
         </div>
     {% endfor %}
+    <div class="import-from-pdf">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="pdf_file">Importar dados do PDF:</label>
+            <input type="file" name="pdf_file" accept=".pdf" />
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

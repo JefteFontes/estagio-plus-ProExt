@@ -1,0 +1,78 @@
+{% extends "cadastro/base.html" %}
+
+{% block content %}
+    <div class="cadastro-container">
+        <h2>Cadastro de Instituição de Ensino</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class = "form-linha1">
+                <div class = "form-inicial">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">CNPJ:</label>
+                    {{ form.instituicao_cnpj }}
+                </div>
+                <div class = "form-inicial">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Nome da Instituição:</label>
+                    {{ form.instituicao_nome }}
+                </div>
+                <div class = "form-inicial">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Telefone:</label>
+                    {{ form.instituicao_telefone }}
+                </div>
+            </div>
+            <p>Endereço:</p>
+            <div class = "form-endereco">
+                <label for="{{ form.email.id_for_label }}" class="form-label">CEP:</label>
+                {{ form.cep }}
+                <div class = "form-linha1">
+                    <div class = "form-inicial">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Rua:</label>
+                        {{ form.rua }}
+                    </div>
+                    <div class = "form-inicial">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Numero:</label>
+                        {{ form.numero }}
+                    </div>
+                    <div class = "form-inicial">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Bairro:</label>
+                        {{ form.bairro }}
+                    </div>
+                </div>
+                <div class = "form-linha1">
+                    <div class = "form-inicial">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Cidade:</label>
+                        {{ form.cidade }}
+                    </div>
+                    <div class = "form-inicial">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Estado:</label>
+                        {{ form.estado }}
+                    </div>
+                </div>
+            </div>
+            <div>
+                <p>Coordenador de Extensão:</p>
+                <div class="form-coordenador">
+                    <div class="form-linha1">
+                        <div class = "form-inicial">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Primeiro Nome:</label>
+                            {{ form.primeiro_nome }}
+                        </div>
+                        <div class = "form-inicial">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Sobrenome:</label>
+                            {{ form.sobrenome }}
+                        </div>
+                        <div class = "form-inicial">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">CPF:</label>
+                            {{ form.cpf }}
+                        </div>
+                    </div>
+                    <div class = "form-inicial">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
+                        {{ form.email}}
+                    </div>
+                </div>
+            </div>
+            <button type="submit">Cadastrar</button>    
+        </form>
+    </div>
+{% endblock%} 
+
