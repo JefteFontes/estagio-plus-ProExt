@@ -6,6 +6,7 @@
     <title>+Estágio</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'cadastro/css/style.css' %}">
     <script src="https://kit.fontawesome.com/073115d401.js" crossorigin="anonymous"></script>
 
 </head>
@@ -20,7 +21,7 @@
             <p>Tem certeza de que deseja sair?</p>
             <div class="modal-actions">
                 <button class="btn-secondary" id="cancelLogout">Cancelar</button>
-                <form method="post" action="{% url 'account_logout' %}">
+                <form method="post" action="{% url 'account_logout' %}" id="logout-form">
                     {% csrf_token %}
                     <button type="submit" class="btn-danger">Confirmar</button>
                 </form>
@@ -35,21 +36,33 @@
             <div class="side-elements">
                 <div class="sidebar-top">
                     <ul>
-                        <li class="actived">
+                        {% url 'dashboard_instituicao' as dashboard_instituicao_url %}
+                        <li class="{% if request.path == dashboard_instituicao_url %}actived{% endif %}">
                             <span class="icon"><i class="fa-solid fa-house"></i></span>
                             <span class="text">
-                                {% url 'dashboard_instituicao' as dashboard_instituicao_url %}
                                 {% if dashboard_instituicao_url %}
                                     <a href="{{ dashboard_instituicao_url }}">Dashboard</a>
                                 {% endif %}
                             </span>
                         </li>
-                        <li>
+                        <!-- Cadastro de Estagiário -->
+                        {% url 'cadastrar_estagiario' as cadastro_estagiario_url_ %}
+                        <li class="{% if request.path == cadastro_estagiario_url_ %}actived{% endif %}">
                             <span class="icon"><i class="fa-solid fa-user"></i></span>
                             <span class="text">
-                                {% url 'cadastrar_estagiario' as cadastro_estagiario_url_ %}
                                 {% if cadastro_estagiario_url_ %}
                                     <a href="{{ cadastro_estagiario_url_ }}">Cadastro de Estagiário</a>
+                                {% endif %}
+                            </span> 
+                        </li>
+                        <!-- Cadastro de Empresa -->
+                        {% url 'cadastrar_empresa' as cadastro_empresa_url_ %}
+                        <li class="{% if request.path == cadastro_empresa_url_ %}actived{% endif %}">
+                            <span class="icon"><i class="fa-solid fa-city"></i></span>
+                            <span class="text">
+                                {% url 'cadastrar_empresa' as cadastro_empresa_url_ %}
+                                {% if cadastro_empresa_url_ %}
+                                    <a href="{{ cadastro_empresa_url_ }}">Cadastro de Empresa</a>
                                 {% endif %}
                             </span> 
                         </li>

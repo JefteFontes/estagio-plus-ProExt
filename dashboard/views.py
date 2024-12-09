@@ -3,9 +3,11 @@ import os
 import tempfile
 import pdfplumber
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import CoordenadorExtensao
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import EstagiarioCadastroForm
+from .forms import EstagiarioCadastroForm, EmpresaCadastroForm
 
 
 def home(request):
@@ -16,12 +18,25 @@ def cadastrar_estagiario(request):
     if request.method == 'POST':
         form = EstagiarioCadastroForm(request.POST)
         if form.is_valid():
-            form.save(commit=True, coordenador=request.user.coordenadorextensao)
+            coordenador = get_object_or_404(CoordenadorExtensao, user=request.user)
+            instituicao = coordenador.instituicao
+            user, estagiario = form.save(commit=True, instituicao=instituicao)
             return redirect('dashboard_instituicao')  # Redireciona para o dashboard após o cadastro
     else:
         form = EstagiarioCadastroForm()
     
     return render(request, 'cadastrar_estagiario.html', {'form': form})
+
+@login_required
+def cadastrar_empresa(request):
+    if request.method == 'POST':
+        form = EmpresaCadastroForm(request.POST)
+        if form.is_valid():
+            user, supervisor = form.save()
+            return redirect('dashboard_instituicao')  # Redireciona para a página de login após o cadastro
+    else:
+        form = EmpresaCadastroForm()
+    return render(request, 'cadastrar_empresa.html', {'form': form})
 
 
 def get_vagas(new_vaga=None):

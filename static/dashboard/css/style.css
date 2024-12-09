@@ -275,6 +275,13 @@ body {
     border-radius: 50%;
 }
 
+.sidebar-top .text a{
+    text-decoration: none;
+    color: #000000;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
 /* Ajuste da seta para fechar a sidebar */
 .toggle {
     height: calc(100vh - 83px);
@@ -517,6 +524,9 @@ body {
 }
 
 /* Estilização do modal */
+#logout-form{
+    width: auto;
+}
 .modal {
     display: none; /* Oculto por padrão */
     position: fixed;

@@ -1,7 +1,7 @@
 {% extends "cadastro/base.html" %}
 
 {% block content %}
-    <div class="cadastro-container">
+    <div class="cadastro-container-home">
         <h2>Cadastro de Instituição de Ensino</h2>
         <form method="post">
             {% csrf_token %}
@@ -71,7 +71,7 @@
                     </div>
                 </div>
             </div>
-            <button type="submit">Cadastrar</button>    
+            <button class="btn-user-signup" type="submit">Cadastrar</button>    
         </form>
     </div>
 {% endblock%} 
