@@ -1,15 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-body {	
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
 
 .content {
     padding: 2px 25px;
@@ -32,13 +22,6 @@ body {
 
 .date {
     font-weight: bold;
-}
-
-.status {
-    background-color: red;
-    padding: 5px 10px;
-    border-radius: 4px;
-    color: white;
 }
 
 .info-right {

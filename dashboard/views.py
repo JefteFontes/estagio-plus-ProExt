@@ -8,10 +8,11 @@ from .models import CoordenadorExtensao
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import EstagiarioCadastroForm, EmpresaCadastroForm
+
 def home(request):
-    return render(request, 'dashboard/home.html')
-
-
+    if request.user.is_authenticated:
+        return redirect('/dashboard/')
+    return render(request, 'cadastro/home.html')
 def details(request):
     return render(request, 'details.html')
 
@@ -20,9 +21,7 @@ def cadastrar_estagiario(request):
     if request.method == 'POST':
         form = EstagiarioCadastroForm(request.POST)
         if form.is_valid():
-            coordenador = get_object_or_404(CoordenadorExtensao, user=request.user)
-            instituicao = coordenador.instituicao
-            user, estagiario = form.save(commit=True, instituicao=instituicao)
+            user, estagiario = form.save()
             return redirect('dashboard_instituicao')  # Redireciona para o dashboard após o cadastro
     else:
         form = EstagiarioCadastroForm()

@@ -18,6 +18,7 @@ class Empresa(models.Model):
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
 
 
+
 class Instituicao(models.Model):
     cnpj = models.CharField(max_length=20)
     nome = models.CharField(max_length=250)

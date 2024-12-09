@@ -47,9 +47,6 @@ class EstagiarioCadastroForm(forms.ModelForm):
         estagiario.user = user
         estagiario.endereco = endereco
 
-        if coordenador:
-            estagiario.instituicao = coordenador.instituicao
-
         if commit:
             estagiario.save()
             user.save()
