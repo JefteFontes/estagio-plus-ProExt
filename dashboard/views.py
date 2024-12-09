@@ -3,12 +3,25 @@ import os
 import tempfile
 import pdfplumber
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from .forms import EstagiarioCadastroForm
 
 
 def home(request):
     return render(request, 'dashboard/home.html')
+
+@login_required
+def cadastrar_estagiario(request):
+    if request.method == 'POST':
+        form = EstagiarioCadastroForm(request.POST)
+        if form.is_valid():
+            form.save(commit=True, coordenador=request.user.coordenadorextensao)
+            return redirect('dashboard_instituicao')  # Redireciona para o dashboard após o cadastro
+    else:
+        form = EstagiarioCadastroForm()
+    
+    return render(request, 'cadastrar_estagiario.html', {'form': form})
 
 
 def get_vagas(new_vaga=None):

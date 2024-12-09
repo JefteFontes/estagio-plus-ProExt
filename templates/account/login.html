@@ -7,6 +7,8 @@
 {% endblock head_title %}
 
 {% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+{{ block.super }}
 {{ block.super }}
 {% endblock extra_head %}
 
@@ -17,6 +19,7 @@
         {% element h1 %}
             {% trans "Login" %}
         {% endelement %}
+        {% url 'cadastro_instituicao' as signup_url %}
         {% setvar link %}
             <a href="{{ signup_url }}">
         {% endsetvar %}

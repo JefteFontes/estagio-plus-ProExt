@@ -1,3 +1,4 @@
+
 {% extends "account/base_entrance.html" %}
 {% load i18n %}
 {% load allauth account %}
@@ -7,6 +8,7 @@
 {% endblock head_title %}
 
 {% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
 {{ block.super }}
 {% endblock extra_head %}
 
@@ -23,7 +25,6 @@
             {% setvar end_link %}
             </a>
         {% endsetvar %}
-    
             {% if not SOCIALACCOUNT_ONLY %}
                 {% url 'account_signup' as action_url %}
                 {% element form form=form method="post" action=action_url tags="entrance,signup" %}
@@ -56,6 +57,6 @@
             {% element p %}
                 {% blocktranslate %}Já tem uma conta? {{ link }}Entrar{{ end_link }}.{% endblocktranslate %}
             {% endelement %}
-        {% endblock content %}
     </div>
 </div>
+{% endblock content %}
