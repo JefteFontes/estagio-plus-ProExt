@@ -46,7 +46,7 @@ class Estagiario(models.Model):
     curso = models.CharField(max_length=55)
     status = models.BooleanField()
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE)
+    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE , null=True, blank=True)
 
     def __str__(self):
         return f'{self.primeiro_nome} {self.sobrenome}'

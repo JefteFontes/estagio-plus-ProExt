@@ -4,8 +4,6 @@ from .models import Estagiario, Endereco, Supervisor, Empresa
 
 
 class EstagiarioCadastroForm(forms.ModelForm):
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'exemplo@dominio.com'}))
-    
     rua = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Rua das Flores'}))
     numero = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Número (ex: 123)'}))
     bairro = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Bairro (ex: Centro)'}))
@@ -15,7 +13,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
     class Meta:
         model = Estagiario
-        fields = ['primeiro_nome', 'sobrenome', 'cpf', 'matricula', 'telefone', 'curso', 'status']
+        fields = ['primeiro_nome', 'sobrenome', 'cpf', 'matricula', 'telefone', 'curso', 'status', 'email']
         widgets = {
             'primeiro_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Primeiro Nome (ex: João)'}),
             'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sobrenome (ex: Silva)'}),
@@ -24,17 +22,11 @@ class EstagiarioCadastroForm(forms.ModelForm):
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone (ex: 11 91234-5678)'}),
             'curso': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Curso (ex: Engenharia)'}),
             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'exemplo@dominio.com'})
         }
 
-    def save(self, commit=True, coordenador=None):
-        user_data = {
-            'username': self.cleaned_data['primeiro_nome'] + " " + self.cleaned_data['sobrenome'],
-            'email': self.cleaned_data['email'],
-        }
-        password = f"{self.cleaned_data['cpf']}"
-
-        user = User.objects.create_user(**user_data, password=password)
-
+    def save(self, commit=True):
+        
         endereco = Endereco.objects.create(
             rua=self.cleaned_data['rua'],
             numero=self.cleaned_data['numero'],
@@ -45,14 +37,12 @@ class EstagiarioCadastroForm(forms.ModelForm):
         )
 
         estagiario = super().save(commit=False)
-        estagiario.user = user
         estagiario.endereco = endereco
 
         if commit:
             estagiario.save()
-            user.save()
 
-        return user, estagiario
+        return estagiario
 
 
 class EmpresaCadastroForm(forms.ModelForm):
@@ -84,15 +74,7 @@ class EmpresaCadastroForm(forms.ModelForm):
         }
 
     def save(self, commit=True):
-        user_data = {
-            'username': self.cleaned_data['primeiro_nome'] + " " + self.cleaned_data['sobrenome'],
-            'email': self.cleaned_data['email'],
-        }
-        password = f"{self.cleaned_data['cpf']}"
         
-        # Cria o usuário
-        user = User.objects.create_user(**user_data, password=password)
-
         endereco = Endereco.objects.create(
             rua=self.cleaned_data['rua'],
             numero=self.cleaned_data['numero'],
@@ -106,17 +88,18 @@ class EmpresaCadastroForm(forms.ModelForm):
             nome=self.cleaned_data['empresa_nome'],
             cnpj=self.cleaned_data['empresa_cnpj'],
             razao_social=self.cleaned_data['empresa_razao_social'],
-            endereco=endereco
+            endereco=endereco,
+            email = self.cleaned_data['email'] 
         )
 
         # Cria o coordenador de extensão
         supervisor = super().save(commit=False)
         supervisor.empresa = empresa
         supervisor.email = self.cleaned_data['email'] 
+
         if commit:
             supervisor.save()
-            user.save()
 
-        return user, supervisor
+        return supervisor
 
 

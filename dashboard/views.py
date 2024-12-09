@@ -22,7 +22,7 @@ def cadastrar_estagiario(request):
     if request.method == 'POST':
         form = EstagiarioCadastroForm(request.POST)
         if form.is_valid():
-            user, estagiario = form.save()
+            estagiario = form.save()
             return redirect('dashboard_instituicao')  # Redireciona para o dashboard após o cadastro
     else:
         form = EstagiarioCadastroForm()
@@ -34,7 +34,7 @@ def cadastrar_empresa(request):
     if request.method == 'POST':
         form = EmpresaCadastroForm(request.POST)
         if form.is_valid():
-            user, supervisor = form.save()
+            supervisor = form.save()
             return redirect('dashboard_instituicao')  # Redireciona para a página de login após o cadastro
     else:
         form = EmpresaCadastroForm()
