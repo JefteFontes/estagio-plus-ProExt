@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'details/css/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>+Estágio</title>
+</head>
+<body>
+    <div class="content">
+
+        <ul class="breadcrumb">
+            <li><a href="{% url 'dashboard_instituicao' %}">dashboard</a></li>
+            <li><a href="{% url 'details' %}">vaga</a></li>
+        </ul>
+        
+        
+
+        <div class="header">
+            <h1>{{ vaga.nome }}</h1>
+
+            <div class="info-right">
+                <span class="date">{{ vaga.data }}</span>
+
+                <span class="status">{{ vaga.status }}</span>
+            </div>
+        </div>
+        
+        <div class="center">
+            <hr>
+            <div class="info">
+                <div class="info-left">
+                    <strong>Nome do Aluno</strong>
+                    <span>Nome do Aluno</span>
+                </div>
+
+                <div class="info-right">
+                    <strong>Empresa Concedente</strong>
+                    <span>{{ vaga.empresa }}</span>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="info-left">
+                    <strong>Supervisor de Estágio</strong>
+                    <span>Nome do Supervisor</span>
+                </div>
+
+                <div class="info-right">
+                    <strong>Duração do Estágio</strong>
+                    <span>12 meses</span>
+                </div>
+            </div>
+            <hr>
+
+            <div class="info">
+                <div class="describle">
+                    <strong><p>Atividades a serem desenvolvidas</p></strong>
+
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Similique cupiditate, facere iure odit facilis consectetur libero eos quas placeat blanditiis praesentium, aliquam aspernatur officia, iusto assumenda debitis corporis rerum! Nihil.</p>
+                </div>
+            </div>
+            <hr>
+            <div class="info">
+                <div class="info-left">
+                    <strong>Valor da bolsa-estágio</strong>
+                    <span>R$ 1.200,00</span>
+                </div>
+
+                <div class="info-right">
+                    <strong>Valor do Auxilio-Transporte</strong>
+                    <span>R$ 150,00</span>
+                </div>
+            </div>
+            <hr>
+            
+            <div class="info">
+                <div class="info-left">
+                    <p class="Attachment-text">Documentos anexados</p>
+                    <img class = "image"src="{% static 'img/anexo.png' %}" alt="papel dobrado">
+                </div>
+            </div>
+            <hr>
+            <div class="return">
+                <a href="{% url 'dashboard_instituicao' %}" class="btn-return">Voltar</a>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'details/js/script.js' %}"></script>
+</body>
+</html>

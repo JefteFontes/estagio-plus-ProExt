@@ -8,10 +8,15 @@ from .models import CoordenadorExtensao
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import EstagiarioCadastroForm, EmpresaCadastroForm
-
-
+from django.shortcuts import get_object_or_404
+from .models import CoordenadorExtensao, Estagio
+from django.shortcuts import render, redirect
 def home(request):
     return render(request, 'dashboard/home.html')
+
+
+def details(request):
+    return render(request, 'details.html')
 
 @login_required
 def cadastrar_estagiario(request):
@@ -38,7 +43,6 @@ def cadastrar_empresa(request):
         form = EmpresaCadastroForm()
     return render(request, 'cadastrar_empresa.html', {'form': form})
 
-
 def get_vagas(new_vaga=None):
     vagas = [
         {'nome': 'Nome do Estágio 1', 'empresa': 'Empresa 1', 'data': '11/01/2050', 'status': 'Pendente'},
@@ -50,6 +54,13 @@ def get_vagas(new_vaga=None):
     if new_vaga:
         vagas.append(new_vaga)
     return vagas
+
+def detalhes_vaga(request):
+    nome_vaga = request.GET.get('nome', None)
+    vagas = get_vagas() 
+    vaga = next((v for v in vagas if v["nome"] == nome_vaga), None)
+    return render(request, 'details.html', {"vaga": vaga}) 
+
 
 
 def extract_vaga_from_pdf(file_path):
