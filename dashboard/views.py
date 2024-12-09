@@ -13,6 +13,7 @@ def home(request):
     if request.user.is_authenticated:
         return redirect('/dashboard/')
     return render(request, 'cadastro/home.html')
+
 def details(request):
     return render(request, 'details.html')
 
