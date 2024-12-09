@@ -9,6 +9,9 @@ class Endereco(models.Model):
     estado = models.CharField(max_length=50)
     cep = models.CharField(max_length=20)
 
+    def __str__(self):
+        return f'{self.rua}, {self.numero} - {self.bairro}'
+
 
 class Empresa(models.Model):
     nome = models.CharField(max_length=250)
@@ -16,6 +19,9 @@ class Empresa(models.Model):
     razao_social = models.CharField(max_length=250)
     email = models.EmailField(unique=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nome
 
 
 
@@ -25,6 +31,9 @@ class Instituicao(models.Model):
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nome
 
 
 class Estagiario(models.Model):
@@ -39,6 +48,9 @@ class Estagiario(models.Model):
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE)
     instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.primeiro_nome} {self.sobrenome}'
+
 
 class CoordenadorExtensao(models.Model):
     cpf = models.CharField(max_length=12)
@@ -46,6 +58,9 @@ class CoordenadorExtensao(models.Model):
     primeiro_nome = models.CharField(max_length=250)
     sobrenome = models.CharField(max_length=250)
     instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.primeiro_nome} {self.sobrenome}'
 
 
 class Supervisor(models.Model):
@@ -56,6 +71,9 @@ class Supervisor(models.Model):
     sobrenome = models.CharField(max_length=250)
     cargo = models.CharField(max_length=254)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.primeiro_nome} {self.sobrenome}'
 
 
 class Estagio(models.Model):
@@ -70,3 +88,6 @@ class Estagio(models.Model):
     supervisor = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.area} - {self.status}'
