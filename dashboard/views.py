@@ -5,11 +5,10 @@ import pdfplumber
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+
 from .forms import EstagiarioCadastroForm
+from . import models
 
-
-def home(request):
-    return render(request, 'dashboard/home.html')
 
 @login_required
 def cadastrar_estagiario(request):
@@ -20,33 +19,29 @@ def cadastrar_estagiario(request):
             return redirect('dashboard_instituicao')  # Redireciona para o dashboard após o cadastro
     else:
         form = EstagiarioCadastroForm()
-    
+
     return render(request, 'cadastrar_estagiario.html', {'form': form})
 
 
-def get_vagas(new_vaga=None):
-    vagas = [
-        {'nome': 'Nome do Estágio 1', 'empresa': 'Empresa 1', 'data': '11/01/2050', 'status': 'Pendente'},
-        {'nome': 'Nome do Estágio 2', 'empresa': 'Empresa 2', 'data': '12/01/2050', 'status': 'Concluído'},
-        {'nome': 'Nome do Estágio 3', 'empresa': 'Empresa 3', 'data': '13/01/2050', 'status': 'Pendente'},
-        {'nome': 'Nome do Estágio 4', 'empresa': 'Empresa 4', 'data': '14/01/2050', 'status': 'Concluído'},
-        {'nome': 'Nome do Estágio 5', 'empresa': 'Empresa 5', 'data': '15/01/2050', 'status': 'Pendente'},
-    ]
-    if new_vaga:
-        vagas.append(new_vaga)
-    return vagas
+def get_estagio(new_estagio=None):
+    estagios = models.Estagio.objects
+
+    if new_estagio:
+        estagios = estagios.filter(id=new_estagio.get('id', 0))
+
+    return estagios
 
 
-def extract_vaga_from_pdf(file_path):
-    vaga = {}
+def extract_estagio_from_pdf(file_path):
+    estagio = {}
     with pdfplumber.open(file_path) as pdf:
         text = "\n".join(page.extract_text() for page in pdf.pages)
 
-    vaga['nome'] = re.search(r'Curso:\s*(.+)', text).group(1).strip()
-    vaga['empresa'] = re.search(r'Razão Social:\s*(.+)', text).group(1).strip()
-    vaga['data'] = "01/01/2050"
-    vaga['status'] = "Pendente"
-    return vaga
+    estagio['nome'] = re.search(r'Curso:\s*(.+)', text).group(1).strip()
+    estagio['empresa'] = re.search(r'Razão Social:\s*(.+)', text).group(1).strip()
+    estagio['data'] = "01/01/2050"
+    estagio['status'] = "Pendente"
+    return estagio
 
 
 @login_required
@@ -61,21 +56,20 @@ def dashboard_instituicao(request):
 
         # Processar o arquivo PDF
         try:
-            new_vaga = extract_vaga_from_pdf(file_path)
-            estagios = get_vagas(new_vaga)
+            new_estagio = extract_estagio_from_pdf(file_path)
+            estagios = get_estagio(new_estagio)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
         finally:
             # Remover o arquivo temporário após o uso
             os.remove(file_path)
     else:
-        estagios = get_vagas()
+        estagios = models.Estagio.objects.all()  # Aqui você faz uma consulta para obter os Estágios
 
     context = {
         'estagios': estagios,
         'estagios_ativos': len(estagios),
-        'alunos_estagi': 10,
-
+        'alunos_estagi': 10,  # Ajuste conforme a lógica
     }
 
     return render(request, 'dashboard_instituicao.html', context)
