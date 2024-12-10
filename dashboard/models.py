@@ -75,7 +75,10 @@ class Supervisor(models.Model):
     def __str__(self):
         return f'{self.primeiro_nome} {self.sobrenome}'
 
-
+class TurnoChoices(models.TextChoices):
+    MANHA = 'Manha'
+    TARDE = 'Tarde'
+    NOITE = 'Noite'
 class Estagio(models.Model):
     bolsa_estagio = models.FloatField(blank=True)
     area = models.CharField(max_length=250)
@@ -83,7 +86,8 @@ class Estagio(models.Model):
     descricao = models.TextField()
     data_inicio = models.DateField()
     data_fim = models.DateField()
-    turno = models.CharField(max_length=30)
+    turno = models.TextField(choices=TurnoChoices.choices)
+    auxilio_transporte = models.FloatField()
     estagiario = models.ForeignKey(Estagiario, on_delete=models.CASCADE)
     supervisor = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)

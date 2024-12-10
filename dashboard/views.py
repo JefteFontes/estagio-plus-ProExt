@@ -7,12 +7,30 @@ from django.shortcuts import get_object_or_404
 from . import models
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import EstagiarioCadastroForm, EmpresaCadastroForm
+from .forms import EstagiarioCadastroForm, EmpresaCadastroForm, EstagioCadastroForm
+
 
 def home(request):
     if request.user.is_authenticated:
         return redirect('/dashboard/')
     return render(request, 'cadastro/home.html')
+
+from django.shortcuts import render, redirect
+from .forms import EstagioCadastroForm
+
+def add_estagios(request):
+    if request.method == 'POST':
+        form = EstagioCadastroForm(request.POST)
+        if form.is_valid():
+            form.save()  # Salva o Estágio no banco de dados
+            return redirect('dashboard_instituicao')  # Redireciona para a página de sucesso
+        else:
+            print(form.errors)  # Exibe erros no console, caso o formulário não seja válido
+    else:
+        form = EstagioCadastroForm()  # Cria um formulário vazio para GET
+
+#voltar para a pagina de dashboard
+    return render(request, 'add_estagios.html', {'form': form})
 
 def details(request):
     return render(request, 'details.html')
@@ -40,19 +58,16 @@ def cadastrar_empresa(request):
         form = EmpresaCadastroForm()
     return render(request, 'cadastrar_empresa.html', {'form': form})
 
+
 def get_estagio(new_estagio=None):
-    estagios = models.Estagio.objects
-
     if new_estagio:
-        estagios = estagios.filter(id=new_estagio.get('id', 0))
+        models.Estagio.objects.create(**new_estagio)
+    return models.Estagio.objects.all()
 
-    return estagios
-
-def detalhes_vaga(request):
-    nome_vaga = request.GET.get('nome', None)
-    vagas = get_estagio() 
-    vaga = next((v for v in vagas if v["nome"] == nome_vaga), None)
-    return render(request, 'details.html', {"vaga": vaga}) 
+def detalhes_estagio(request):
+    selected = request.GET.get('selected')
+    estagio = get_object_or_404(models.Estagio, id=selected)# Aqui vocé faz uma consulta para obter o Estágio com base no selected
+    return render(request, 'details.html', {'estagio': estagio})
 
 def extract_estagio_from_pdf(file_path):
     estagio = {}

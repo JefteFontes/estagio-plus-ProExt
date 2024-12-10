@@ -3,52 +3,50 @@
 {% load static %}
 
 {% block content %}
-    <div class="content">
 
         <ul class="breadcrumb">
             <li><a href="{% url 'dashboard_instituicao' %}">dashboard</a></li>
-            <li><a href="{% url 'details' %}">vaga</a></li>
+            <li>detalhes</li>
         </ul>
         
         
 
         <div class="header">
-            <h1>{{ vaga.nome }}</h1>
+            <h1>{{ estagio.estagiario }}</h1>
 
             <div class="info-right">
-                <span class="date">{{ vaga.data }}</span>
+                <span class="date">{{ estagio.data_inicio }}</span>
 
-                {% if vaga.status == 'Concluído' %}
-                    <span class="status concluido">{{ vaga.status }}</span>
+                {% if estagio.status == 'True' %}
+                    <span class="status concluido">{{ estagio.status }}</span>
                 {% else %}
-                    <span class="status">{{ vaga.status }}</span>
+                    <span class="status">{{ estagio.status }}</span>
                 {% endif %}
             </div>
         </div>
         
-        <div class="center">
             <hr>
             <div class="info">
                 <div class="info-left">
                     <strong>Nome do Aluno</strong>
-                    <span>Nome do Aluno</span>
+                    <span>{{ estagio.estagiario}}</span>
                 </div>
 
                 <div class="info-right">
                     <strong>Empresa Concedente</strong>
-                    <span>{{ vaga.empresa }}</span>
+                    <span>{{ estagio.empresa }}</span>
                 </div>
             </div>
             <hr>
             <div class="info">
                 <div class="info-left">
                     <strong>Supervisor de Estágio</strong>
-                    <span>Nome do Supervisor</span>
+                    <span>{{ estagio.supervisor }}</span>
                 </div>
 
                 <div class="info-right">
                     <strong>Duração do Estágio</strong>
-                    <span>12 meses</span>
+                    <span>{{ estagio.data_fim }}</span>
                 </div>
             </div>
             <hr>
@@ -57,19 +55,19 @@
                 <div class="describle">
                     <strong><p>Atividades a serem desenvolvidas</p></strong>
 
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Similique cupiditate, facere iure odit facilis consectetur libero eos quas placeat blanditiis praesentium, aliquam aspernatur officia, iusto assumenda debitis corporis rerum! Nihil.</p>
+                    <p>{{ estagio.descricao }}</p>
                 </div>
             </div>
             <hr>
             <div class="info">
                 <div class="info-left">
                     <strong>Valor da bolsa-estágio</strong>
-                    <span>R$ 1.200,00</span>
+                    <span>R$ {{estagio.bolsa_estagio}}</span>
                 </div>
 
                 <div class="info-right">
                     <strong>Valor do Auxilio-Transporte</strong>
-                    <span>R$ 150,00</span>
+                    <span>R$ {{estagio.auxilio_transporte}}</span>
                 </div>
             </div>
             <hr>
@@ -84,8 +82,6 @@
             <div class="return">
                 <a href="{% url 'dashboard_instituicao' %}" class="btn-return">Voltar</a>
             </div>
-        </div>
-    </div>
 {% endblock %}
 
     

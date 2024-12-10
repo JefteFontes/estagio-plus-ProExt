@@ -11,7 +11,7 @@
 }
 
 .cadastro-container-home {
-    margin: 120px auto;
+    margin: 10px auto;
 }
 .cadastro-container-dashboard {
     margin: 0px auto;
@@ -31,7 +31,7 @@ form {
     width: 100%;
 }
 
-form input {
+form input, form select {
     display: block;
     padding: 8px;
     width: 100%;
@@ -40,7 +40,6 @@ form input {
     border: 1px solid #ccc;
     margin-top: 10px;
 }
-
 form p {
     margin-bottom: 4px;
     font-weight: bold;
