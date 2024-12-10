@@ -1,0 +1,35 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block head_title %}
+            {% endblock head_title %}
+        </title>
+        <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'login/css/style.css' %}">
+        {% block extra_head %}
+        {% endblock extra_head %}
+        {{ block.super }}
+    </head>
+    <body>
+        {% block body %}
+            {% if messages %}
+                <div>
+                    <strong>{% trans "Messages:" %}</strong>
+                    <ul>
+                        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+                    </ul>
+                </div>
+            {% endif %} 
+            {% include "partials/nav-bar.html" %}<!-- Barra de navegação aqui -->
+            {% block content %}<!-- Conteúdo principal da tela atual aqui -->
+            {% endblock content %}
+        {% endblock body %}
+        {% block extra_body %}
+        {% endblock extra_body %}
+    </body>
+</html>

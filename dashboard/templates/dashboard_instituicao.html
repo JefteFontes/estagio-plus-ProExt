@@ -1,0 +1,34 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="welcome-container">
+    <div class="welcome-section">
+        <h2>Bem-vindo ao +Estágio</h2>
+        <p>Vamos começar!</p>
+    </div>
+    <div class="summary">
+        <div class="summary-item">
+            <p>Estágios ativos</p>
+            <span>{{ estagios_ativos }}</span>
+        </div>
+        <div class="summary-item">
+            <p>cadastrar Novo Estágio</p>
+            <a href="{% url 'add_estagios' %}"><span>+</span></a>
+        </div>
+    </div>
+</div>
+    {% for estagio in estagios %}
+        <div class="vaga-item">
+            <p><strong>{{ estagio.empresa }}</strong></p>
+            <p>{{ estagio.estagiario }}</p>
+            <p><i class="fa fa-calendar"></i> {{ estagio.data_fim }}</p>
+            {% if vaga.status == 'True' %}
+                <span class="status concluido">{{ estagio.status }}</span>
+            {% else %}
+                <span class="status">{{ estagio.status }}</span>
+            {% endif %}
+            <a class="details-link" href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}">Ver detalhes</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

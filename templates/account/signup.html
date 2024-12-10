@@ -1,0 +1,62 @@
+
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load allauth account %}
+{% load static %} 
+{% block head_title %}
+    {% trans "+Estagio" %}
+{% endblock head_title %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+{{ block.super }}
+{% endblock extra_head %}
+
+
+{% block content %}
+<div class="container">
+    <div class="content">
+        {%element h1 %}
+            {% trans "Cadastro" %}
+        {% endelement %}
+        {% setvar link %}
+            <a href="{{ login_url }}">
+            {% endsetvar %}
+            {% setvar end_link %}
+            </a>
+        {% endsetvar %}
+            {% if not SOCIALACCOUNT_ONLY %}
+                {% url 'account_signup' as action_url %}
+                {% element form form=form method="post" action=action_url tags="entrance,signup" %}
+                    {% slot body %}
+                        {% csrf_token %}
+                        {% element fields form=form unlabeled=True %}
+                        {% endelement %}
+                        {{ redirect_field }}
+                    {% endslot %}
+                    {% slot actions %}
+                        <div class="button-container">
+                            {% element button tags="prominent,signup" type="submit" %}
+                                {% trans "Cadastre-se" %}
+                            {% endelement %}
+                        </div>                    
+                    {% endslot %}
+                {% endelement %}
+            {% endif %}
+            {% if PASSKEY_SIGNUP_ENABLED %}
+                {% element hr %}
+                {% endelement %}
+                {% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" %}
+                    {% trans "Sign up using a passkey" %}
+                {% endelement %}
+            {% endif %}
+            {% if SOCIALACCOUNT_ENABLED %}
+                {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+            {% endif %}
+
+            {% element p %}
+                {% blocktranslate %}Já tem uma conta? {{ link }}Entrar{{ end_link }}.{% endblocktranslate %}
+            {% endelement %}
+    </div>
+</div>
+{% endblock content %}

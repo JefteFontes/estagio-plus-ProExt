@@ -1,0 +1,140 @@
+.cadastro-container-home, .cadastro-container-dashboard {
+    display: flex;
+    flex-direction: column;
+    background-color: #E3FFE3;
+    border-radius: 5px;
+    width: 65%;
+    min-width: 1200px;
+    padding: 20px 40px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+}
+
+.cadastro-container-home {
+    margin: 10px auto;
+}
+.cadastro-container-dashboard {
+    margin: 0px auto;
+}
+
+form h2 {
+    margin-bottom: 20px;
+    color: #14AE5C;
+}
+
+form label {
+    font-weight: bold;
+}
+
+form {
+    border-radius: 5px;
+    width: 100%;
+}
+
+form input, form select {
+    display: block;
+    padding: 8px;
+    width: 100%;
+    max-width: 300px; /* Limite máximo de largura */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+form p {
+    margin-bottom: 4px;
+    font-weight: bold;
+    color: #14AE5C;
+    margin-left: 10px;
+}
+
+.form-inicial {
+    margin-top: 10px;
+}
+
+.form-linha1 {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    margin-top: 10px;
+    flex-wrap: wrap; /* Permite que os elementos se ajustem em linha em telas menores */
+}
+
+.form-endereco,
+.form-coordenador {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #14AE5C;
+    border-radius: 10px;
+    padding: 20px 20px;
+    margin-bottom: 30px;
+}
+
+.btn-user-signup {
+    background-color: #14AE5C;
+    color: #FFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 200px;
+    height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+}
+
+.btn-user-signup:hover {
+    background-color: #11833D;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    .cadastro-container {
+        width: 90%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .form-linha1 {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-inicial {
+        width: 100%;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    button {
+        width: 100%; /* Botão ocupa toda a largura disponível em telas pequenas */
+    }
+}
+
+@media (max-width: 480px) {
+    .cadastro-container {
+        margin: 10px auto;
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 24px; /* Ajusta o tamanho da fonte do título */
+    }
+
+    input {
+        max-width: 100%; /* Permite que o input ocupe 100% da largura disponível */
+    }
+
+    .form-linha1 {
+        gap: 20px;
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%; /* Garante que o botão ocupe toda a largura da tela */
+        font-size: 16px;
+    }
+}

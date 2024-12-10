@@ -1,0 +1,39 @@
+{% load static %}
+<header class="navbar">
+    <div class="logo">
+        <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
+    </div>
+    <nav class="navbar-nav">
+        
+        {% url 'account_login' as login_url_ %}
+        {% if user.is_authenticated %}
+            <div class="navbar-user">
+                <a title="Notificação" href="#" class="notif-btn"><i class="fa-regular fa-bell"></i></a>
+                <div class="user-info">
+                    <img src="{% static 'img/default.png' %}" alt="Foto de perfil">
+                    <span class="user-name">{{ request.user.username }}</span>
+                    <div class="user-dropdown">
+                        <button title="User logout-edit" class="user-button" onclick="toggleDropdown()" id="userDropdownButton">
+                            <i class="fa-solid fa-chevron-down"></i> <!-- Ícone de usuário -->
+                        </button>
+                        <div id="myDropdown" class="dropdown-content">
+                            <button class="btn-logout" id="openModal">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="navbar-menu">
+                {% url 'home' as inicio_url_ %}
+                {% if inicio_url_ %}
+                    <a href="{{ inicio_url_ }}">Inicio</a>
+                {% endif %}
+                {% if login_url_ %}
+                    <a href="{{ login_url_ }}">Login</a>
+                {% endif %}
+                <a href="#">Contato</a>
+                <a href="#">Sobre</a>
+            </div>
+        {% endif %}
+    </nav>
+</header> 

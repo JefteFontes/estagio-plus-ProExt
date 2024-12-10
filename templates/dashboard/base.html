@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>+Estágio</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'cadastro/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'details/css/style.css' %}">
+    rel="stylesheet">
+    <script src="https://kit.fontawesome.com/073115d401.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <!-- Navbar horizontal com Bootstrap no topo -->
+    {% include 'partials/nav-bar.html' %}
+
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal"></span>
+            <h2>Confirmar Logout</h2>
+            <p>Tem certeza de que deseja sair?</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelLogout">Cancelar</button>
+                <form method="post" action="{% url 'account_logout' %}" id="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-danger">Confirmar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container principal com sidebar e conteúdo -->
+    <div class="container-main">
+        <!-- Barra lateral -->
+        <div class="sidebar" id="sidebar">
+            <div class="side-elements">
+                <div class="sidebar-top">
+                    <ul>
+                        {% url 'dashboard_instituicao' as dashboard_instituicao_url %}
+                        <li class="{% if request.path == dashboard_instituicao_url %}actived{% endif %}">
+                            <span class="icon"><i class="fa-solid fa-house"></i></span>
+                            <span class="text">
+                                {% if dashboard_instituicao_url %}
+                                    <a href="{{ dashboard_instituicao_url }}">Dashboard</a>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <!-- Cadastro de Estagiário -->
+                        {% url 'cadastrar_estagiario' as cadastro_estagiario_url_ %}
+                        <li class="{% if request.path == cadastro_estagiario_url_ %}actived{% endif %}">
+                            <span class="icon"><i class="fa-solid fa-user"></i></span>
+                            <span class="text">
+                                {% if cadastro_estagiario_url_ %}
+                                    <a href="{{ cadastro_estagiario_url_ }}">Cadastro de Estagiário</a>
+                                {% endif %}
+                            </span> 
+                        </li>
+                        <!-- Cadastro de Empresa -->
+                        {% url 'cadastrar_empresa' as cadastro_empresa_url_ %}
+                        <li class="{% if request.path == cadastro_empresa_url_ %}actived{% endif %}">
+                            <span class="icon"><i class="fa-solid fa-city"></i></span>
+                            <span class="text">
+                                {% url 'cadastrar_empresa' as cadastro_empresa_url_ %}
+                                {% if cadastro_empresa_url_ %}
+                                    <a href="{{ cadastro_empresa_url_ }}">Cadastro de Empresa</a>
+                                {% endif %}
+                            </span> 
+                        </li>
+                    </ul>
+                </div>
+                <div class="sidebar-bottom">
+                    
+                </div>
+            </div>
+            <!-- Botão para esconder/mostrar a sidebar -->
+            <div class="toggle">
+                <button type="button" onclick="toggleSidebar()" class="toggle-btn" title="Toggle Sidebar">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+
+    <script src="{% static 'dashboard/js/script.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+</body>
+</html>
