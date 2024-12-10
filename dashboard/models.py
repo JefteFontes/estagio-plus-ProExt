@@ -87,7 +87,7 @@ class Estagio(models.Model):
     data_inicio = models.DateField()
     data_fim = models.DateField()
     turno = models.TextField(choices=TurnoChoices.choices)
-    auxilio_transporte = models.FloatField()
+    auxilio_transporte = models.FloatField(default=0.0)
     estagiario = models.ForeignKey(Estagiario, on_delete=models.CASCADE)
     supervisor = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)

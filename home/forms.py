@@ -36,7 +36,8 @@ class CoordenadorCadastroForm(forms.ModelForm):
         }
         password = f"{self.cleaned_data['cpf']}"
         
-        print(password)   # Gera uma senha com CPF
+        print(password)
+           # Gera uma senha com CPF
 
         # Cria o usuário
         user = User.objects.create_user(**user_data, password=password)
