@@ -15,8 +15,6 @@ def home(request):
         return redirect('/dashboard/')
     return render(request, 'cadastro/home.html')
 
-from django.shortcuts import render, redirect
-from .forms import EstagioCadastroForm
 
 def add_estagios(request):
     if request.method == 'POST':
@@ -29,11 +27,13 @@ def add_estagios(request):
     else:
         form = EstagioCadastroForm()  # Cria um formulário vazio para GET
 
-#voltar para a pagina de dashboard
+# voltar para a pagina de dashboard
     return render(request, 'add_estagios.html', {'form': form})
+
 
 def details(request):
     return render(request, 'details.html')
+
 
 @login_required
 def cadastrar_estagiario(request):
@@ -46,6 +46,7 @@ def cadastrar_estagiario(request):
         form = EstagiarioCadastroForm()
 
     return render(request, 'cadastrar_estagiario.html', {'form': form})
+
 
 @login_required
 def cadastrar_empresa(request):
@@ -64,10 +65,12 @@ def get_estagio(new_estagio=None):
         models.Estagio.objects.create(**new_estagio)
     return models.Estagio.objects.all()
 
+
 def detalhes_estagio(request):
     selected = request.GET.get('selected')
     estagio = get_object_or_404(models.Estagio, id=selected)# Aqui vocé faz uma consulta para obter o Estágio com base no selected
     return render(request, 'details.html', {'estagio': estagio})
+
 
 def extract_estagio_from_pdf(file_path):
     estagio = {}

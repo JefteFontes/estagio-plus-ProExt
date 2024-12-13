@@ -20,9 +20,9 @@
     {% for estagio in estagios %}
         <div class="vaga-item">
             <p><strong>{{ estagio.empresa }}</strong></p>
-            <p>{{ estagio.estagiario }}</p>
+            <p><strong>Estagiário:</strong>{{ estagio.estagiario }}</p>
             <p><i class="fa fa-calendar"></i> {{ estagio.data_fim }}</p>
-            {% if vaga.status == 'True' %}
+            {% if estagio.status == "ATIVO" %}
                 <span class="status concluido">{{ estagio.status }}</span>
             {% else %}
                 <span class="status">{{ estagio.status }}</span>

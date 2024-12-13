@@ -24,7 +24,6 @@ class Empresa(models.Model):
         return self.nome
 
 
-
 class Instituicao(models.Model):
     cnpj = models.CharField(max_length=20)
     nome = models.CharField(max_length=250)
@@ -75,19 +74,28 @@ class Supervisor(models.Model):
     def __str__(self):
         return f'{self.primeiro_nome} {self.sobrenome}'
 
+
 class TurnoChoices(models.TextChoices):
     MANHA = 'Manha'
     TARDE = 'Tarde'
     NOITE = 'Noite'
+
+
+class StatusChoices(models.TextChoices):
+    ATIVO = 'Ativo'
+    PENDENTE = 'Pendente'
+    CONCLUIDO = 'Concluído'
+
+
 class Estagio(models.Model):
-    bolsa_estagio = models.FloatField(blank=True)
+    bolsa_estagio = models.FloatField(blank=True, default=0)
     area = models.CharField(max_length=250)
-    status = models.BooleanField()
+    status = models.TextField(choices=StatusChoices.choices)
     descricao = models.TextField()
     data_inicio = models.DateField()
     data_fim = models.DateField()
     turno = models.TextField(choices=TurnoChoices.choices)
-    auxilio_transporte = models.FloatField()
+    auxilio_transporte = models.FloatField(blank=True, default=0)
     estagiario = models.ForeignKey(Estagiario, on_delete=models.CASCADE)
     supervisor = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)

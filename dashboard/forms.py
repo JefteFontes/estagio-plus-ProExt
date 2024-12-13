@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices
+from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices, StatusChoices
 
 
 ##############################################
@@ -9,8 +9,8 @@ from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Institui
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}))
     area = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Área'}))
-    status = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))  
-    descricao = forms.CharField(max_length=255, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição',"rows": 4, "cols": 50}))
+    status = forms.ChoiceField(choices=StatusChoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
+    descricao = forms.CharField(max_length=255, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição', "rows": 4, "cols": 50}))
     auxilio_transporte = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Auxilio de Transporte'}))
     data_inicio = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Data de Início'}))
     data_fim = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Data de Fim'}))
@@ -19,7 +19,7 @@ class EstagioCadastroForm(forms.ModelForm):
     empresa = forms.ModelChoiceField(queryset=Empresa.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}),)
     supervisor = forms.ModelChoiceField(queryset=Supervisor.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
     instituicao = forms.ModelChoiceField(queryset=Instituicao.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
-    
+
     class Meta:
         model = Estagio
         fields = ['bolsa_estagio', 'auxilio_transporte', 'area', 'status', 'descricao', 'data_inicio', 'data_fim', 'turno', 'estagiario', 'empresa', 'supervisor', 'instituicao']
@@ -40,10 +40,11 @@ class EstagioCadastroForm(forms.ModelForm):
         if commit:
             estagio.save()
         return estagio
-        
-###############################################        
+
+
+###############################################
 ######CADASTRO DE ESTAGIARIO - ALUNO ##########
-###############################################   
+###############################################
 class EstagiarioCadastroForm(forms.ModelForm):
     rua = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Rua das Flores'}))
     numero = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Número (ex: 123)'}))
