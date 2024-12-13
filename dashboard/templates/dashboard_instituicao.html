@@ -19,13 +19,13 @@
 </div>
     {% for vaga in estagios %}
         <div class="vaga-item">
-            <p><strong>{{ vaga.nome }}</strong></p>
+            <p><strong>{{ vaga.estagiario }}</strong></p>
             <p>{{ vaga.empresa }}</p>
-            <p><i class="fa fa-calendar"></i> {{ vaga.data }}</p>
-            {% if vaga.status == 'Concluído' %}
-                <span class="status concluido">{{ vaga.status }}</span>
+            <p><i class="fa fa-calendar"></i> {{ vaga.data_inicio }} - {{vaga.data_fim}}</p>
+            {% if vaga.status == True %}
+                <span class="status concluido">{{"Ativo"}}</span>
             {% else %}
-                <span class="status">{{ vaga.status }}</span>
+                <span class="status">{{ "Pendente" }}</span>
             {% endif %}
         </div>
     {% endfor %}
