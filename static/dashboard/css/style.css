@@ -358,14 +358,14 @@ body {
 
 /* Quando a sidebar estiver escondida */
 .container-main.sidebar-collapsed {
-    margin-left: 100px;
+    margin-left: 10px;
     transition: margin-left 0.9s ease;
 }
 
 /* Estilos do conteúdo */
 .main-content {
     flex-grow: 1;
-    padding: 40px 20px 20px 10px;
+    padding: 20px;
     margin-top: 70px;
     transition: margin-left 0.9s ease;
 }
@@ -629,4 +629,16 @@ body {
 .import-from-pdf button:hover {
     background-color: #1A5722;
     transition: background-color 0.3s ease;
+}
+
+.details-link a {
+    text-decoration: none;
+}
+select, #form-control{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #C1F9C1;
+    border-radius: 5px;
+    background-color: #FFF;
+    cursor: pointer;
 }

@@ -1,0 +1,87 @@
+{% extends "dashboard/base.html" %} 
+{% block content %} 
+
+{% if form.errors %}
+<div class="alert alert-danger">
+  <ul>
+    {% for field in form %}
+      {% for error in field.errors %}
+      <li>{{ field.label }}: {{ error }}</li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<div class="cadastro-container-dashboard">
+  <h2>Cadastro de Estágio</h2>
+  <form method="post">
+    {% csrf_token %}
+    <p>Dados estágio:</p>
+    <div class="form-coordenador">
+      <div class="form-linha1">
+        <div class="form-inicial">
+          <label for="{{ form.estagiario.id_for_label }}" class="form-label">Estagiário:</label>
+          {{ form.estagiario }}
+        </div>
+        <div class="form-inicial">
+          <label for="{{ form.empresa.id_for_label }}" class="form-label">Empresa:</label>
+          {{ form.empresa }}
+        </div>
+        <div class="form-inicial">
+          <label for="{{ form.instituicao.id_for_label }}" class="form-label">Instituição de Ensino:</label>
+          {{ form.instituicao }}
+        </div>
+        <div class="form-inicial">
+          <label for="{{ form.supervisor.id_for_label }}" class="form-label">Supervisor:</label>
+          {{ form.supervisor }}
+        </div>
+      </div>
+
+      <div class="form-linha1">
+        
+        <div class="form-inicial">
+          <label for="{{ form.turno.id_for_label }}" class="form-label">Turno:</label>
+          {{ form.turno }}
+        </div>
+        <div class="form-inicial">
+          <label for="{{ form.area.id_for_label }}" class="form-label">Área:</label>
+          {{ form.area }}
+        </div>
+      </div>
+
+      <div class="form-linha1">
+        <div class="form-inicial">
+          <label for="{{ form.bolsa_estagio.id_for_label }}" class="form-label">Bolsa de Estágio:</label>
+          {{ form.bolsa_estagio }}
+        </div>
+        <div class="form-inicial">
+          <label for="{{ form.auxilio_transporte.id_for_label }}" class="form-label">auxilio transporte:</label>
+          {{ form.auxilio_transporte }}
+        </div>
+        <div class="form-inicial">
+          <label for="{{ form.data_inicio.id_for_label }}" class="form-label">Data Início:</label>
+          {{ form.data_inicio }}
+        </div>
+        <div class="form-inicial">
+          <label for="{{ form.data_fim.id_for_label }}" class="form-label">Data de Término:</label>
+          {{ form.data_fim }}
+        </div>
+      </div>
+
+      <div class="form-linha1">
+        <div class="form-inicial">
+          <label for="{{ form.descricao.id_for_label }}" class="form-label">Descrição:</label>
+          {{ form.descricao }}
+        </div>
+        <div class="form-inicial">
+          <label for="{{ form.status.id_for_label }}" class="form-label">Ativo:</label>
+          {{ form.status }}
+        </div>
+      </div>
+    </div>
+    <button class="btn-user-signup" type="submit">Cadastrar</button>
+  </form>
+</div>
+
+{% endblock %}

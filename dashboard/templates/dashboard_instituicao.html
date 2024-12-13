@@ -12,30 +12,23 @@
             <span>{{ estagios_ativos }}</span>
         </div>
         <div class="summary-item">
-            <p>Alunos estagiando</p>
-            <span>{{ alunos_estagi }}</span>
+            <p>cadastrar Novo Estágio</p>
+            <a href="{% url 'add_estagios' %}"><span>+</span></a>
         </div>
     </div>
 </div>
-    {% for vaga in estagios %}
+    {% for estagio in estagios %}
         <div class="vaga-item">
-            <p><strong>{{ vaga.estagiario }}</strong></p>
-            <p>{{ vaga.empresa }}</p>
-            <p><i class="fa fa-calendar"></i> {{ vaga.data_inicio }} - {{vaga.data_fim}}</p>
-            {% if vaga.status == True %}
-                <span class="status concluido">{{"Ativo"}}</span>
+            <p><strong>{{ estagio.empresa }}</strong></p>
+            <p>{{ estagio.estagiario }}</p>
+            <p><i class="fa fa-calendar"></i> {{ estagio.data_fim }}</p>
+            {% if vaga.status == 'True' %}
+                <span class="status concluido">{{ estagio.status }}</span>
             {% else %}
-                <span class="status">{{ "Pendente" }}</span>
+                <span class="status">{{ estagio.status }}</span>
             {% endif %}
+            <a class="details-link" href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}">Ver detalhes</a>
         </div>
     {% endfor %}
-    <div class="import-from-pdf">
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="pdf_file">Importar dados do PDF:</label>
-            <input type="file" name="pdf_file" accept=".pdf" />
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
 </div>
 {% endblock %}

@@ -3,7 +3,10 @@ from .forms import CoordenadorCadastroForm
 
 # Create your views here.
 def home(request):
+    if request.user.is_authenticated:
+        return redirect('/accounts/profile/')
     return render(request, 'home/home.html')
+
 
 def cadastrar_instituicao(request):
     if request.method == 'POST':
