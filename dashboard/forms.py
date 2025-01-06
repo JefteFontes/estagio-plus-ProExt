@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import Estagiario, Endereco
 
+
 class EstagiarioCadastroForm(forms.ModelForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'exemplo@dominio.com'}))
 
@@ -30,10 +31,10 @@ class EstagiarioCadastroForm(forms.ModelForm):
             'username': self.cleaned_data['primeiro_nome'] + " " + self.cleaned_data['sobrenome'],
             'email': self.cleaned_data['email'],
         }
-        password = f"{self.cleaned_data['cpf']}" 
+        password = f"{self.cleaned_data['cpf']}"
 
         user = User.objects.create_user(**user_data, password=password)
-        
+
         endereco = Endereco.objects.create(
             rua=self.cleaned_data['rua'],
             numero=self.cleaned_data['numero'],

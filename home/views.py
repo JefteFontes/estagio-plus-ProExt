@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect
 from .forms import CoordenadorCadastroForm
 
-# Create your views here.
+
 def home(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard_instituicao')
+
     return render(request, 'home/home.html')
+
 
 def cadastrar_instituicao(request):
     if request.method == 'POST':
