@@ -111,6 +111,67 @@ body {
     font-weight: 500;
 }
 
+.error-message{
+    color:red;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+.has-error label {
+    color: red;
+}
+.has-error input,
+.has-error select,
+.has-error textarea {
+    border: 2px solid red;
+    background-color: rgba(255, 0, 0, 0.1);
+}
+.add-estagio-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    margin-top: -10px;
+    background-color: #E1F3E2;
+    border: 1px solid #C1F9C1;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+.add-estagio-card a{
+    text-decoration: none;
+}
+.add-estagio-card span{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-estagio-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #eef7ff;
+}
+
+
+.add-estagio-card p {
+    text-align: center;
+    flex-direction: row;
+    font-size: 20px;
+    font-weight: bold;
+    color: #11833D;
+}
+
+.add-estagio-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #eef7ff;
+}
+.summary-item p{
+    text-align: center;
+    flex-direction: column;
+    font-size: 20px;
+}
 /* Para centralizar ainda mais no mobile */
 @media (max-width: 600px) {
     .content {

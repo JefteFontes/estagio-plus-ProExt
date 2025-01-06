@@ -113,3 +113,4 @@ def dashboard_instituicao(request):
     }
 
     return render(request, 'dashboard_instituicao.html', context)
+

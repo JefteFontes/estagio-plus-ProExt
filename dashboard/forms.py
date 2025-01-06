@@ -17,6 +17,7 @@ class EstagioCadastroForm(forms.ModelForm):
     turno = forms.ChoiceField(choices=TurnoChoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
     estagiario = forms.ModelChoiceField(queryset=Estagiario.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
     empresa = forms.ModelChoiceField(queryset=Empresa.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}),)
+    #supervisor somente os da empresa selecionada
     supervisor = forms.ModelChoiceField(queryset=Supervisor.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
     instituicao = forms.ModelChoiceField(queryset=Instituicao.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
 
@@ -143,5 +144,6 @@ class EmpresaCadastroForm(forms.ModelForm):
             supervisor.save()
 
         return supervisor
-
-
+    
+class ImportEmpresaPDFForm(forms.Form):
+    file = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}))

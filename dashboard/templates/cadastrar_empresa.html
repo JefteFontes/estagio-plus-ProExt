@@ -82,5 +82,33 @@
 
             <button type="submit" class="btn-user-signup">Cadastrar</button>
         </form>
-    </div>
+    </div><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#id_cep').on('blur', function() {
+            let cep = $(this).val().replace(/\D/g, ''); // Remove caracteres não numéricos
+    
+            if (cep.length === 8) {
+                $.ajax({
+                    url: "{% url 'buscar_cep' %}", // URL da view
+                    method: "GET",
+                    data: { cep: cep }, // Dados enviados para o servidor
+                    success: function(data) {
+                        // Preenche os campos com os dados retornados
+                        $('#id_rua').val(data.logradouro);
+                        $('#id_bairro').val(data.bairro);
+                        $('#id_cidade').val(data.cidade);
+                        $('#id_estado').val(data.estado);
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON.error || 'Erro ao buscar o CEP.');
+                    }
+                });
+            } else {
+                alert('CEP inválido! Digite 8 números.');
+            }
+        });
+    });
+    </script>
+    
 {% endblock %}
