@@ -358,7 +358,7 @@ body {
 
 /* Quando a sidebar estiver escondida */
 .container-main.sidebar-collapsed {
-    margin-left: 10px;
+    margin-left: 100px;
     transition: margin-left 0.9s ease;
 }
 

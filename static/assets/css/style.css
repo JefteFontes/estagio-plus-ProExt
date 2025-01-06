@@ -45,8 +45,8 @@ body {
 
 .navbar-menu a {
     position: relative;
-    color: #000000;
     font-size: 18px;
+    color:#000000;
     font-weight: 700;
     text-decoration: none;
 }
