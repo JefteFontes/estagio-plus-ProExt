@@ -3,9 +3,9 @@ import tempfile
 from django.shortcuts import render, redirect
 import pdfplumber
 from django.contrib.auth.decorators import login_required
-from dashboard.models import Empresa, Endereco, Estagiario, Estagio, Supervisor
+from dashboard.models import Empresa, Endereco, Estagiario, Estagio, Supervisor, Cursos
 from dashboard.views.utils import parse_sections
-
+from dashboard.forms import CursosCadastroForm
 def home(request):
     if request.user.is_authenticated:
         return redirect('/dashboard/')
@@ -14,6 +14,20 @@ def home(request):
 def details(request):
     return render(request, 'details.html')
 
+def dashboard(request):
+    return render(request, 'dashboard.html')
+def dashboard_cursos(request):
+    cursos = Cursos.objects.all()
+    context = { 'cursos': cursos}
+    return render(request, 'dashboard_cursos.html', context)
+def dashboard_empresa(request):
+    empresas = Empresa.objects.all()
+    context = { 'empresas': empresas}
+    return render(request, 'dashboard_empresa.html', context)
+def dashboard_estagiario(request):
+    estagiarios = Estagiario.objects.all()
+    context = { 'estagiarios': estagiarios}
+    return render(request, 'dashboard_estagiario.html', context)
 @login_required
 def dashboard_instituicao(request):
     errors = []
@@ -119,3 +133,14 @@ def dashboard_instituicao(request):
         'errors': errors,
     }
     return render(request, 'dashboard_instituicao.html', context)
+
+def cadastrar_cursos(request):
+    if request.method == 'POST':
+        form = CursosCadastroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard_cursos')
+    else:
+        form = CursosCadastroForm()
+
+    return render(request, 'cadastrar_cursos.html', {'form': form}, )

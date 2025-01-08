@@ -1,0 +1,33 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Empresas</h2>
+    <div class="add-button mb-3">
+        <a href="{% url 'cadastrar_empresa' %}" class="btn btn-primary">Cadastrar Nova Empresa</a>
+    </div>
+    {% if empresas %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CNPJ</th>
+                    <th>Atividades</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for empresa in empresas %}
+                    <tr>
+                        <td>{{ empresa.empresa_nome }}</td>
+                        <td>{{ empresa.cnpj }}</td>
+                        <td>{{ empresa.razao_social }}</td>
+                       
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Não há empresas cadastradas.</p>
+    {% endif %}
+</div>
+{% endblock %}
