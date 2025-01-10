@@ -1,34 +1,75 @@
 {% extends "dashboard/base.html" %}
 
 {% block content %}
-<div class="welcome-container">
+<div class="welcome-container">{% if error %}
+    <div class="alert alert-danger">
+        Erro: {{ error }}
+    </div>
+{% endif %}
+
+{% if success %}
+    <div class="alert alert-success">
+        Estágio cadastrado com sucesso!
+    </div>
+{% endif %}
     <div class="welcome-section">
-        <h2>Bem-vindo ao +Estágio</h2>
-        <p>Vamos começar!</p>
+        <h2>Bem-vindo(a) ao +Estágio</h2>
+      
+<p>{{ instituicao }}</p>
+<div class="add-estagio-card">
+    <a href="{% url 'add_estagio' %}">
+        <div class="card-content">
+            <p> Cadastrar Estágio</p>
+        </div>
+    </a>
+</div>
     </div>
     <div class="summary">
         <div class="summary-item">
             <p>Estágios ativos</p>
             <span>{{ estagios_ativos }}</span>
         </div>
-        <div class="summary-item">
-            <p>cadastrar Novo Estágio</p>
-            <a href="{% url 'add_estagios' %}"><span>+</span></a>
-        </div>
+        
     </div>
 </div>
     {% for estagio in estagios %}
         <div class="vaga-item">
             <p><strong>{{ estagio.empresa }}</strong></p>
             <p>{{ estagio.estagiario }}</p>
+            <p><i class="fa fa-calendar"></i> {{ estagio.data_inicio }}</p>
+            
             <p><i class="fa fa-calendar"></i> {{ estagio.data_fim }}</p>
             {% if vaga.status == 'True' %}
-                <span class="status concluido">{{ estagio.status }}</span>
+                <span class="status concluido">{{estagio.status}}</span>
             {% else %}
                 <span class="status">{{ estagio.status }}</span>
             {% endif %}
             <a class="details-link" href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}">Ver detalhes</a>
         </div>
     {% endfor %}
+</div>
+<div>
+<div class="form-coordenador vaga-item">
+    {% if errors %}
+    <div class="alert alert-danger">
+        <ul>
+        {% for error in errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+    <div class="form-linha1">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="importar_pdf">
+        <label for="pdf_file">Importar Termo de Estágio (PDF):</label>
+        <div class="form-linha1">
+        <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf" required />
+        <button type="submit" class="btn-user-signup">Importar</button>
+    </div>
+    </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -1,17 +1,6 @@
-{% extends "dashboard/base.html" %} 
-{% block content %} 
+  {% extends "dashboard/base.html" %}
 
-{% if form.errors %}
-<div class="alert alert-danger">
-  <ul>
-    {% for field in form %}
-      {% for error in field.errors %}
-      <li>{{ field.label }}: {{ error }}</li>
-      {% endfor %}
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
+  {% block content %}
 
 <div class="cadastro-container-dashboard">
   <h2>Cadastro de Estágio</h2>
@@ -20,67 +9,106 @@
     <p>Dados estágio:</p>
     <div class="form-coordenador">
       <div class="form-linha1">
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.estagiario.errors %}has-error{% endif %}">
+          {%if form.estagiario.errors%}
           <label for="{{ form.estagiario.id_for_label }}" class="form-label">Estagiário:</label>
+          
           {{ form.estagiario }}
+
+          {%endif%}
+          {% for error in form.estagiario.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.empresa.errors %}has-error{% endif %}">
           <label for="{{ form.empresa.id_for_label }}" class="form-label">Empresa:</label>
           {{ form.empresa }}
+          {% for error in form.empresa.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.instituicao.errors %}has-error{% endif %}">
           <label for="{{ form.instituicao.id_for_label }}" class="form-label">Instituição de Ensino:</label>
           {{ form.instituicao }}
+          {% for error in form.instituicao.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.supervisor.errors %}has-error{% endif %}">
           <label for="{{ form.supervisor.id_for_label }}" class="form-label">Supervisor:</label>
           {{ form.supervisor }}
+          {% for error in form.supervisor.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
       </div>
 
       <div class="form-linha1">
-        
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.turno.errors %}has-error{% endif %}">
           <label for="{{ form.turno.id_for_label }}" class="form-label">Turno:</label>
           {{ form.turno }}
+          {% for error in form.turno.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.area.errors %}has-error{% endif %}">
           <label for="{{ form.area.id_for_label }}" class="form-label">Área:</label>
           {{ form.area }}
+          {% for error in form.area.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
       </div>
 
       <div class="form-linha1">
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.bolsa_estagio.errors %}has-error{% endif %}">
           <label for="{{ form.bolsa_estagio.id_for_label }}" class="form-label">Bolsa de Estágio:</label>
           {{ form.bolsa_estagio }}
+          {% for error in form.bolsa_estagio.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="form-inicial">
-          <label for="{{ form.auxilio_transporte.id_for_label }}" class="form-label">auxilio transporte:</label>
+        <div class="form-inicial {% if form.auxilio_transporte.errors %}has-error{% endif %}">
+          <label for="{{ form.auxilio_transporte.id_for_label }}" class="form-label">Auxílio Transporte:</label>
           {{ form.auxilio_transporte }}
+          {% for error in form.auxilio_transporte.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.data_inicio.errors %}has-error{% endif %}">
           <label for="{{ form.data_inicio.id_for_label }}" class="form-label">Data Início:</label>
           {{ form.data_inicio }}
+          {% for error in form.data_inicio.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.data_fim.errors %}has-error{% endif %}">
           <label for="{{ form.data_fim.id_for_label }}" class="form-label">Data de Término:</label>
           {{ form.data_fim }}
+          {% for error in form.data_fim.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
       </div>
 
       <div class="form-linha1">
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.descricao.errors %}has-error{% endif %}">
           <label for="{{ form.descricao.id_for_label }}" class="form-label">Descrição:</label>
           {{ form.descricao }}
+          {% for error in form.descricao.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="form-inicial">
+        <div class="form-inicial {% if form.status.errors %}has-error{% endif %}">
           <label for="{{ form.status.id_for_label }}" class="form-label">Ativo:</label>
           {{ form.status }}
+          {% for error in form.status.errors %}
+          <div class="error-message">{{ error }}</div>
+          {% endfor %}
         </div>
       </div>
     </div>
-    <button class="btn-user-signup" type="submit">Cadastrar</button>
+    <button class="btn-user-signup" type="submit" name="cadastrar_estagio">Cadastrar</button>
   </form>
 </div>
 
