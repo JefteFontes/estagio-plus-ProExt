@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Cursos, Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices,Areachoices
+from .models import Cursos, Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices,Areachoices,StatusChoices
 
 
 
@@ -24,7 +24,7 @@ class CursosCadastroForm(forms.ModelForm):
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}))
     area = forms.ChoiceField(choices=Areachoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
-    status = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))  
+    status = forms.ChoiceField(choices=StatusChoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
     descricao = forms.CharField(max_length=255, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição',"rows": 4, "cols": 50}))
     auxilio_transporte = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Auxilio de Transporte'}))
     data_inicio = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Data de Início'}))
@@ -42,12 +42,16 @@ class EstagioCadastroForm(forms.ModelForm):
             'bolsa_estagio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}),
             'auxilio_transporte': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Auxilio de Transporte'}),
             'area': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.TextInput(attrs={'class': 'form-check-input'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição'}),
+            'data_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Data de Início'}),
+            'data_fim': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Data de Fim'}),
             'turno': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Turno'}),
             'estagiario': forms.Select(attrs={'class': 'form-control'}),
             'empresa': forms.Select(attrs={'class': 'form-control'}),
             'supervisor': forms.Select(attrs={'class': 'form-control'}),
-            'instituicao': forms.Select(attrs={'class': 'form-control'})
+            'instituicao': forms.Select(attrs={'class': 'form-control'}),
+            
         }
 
     def save(self, commit=True):
@@ -69,7 +73,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
     class Meta:
         model = Estagiario
-        fields = ['primeiro_nome', 'sobrenome', 'cpf', 'matricula', 'telefone', 'curso', 'status', 'email']
+        fields = ['primeiro_nome', 'sobrenome', 'cpf', 'matricula', 'telefone', 'curso', 'email']
         widgets = {
             'primeiro_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Primeiro Nome (ex: João)'}),
             'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sobrenome (ex: Silva)'}),
@@ -77,7 +81,6 @@ class EstagiarioCadastroForm(forms.ModelForm):
             'matricula': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Matrícula (ex: 202312345)'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone (ex: 11 91234-5678)'}),
             'curso': forms.Select(attrs={'class': 'form-select'}),
-            'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'exemplo@dominio.com'})
         }
 

@@ -56,13 +56,13 @@ class Cursos(models.Model):
 
 class Estagiario(models.Model):
     primeiro_nome = models.CharField(max_length=50)
+    status = models.BooleanField(default=False)
     sobrenome = models.CharField(max_length=50)
     cpf = models.CharField(max_length=12, unique=True,validators=[ RegexValidator(regex='^[0-9]+$',message='no CPF, Use apenas números.')])
     matricula = models.CharField(max_length=55)
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20,validators=[ RegexValidator(regex='^[0-9]+$',message='Use apenas números.')])
     curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, null=True, blank=True)
-    status = models.BooleanField(default=False)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True, blank=True)
     instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE , null=True, blank=True)
 
@@ -98,14 +98,14 @@ class TurnoChoices(models.TextChoices):
     TARDE = 'Tarde'
     NOITE = 'Noite'
 
-class status_choices(models.TextChoices):
+class StatusChoices(models.TextChoices):
     em_andamento = 'Em andamento'
     concluido = 'Concluido'
 
 class Estagio(models.Model):
     bolsa_estagio = models.FloatField(blank=True, null=True)
     area = models.CharField(max_length=50,choices=Areachoices.choices, default=Areachoices.tecnologia)
-    status = models.TextField(choices=status_choices.choices,default=status_choices.em_andamento)
+    status = models.TextField(choices=StatusChoices.choices, default=StatusChoices.em_andamento)
     descricao = models.TextField(max_length=1000)
     data_inicio = models.DateField(max_length=10)
     data_fim = models.DateField(max_length=10)
