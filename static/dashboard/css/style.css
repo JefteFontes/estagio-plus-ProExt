@@ -30,6 +30,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: 20px;
 }
 
 .logo img {
@@ -195,7 +196,6 @@ body {
 
 /* Sidebar fixa na tela */
 .sidebar {
-    top: 83px; /* Espaçamento da navbar */
     left: 0;
     height: calc(100svh - 83px); /* Subtrair a altura da navbar */
     width: 250px;

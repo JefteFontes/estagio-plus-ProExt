@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
+        migrations.AlterField(
             model_name='estagio',
             name='auxilio_transporte',
             field=models.FloatField(blank=True, null=True),

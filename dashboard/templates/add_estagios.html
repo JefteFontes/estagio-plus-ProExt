@@ -10,15 +10,9 @@
     <div class="form-coordenador">
       <div class="form-linha1">
         <div class="form-inicial {% if form.estagiario.errors %}has-error{% endif %}">
-          {%if form.estagiario.errors%}
           <label for="{{ form.estagiario.id_for_label }}" class="form-label">Estagiário:</label>
           
           {{ form.estagiario }}
-
-          {%endif%}
-          {% for error in form.estagiario.errors %}
-          <div class="error-message">{{ error }}</div>
-          {% endfor %}
         </div>
         <div class="form-inicial {% if form.empresa.errors %}has-error{% endif %}">
           <label for="{{ form.empresa.id_for_label }}" class="form-label">Empresa:</label>
