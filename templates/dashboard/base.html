@@ -51,24 +51,34 @@
                                 {% endif %}
                             </span>
                         </li>
+                        {% url 'dashboard_cursos' as dashboard_cursos_url %}
+                        <li class="{% if request.path == dashboard_cursos_url %}actived{% endif %}">
+                            <span class="icon"><i class="fa-solid fa-book"></i></span>
+                            <span class="text">
+                                {% if dashboard_cursos_url %}
+                                    <a href="{{ dashboard_cursos_url }}">Cursos</a>
+                                {% endif %}
+                            </span>
+                        </li>
+                        
                         <!-- Cadastro de Estagiário -->
-                        {% url 'cadastrar_estagiario' as cadastro_estagiario_url_ %}
-                        <li class="{% if request.path == cadastro_estagiario_url_ %}actived{% endif %}">
+                        {% url 'dashboard_estagiario' as dashboard_estagiario_url %}
+                        <li class="{% if request.path == dashboard_estagiario_url %}actived{% endif %}">
                             <span class="icon"><i class="fa-solid fa-user"></i></span>
                             <span class="text">
-                                {% if cadastro_estagiario_url_ %}
-                                    <a href="{{ cadastro_estagiario_url_ }}">Cadastro de Estagiário</a>
+                                {% if dashboard_estagiario_url %}
+                                    <a href="{{ dashboard_estagiario_url }}">Estagiários</a>
                                 {% endif %}
                             </span> 
                         </li>
                         <!-- Cadastro de Empresa -->
-                        {% url 'cadastrar_empresa' as cadastro_empresa_url_ %}
-                        <li class="{% if request.path == cadastro_empresa_url_ %}actived{% endif %}">
+                        {% url 'dashboard_empresa' as dashboard_empresa %}
+                        <li class="{% if request.path == dashboard_empresa %}actived{% endif %}">
                             <span class="icon"><i class="fa-solid fa-city"></i></span>
                             <span class="text">
-                                {% url 'cadastrar_empresa' as cadastro_empresa_url_ %}
-                                {% if cadastro_empresa_url_ %}
-                                    <a href="{{ cadastro_empresa_url_ }}">Cadastro de Empresa</a>
+                                {% url 'dashboard_empresa' as dashboard_empresa_url_ %}
+                                {% if dashboard_empresa_url_ %}
+                                    <a href="{{ dashboard_empresa_url_ }}">Empresas</a>
                                 {% endif %}
                             </span> 
                         </li>

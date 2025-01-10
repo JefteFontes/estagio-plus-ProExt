@@ -1,0 +1,44 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Estagiários Cadastrados</h2>
+    
+    <!-- Botão para cadastrar novo estagiário -->
+    <div class="add-button mb-3">
+        <a href="{% url 'cadastrar_estagiario' %}" class="btn btn-primary">Cadastrar Novo Estagiário</a>
+    </div>
+
+    <!-- Lista de estagiários -->
+    {% if estagiarios %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Curso</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estagiario in estagiarios %}
+                    <tr>
+                        <td>{{ estagiario.primeiro_nome }} {{ estagiario.sobrenome }}</td>
+                        <td>{{ estagiario.curso }}</td>
+
+                        <td>{{ estagiario.email }}</td>
+                        <td>{{ estagiario.telefone }}</td>
+
+                        
+                        <td>
+                            <a href="" class="btn btn-info btn-sm">Ver Detalhes</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Não há estagiários cadastrados.</p>
+    {% endif %}
+</div>
+{% endblock %}

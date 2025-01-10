@@ -10,8 +10,8 @@ class EnderecoAdmin(admin.ModelAdmin):
 
 @admin.register(models.Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'cnpj', 'razao_social', 'email', 'endereco')
-    search_fields = ('nome', 'cnpj', 'razao_social')
+    list_display = ('empresa_nome', 'cnpj', 'razao_social', 'email', 'endereco')
+    search_fields = ('empresa_nome', 'cnpj', 'razao_social')
     list_filter = ('endereco__cidade', 'endereco__estado')
 
 
@@ -42,6 +42,11 @@ class SupervisorAdmin(admin.ModelAdmin):
     search_fields = ('primeiro_nome', 'sobrenome', 'cpf', 'email', 'cargo')
     list_filter = ('empresa',)
 
+@admin.register(models.Cursos)
+class CursosAdmin(admin.ModelAdmin):
+    list_display = ('nome_curso', 'descricao','coordenador', 'email_coordenador', 'area')
+    search_fields = ('nome_curso', 'coordenador', 'email_coordenador')
+    list_filter = ('area',)
 
 @admin.register(models.Estagio)
 class EstagioAdmin(admin.ModelAdmin):
