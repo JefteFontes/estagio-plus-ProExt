@@ -8,12 +8,18 @@ from ..models import Estagio
 def add_estagios(request):
     if request.method == 'POST':
         form = EstagioCadastroForm(request.POST)
+        
         if form.is_valid():
-            form.save()
-            return redirect('dashboard_instituicao')
+            print(form.cleaned_data)
+            form.save()  # Salva o Estágio no banco de dados
+            return redirect('dashboard_instituicao')  # Redireciona para a página de sucesso
+        else:
+            print("Formulário inválido")
+            print(form.errors)  # Exibe erros no console, caso o formulário não seja válido
     else:
-        form = EstagioCadastroForm()
+        form = EstagioCadastroForm()  # Cria um formulário vazio para GET
 
+#voltar para a pagina de dashboard
     return render(request, 'add_estagios.html', {'form': form})
 
 def detalhes_estagio(request):
