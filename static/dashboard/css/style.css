@@ -358,7 +358,7 @@ body {
 
 /* Quando a sidebar estiver escondida */
 .container-main.sidebar-collapsed {
-    margin-left: 100px;
+    margin-left: 10px;
     transition: margin-left 0.9s ease;
 }
 
@@ -456,7 +456,7 @@ body {
 }
 
 .status {
-    background-color: #d89f62;
+    background-color: #086b17;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;

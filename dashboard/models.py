@@ -27,7 +27,6 @@ class Empresa(models.Model):
         return self.nome
 
 
-
 class Instituicao(models.Model):
     cnpj = models.CharField(max_length=20,validators=[ RegexValidator(regex='^[0-9]+$',message='Use apenas números.')])
     nome = models.CharField(max_length=250,validators=[ RegexValidator(regex='^[A-Za-z\s]+$',message='Use apenas letras e espaços.')])
@@ -78,18 +77,22 @@ class Supervisor(models.Model):
     def __str__(self):
         return f'{self.primeiro_nome} {self.sobrenome}'
 
+
 class TurnoChoices(models.TextChoices):
     MANHA = 'Manha'
     TARDE = 'Tarde'
     NOITE = 'Noite'
 
-class status_choices(models.TextChoices):
+
+class StatusChoices(models.TextChoices):
     em_andamento = 'Em andamento'
     concluido = 'Concluido'
+
+
 class Estagio(models.Model):
     bolsa_estagio = models.FloatField(blank=True, null=True, validators=[RegexValidator(regex='^[0-9]+$',message='Use apenas números.')])
     area = models.CharField(max_length=250,validators=[ RegexValidator(regex='^[A-Za-z\s]+$',message='Use apenas letras e espaços.')])
-    status = models.TextField(choices=status_choices.choices, default=status_choices.em_andamento)
+    status = models.TextField(choices=StatusChoices.choices, default=StatusChoices.em_andamento)
     descricao = models.TextField(max_length=1000,validators=[ RegexValidator(regex='^[A-Za-z\s]+$',message='Use apenas letras e espaços.')])
     data_inicio = models.DateField(max_length=10,validators=[ RegexValidator(regex='^[0-9]+$',message='Use apenas números.')])
     data_fim = models.DateField(max_length=10,validators=[ RegexValidator(regex='^[0-9]+$',message='Use apenas números.')])
@@ -102,9 +105,8 @@ class Estagio(models.Model):
 
     def __str__(self):
         return f'{self.area} - {self.status}'
+
+
 class ImportTermoEstagio(models.Model):
     file = models.FileField(upload_to='termo_estagio/%Y/%m/%d/')
 
-    def __str__(self):
-        return f'{self.file}'
-    
