@@ -3,9 +3,6 @@ from django.contrib.auth.models import User
 from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices, StatusChoices
 
 
-##############################################
-############ CADASTRO ESTÁGIO ################
-##############################################
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}))
     area = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Área'}))
@@ -17,7 +14,7 @@ class EstagioCadastroForm(forms.ModelForm):
     turno = forms.ChoiceField(choices=TurnoChoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
     estagiario = forms.ModelChoiceField(queryset=Estagiario.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
     empresa = forms.ModelChoiceField(queryset=Empresa.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}),)
-    #supervisor somente os da empresa selecionada
+    # supervisor somente os da empresa selecionada
     supervisor = forms.ModelChoiceField(queryset=Supervisor.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
     instituicao = forms.ModelChoiceField(queryset=Instituicao.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
 
@@ -43,9 +40,6 @@ class EstagioCadastroForm(forms.ModelForm):
         return estagio
 
 
-###############################################
-######CADASTRO DE ESTAGIARIO - ALUNO ##########
-###############################################
 class EstagiarioCadastroForm(forms.ModelForm):
     rua = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Rua das Flores'}))
     numero = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Número (ex: 123)'}))
@@ -86,9 +80,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
         return estagiario
 
-#####################################
-########CADASTRO DE EMPRESA##########
-#####################################
+
 class EmpresaCadastroForm(forms.ModelForm):
     # Campos para os dados do usuário
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'exemplo@dominio.com'}))
