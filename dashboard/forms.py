@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from .views.utils import validate_cpf
 from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices, StatusChoices
 
 
@@ -47,6 +48,12 @@ class EstagiarioCadastroForm(forms.ModelForm):
     cidade = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cidade (ex: São Paulo)'}))
     estado = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado (ex: SP)'}))
     cep = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CEP (ex: 12345-678)'}))
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
+        if not validate_cpf(cpf):
+            raise forms.ValidationError("CPF inválido")
+        return cpf
 
     class Meta:
         model = Estagiario
@@ -97,6 +104,13 @@ class EmpresaCadastroForm(forms.ModelForm):
     empresa_nome = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da Empresa (ex: Empresa XYZ)'}))
     empresa_cnpj = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNPJ (ex: 12.345.678/0001-90)'}))
     empresa_razao_social = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Razão Social (ex: XYZ Ltda)'}))
+    empresa_atividades = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Atividade', "rows": 4, "cols": 50}))
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
+        if not validate_cpf(cpf):
+            raise forms.ValidationError("CPF inválido")
+        return cpf
 
     class Meta:
         model = Supervisor
@@ -136,6 +150,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             supervisor.save()
 
         return supervisor
-    
+
+
 class ImportEmpresaPDFForm(forms.Form):
     file = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}))

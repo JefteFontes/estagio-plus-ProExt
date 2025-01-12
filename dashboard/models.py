@@ -21,6 +21,7 @@ class Empresa(models.Model):
     cnpj = models.CharField(max_length=250, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
     razao_social = models.CharField(max_length=250, validators=[RegexValidator(regex='^[A-Za-z\s]+$', message='Use apenas letras e espaços.')])
     email = models.EmailField(unique=True, validators=[RegexValidator(regex='^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', message='Email invalido.')])
+    atividades = models.TextField(max_length=500, null=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True, blank=True, validators=[RegexValidator(regex='^[A-Za-z\s]+$', message='Use apenas letras e espaços.')])
 
     def __str__(self):
