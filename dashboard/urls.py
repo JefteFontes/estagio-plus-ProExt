@@ -14,7 +14,6 @@ urlpatterns = [
     path('home', home, name='home'),
     path('details', details, name='details'),
   
-    
     path('dashboard_estagiario',dashboard_estagiario, name='dashboard_estagiario'),
     path('dashboard_cursos',dashboard_cursos, name='dashboard_cursos'),
     path('cadastrar_cursos',cadastrar_cursos, name='cadastrar_cursos'),
