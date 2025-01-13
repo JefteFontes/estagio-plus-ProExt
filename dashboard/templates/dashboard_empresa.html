@@ -34,12 +34,13 @@
         </div>
     </form>
     {% if empresas %}
-        <table class="table table-striped">
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Nome</th>
                     <th>CNPJ</th>
-                    <th>Atividades</th>
+                    <th>Razão Social</th>
+                    <th>Cidade</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,6 +49,7 @@
                         <td>{{ empresa.empresa_nome }}</td>
                         <td>{{ empresa.cnpj }}</td>
                         <td>{{ empresa.razao_social }}</td>
+                        <td>{{ empresa.endereco.cidade }}</td>  
                     </tr>
                 {% endfor %}
             </tbody>

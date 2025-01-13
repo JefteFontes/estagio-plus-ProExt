@@ -53,23 +53,21 @@ def dashboard_empresa(request):
 def dashboard_estagiario(request):
     search = request.GET.get('search', '')
     curso = request.GET.get('curso', '')
-    instituicao = request.GET.get('instituicao', '')
+    search_matricula = request.GET.get('search-matricula', '')
 
     estagiarios = Estagiario.objects.all()
     if search:
         estagiarios = estagiarios.filter(Q(primeiro_nome__icontains=search) | Q(sobrenome__icontains=search))
     if curso:
         estagiarios = estagiarios.filter(curso__nome_curso__icontains=curso)
-    if instituicao:
-        estagiarios = estagiarios.filter(instituicao__nome__icontains=instituicao)
+    if search_matricula:
+        estagiarios = estagiarios.filter(matricula__startswith=search_matricula)
     
     cursos = Cursos.objects.values_list('nome_curso', flat=True).distinct()
-    instituicoes = Estagiario.objects.values_list('instituicao__nome', flat=True).distinct()
 
     context = {
         'estagiarios': estagiarios,
         'cursos': cursos,
-        'instituicoes': instituicoes,
     }
     return render(request, 'dashboard_estagiario.html', context)
 @login_required

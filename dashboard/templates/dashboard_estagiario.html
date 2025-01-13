@@ -19,16 +19,11 @@
 
     <form method="get">
         <input type="text" name="search" placeholder="Buscar por nome">
+        <input type="text" name="search-matricula" placeholder="Buscar por matricula">
         <select name="curso">
             <option value="">Todos os cursos</option>
             {% for curso in cursos %}
             <option value="{{ curso }}">{{ curso }}</option>
-            {% endfor %}
-        </select>
-        <select name="instituicao">
-            <option value="">Todas as instituições</option>
-            {% for instituicao in instituicoes %}
-            <option value="{{ instituicao }}">{{ instituicao }}</option>
             {% endfor %}
         </select>
         <button type="submit">Filtrar</button>
@@ -41,8 +36,8 @@
                 <tr>
                     <th>Nome</th>
                     <th>Curso</th>
+                    <th>Matricula</th>
                     <th>Email</th>
-                    <th>Telefone</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,8 +46,8 @@
                         <td>{{ estagiario.primeiro_nome }} {{ estagiario.sobrenome }}</td>
                         <td>{{ estagiario.curso }}</td>
 
+                        <td>{{ estagiario.matricula }}</td>
                         <td>{{ estagiario.email }}</td>
-                        <td>{{ estagiario.telefone }}</td>
 
                         
                         <td>

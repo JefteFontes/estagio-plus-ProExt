@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from dashboard.models import CoordenadorExtensao, Instituicao, Endereco
+from dashboard.views.utils import validate_cpf
 
 class CoordenadorCadastroForm(forms.ModelForm):
     # Campos para os dados do usuário
@@ -34,7 +35,15 @@ class CoordenadorCadastroForm(forms.ModelForm):
             'username': self.cleaned_data['primeiro_nome'] + " " + self.cleaned_data['sobrenome'],
             'email': self.cleaned_data['email'],
         }
-        password = f"{self.cleaned_data['cpf']}"
+
+        def clean_cpf(self):
+            cpf = self.cleaned_data['cpf']
+            if not validate_cpf(cpf):
+                print("CPF inválido")
+                raise forms.ValidationError("CPF inválido")
+            return cpf
+    
+        password = f"{clean_cpf(self)}"
         
         print(password)
         # Gera uma senha com CPF

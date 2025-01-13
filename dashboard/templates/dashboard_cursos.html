@@ -33,19 +33,29 @@
             </div>
         </div>
     </form>
-    <ul class="list-group">
-        {% for curso in cursos %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>{{ curso.nome_curso }}</span>
-                <span>{{ curso.area }}</span>
-                <span>{{ curso.coordenador }}</span>
-                <span>{{ curso.email_coordenador }}</span>
-                <div>
-                    <a href="" class="btn btn-primary">Editar</a>
-                    <a href="" class="btn btn-danger">Deletar</a>
-                </div>
-            </li>
-        {% endfor %}
-    </ul>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Area</th>
+                <th>Coordenador</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for curso in cursos %}
+                <tr>
+                    <td>{{ curso.nome_curso }}</td>
+                    <td>{{ curso.area }}</td>
+                    <td>{{ curso.coordenador }}</td>
+                    <td>{{ curso.email_coordenador }}</td>
+                    <td>
+                        <a href="" class="btn btn-primary">Editar</a>
+                        <a href="" class="btn btn-danger">Deletar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
