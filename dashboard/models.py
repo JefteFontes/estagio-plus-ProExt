@@ -10,7 +10,6 @@ class Endereco(models.Model):
     cidade = models.CharField(max_length=100)
     estado = models.CharField(max_length=50)
     cep = models.CharField(max_length=20, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
-    cep = models.CharField(max_length=20, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
 
     def __str__(self):
         return f'{self.rua}, {self.numero} - {self.bairro}'

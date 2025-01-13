@@ -8,5 +8,4 @@ urlpatterns = [
     path('validate_cnpj/', validate_cnpj, name='validate_cnpj'),
     path('validate_cpf/', validate_cpf, name='validate_cpf'),
     path('buscar_cep/', buscar_cep, name='buscar_cep'),
-    path('editar-instituicao/<int:instituicao>', views.editar_instituicao, name='editar_instituicao',args=[instituicao]),
 ]

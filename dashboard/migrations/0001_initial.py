@@ -118,7 +118,6 @@ class Migration(migrations.Migration):
                 ('data_fim', models.DateField(max_length=10)),
                 ('turno', models.TextField(choices=[('Manha', 'Manha'), ('Tarde', 'Tarde'), ('Noite', 'Noite')], default='Manha')),
                 ('auxilio_transporte', models.FloatField(blank=True, default=0, null=True)),
-                ('auxilio_transporte', models.FloatField(blank=True, default=0, null=True)),
                 ('empresa', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.empresa')),
                 ('estagiario', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.estagiario')),
                 ('instituicao', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.instituicao')),

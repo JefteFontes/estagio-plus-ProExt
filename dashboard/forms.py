@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from .views.utils import validate_cpf, validate_cnpj
-from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices, StatusChoices,Areachoices,Cursos
+from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices, StatusChoices,Areachoices,Cursos, CoordenadorExtensao
 class CursosCadastroForm(forms.ModelForm):
     class Meta:
         model = Cursos
