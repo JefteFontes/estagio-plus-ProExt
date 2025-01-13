@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EstagioCadastroForm
-from ..models import Estagio
+from ..models import Empresa, Estagio
 
 @login_required
 def add_estagios(request):
