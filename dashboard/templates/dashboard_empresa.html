@@ -1,11 +1,38 @@
 {% extends "dashboard/base.html" %}
 
 {% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
 <div class="container">
     <h2>Empresas</h2>
     <div class="add-button mb-3">
         <a href="{% url 'cadastrar_empresa' %}" class="btn btn-primary">Cadastrar Nova Empresa</a>
     </div>
+    <form method="get" class="mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="search" placeholder="Buscar por nome ou CNPJ">
+            </div>
+            <div class="col-md-4">
+                <select name="cidade">
+                    <option value="">Todas as cidades</option>
+                    {% for cidade in cidades %}
+                    <option value="{{ cidade }}">{{ cidade }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="{% url 'dashboard_empresa' %}" class="btn btn-secondary">Limpar</a>
+            </div>
+        </div>
+    </form>
     {% if empresas %}
         <table class="table table-striped">
             <thead>
@@ -21,7 +48,6 @@
                         <td>{{ empresa.empresa_nome }}</td>
                         <td>{{ empresa.cnpj }}</td>
                         <td>{{ empresa.razao_social }}</td>
-                       
                     </tr>
                 {% endfor %}
             </tbody>

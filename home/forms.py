@@ -70,3 +70,6 @@ class CoordenadorCadastroForm(forms.ModelForm):
             user.save()
 
         return user, coordenador
+
+
+

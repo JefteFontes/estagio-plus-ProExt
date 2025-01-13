@@ -21,7 +21,7 @@ class Empresa(models.Model):
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return self.nome
+        return self.empresa_nome
 
 
 
@@ -34,6 +34,7 @@ class Instituicao(models.Model):
 
     def __str__(self):
         return self.nome
+    
 class Areachoices(models.TextChoices):
    saude = 'Saude'
    tecnologia = 'Tecnologia'

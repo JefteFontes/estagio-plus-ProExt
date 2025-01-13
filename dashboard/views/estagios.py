@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
@@ -12,6 +13,7 @@ def add_estagios(request):
         if form.is_valid():
             print(form.cleaned_data)
             form.save()  # Salva o Estágio no banco de dados
+            messages.success(request, 'Estágio cadastrado com sucesso!')
             return redirect('dashboard_instituicao')  # Redireciona para a página de sucesso
         else:
             print("Formulário inválido")
@@ -38,6 +40,7 @@ def complementar_estagio(request, estagio_id):
         form = EstagioCadastroForm(request.POST, instance=estagio)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Estágio cadastrado com sucesso!')
             return redirect('dashboard_instituicao')
     else:
         form = EstagioCadastroForm(instance=estagio)

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Cursos, Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices,Areachoices,StatusChoices
+from .models import Cursos, Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices,Areachoices,StatusChoices,CoordenadorExtensao
 
 
 
@@ -127,6 +127,7 @@ class EmpresaCadastroForm(forms.ModelForm):
     def clean_cpf(self):
         cpf = self.cleaned_data['cpf']
         if not validate_cpf(cpf):
+            print("CPF inválido")
             raise forms.ValidationError("CPF inválido")
         return cpf
 
@@ -173,3 +174,58 @@ class EmpresaCadastroForm(forms.ModelForm):
 class ImportEmpresaPDFForm(forms.Form):
     file = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}))
 
+class CoordenadorEditForm(forms.ModelForm):
+    # Campos para os dados do usuário
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    primeiro_nome = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    sobrenome = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    cpf = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    # Campos para os dados da instituição
+    instituicao_nome = forms.CharField(
+        max_length=250,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+    instituicao_telefone = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
+    class Meta:
+        model = CoordenadorExtensao
+        fields = ['primeiro_nome', 'sobrenome', 'cpf', 'email']
+
+    def __init__(self, *args, **kwargs):
+        coordenador = kwargs.pop('coordenador')
+        super().__init__(*args, **kwargs)
+        self.fields['instituicao_nome'].initial = coordenador.instituicao.nome
+        self.fields['instituicao_telefone'].initial = coordenador.instituicao.telefone
+
+    def save(self, commit=True):
+        user_data = {
+            'username': self.cleaned_data['primeiro_nome'] + " " + self.cleaned_data['sobrenome'],
+            'email': self.cleaned_data['email'],
+        }
+
+        # Atualiza os dados do usuário
+        user = User.objects.filter(username=user_data['username']).first()
+
+        if user:
+            user.username = user_data['username']
+            user.email = user_data['email']
+            user.save()
+        
+        coordenador = super().save(commit=False)
+
+        # Atualiza os dados da instituição
+        coordenador.instituicao.nome = self.cleaned_data['instituicao_nome']
+        coordenador.instituicao.telefone = self.cleaned_data['instituicao_telefone']
+        coordenador.instituicao.save()
+
+        if commit:
+            coordenador.save()
+
+        return coordenador, user
+    

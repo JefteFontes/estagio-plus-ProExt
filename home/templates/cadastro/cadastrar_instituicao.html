@@ -7,43 +7,43 @@
             {% csrf_token %}
             <div class = "form-linha1">
                 <div class = "form-inicial">
-                    <label for="{{ form.email.id_for_label }}" class="form-label">CNPJ:</label>
+                    <label for="{{ form.instituicao_cnpj.id_for_label }}" class="form-label">CNPJ:</label>
                     {{ form.instituicao_cnpj }}
                 </div>
                 <div class = "form-inicial">
-                    <label for="{{ form.email.id_for_label }}" class="form-label">Nome da Instituição:</label>
+                    <label for="{{ form.instituicao_nome.id_for_label }}" class="form-label">Nome da Instituição:</label>
                     {{ form.instituicao_nome }}
                 </div>
                 <div class = "form-inicial">
-                    <label for="{{ form.email.id_for_label }}" class="form-label">Telefone:</label>
+                    <label for="{{ form.instituicao_telefone.id_for_label }}" class="form-label">Telefone:</label>
                     {{ form.instituicao_telefone }}
                 </div>
             </div>
             <p>Endereço:</p>
             <div class = "form-endereco">
-                <label for="{{ form.email.id_for_label }}" class="form-label">CEP:</label>
+                <label for="{{ form.cep.id_for_label }}" class="form-label">CEP:</label>
                 {{ form.cep }}
                 <div class = "form-linha1">
                     <div class = "form-inicial">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">Rua:</label>
+                        <label for="{{ form.rua.id_for_label }}" class="form-label">Rua:</label>
                         {{ form.rua }}
                     </div>
                     <div class = "form-inicial">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">Numero:</label>
+                        <label for="{{ form.numero.id_for_label }}" class="form-label">Numero:</label>
                         {{ form.numero }}
                     </div>
                     <div class = "form-inicial">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">Bairro:</label>
+                        <label for="{{ form.bairro.id_for_label }}" class="form-label">Bairro:</label>
                         {{ form.bairro }}
                     </div>
                 </div>
                 <div class = "form-linha1">
                     <div class = "form-inicial">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">Cidade:</label>
+                        <label for="{{ form.cidade.id_for_label }}" class="form-label">Cidade:</label>
                         {{ form.cidade }}
                     </div>
                     <div class = "form-inicial">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">Estado:</label>
+                        <label for="{{ form.estado.id_for_label }}" class="form-label">Estado:</label>
                         {{ form.estado }}
                     </div>
                 </div>
@@ -53,15 +53,15 @@
                 <div class="form-coordenador">
                     <div class="form-linha1">
                         <div class = "form-inicial">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">Primeiro Nome:</label>
+                            <label for="{{ form.primeiro_nome.id_for_label }}" class="form-label">Primeiro Nome:</label>
                             {{ form.primeiro_nome }}
                         </div>
                         <div class = "form-inicial">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">Sobrenome:</label>
+                            <label for="{{ form.sobrenome.id_for_label }}" class="form-label">Sobrenome:</label>
                             {{ form.sobrenome }}
                         </div>
                         <div class = "form-inicial">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">CPF:</label>
+                            <label for="{{ form.cpf.id_for_label }}" class="form-label">CPF:</label>
                             {{ form.cpf }}
                         </div>
                     </div>
@@ -74,5 +74,58 @@
             <button class="btn-user-signup" type="submit">Cadastrar</button>    
         </form>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#id_cep').on('blur', function() {
+                let cep = $(this).val().replace(/\D/g, ''); // Remove caracteres não numéricos
+        
+                if (cep.length === 8) {
+                    $.ajax({
+                        url: "{% url 'buscar_cep' %}", // URL da view
+                        method: "GET",
+                        data: { cep: cep }, // Dados enviados para o servidor
+                        success: function(data) {
+                            // Preenche os campos com os dados retornados
+                            $('#id_rua').val(data.logradouro);
+                            $('#id_bairro').val(data.bairro);
+                            $('#id_cidade').val(data.cidade);
+                            $('#id_estado').val(data.estado);
+                        },
+                        error: function(xhr) {
+                            alert(xhr.responseJSON.error || 'Erro ao buscar o CEP.');
+                        }
+                    });
+                } else {
+                    alert('CEP inválido! Digite 8 números.');
+                }
+            });
+        });
+    
+        $(document).ready(function() {
+            $('#id_instituicao_cnpj').on('blur', function() {
+                let cnpj = $(this).val().replace(/\D/g, ''); // Remove caracteres não numéricos
+        
+                if (cnpj.length === 14) {
+                    $.ajax({
+                        url: "{% url 'validate_cnpj' %}", // URL da view
+                        method: "GET",
+                        data: { cnpj: cnpj }, // Dados enviados para o servidor
+                        success: function(data) {
+                            // Preenche os campos com os dados retornados
+                            $('#id_instituicao_nome').val(data.name);
+                            $('#id_cep').val(data.cep);
+                            $('#id_numero').val(data.numero);
+                        },
+                        error: function(xhr) {
+                            alert(xhr.responseJSON.error || 'Erro ao buscar o CNPJ.');
+                        }
+                    });
+                } else {
+                    alert('CNPJ inválido! Digite 14 números.');
+                }
+            });
+        });
+    </script>
 {% endblock%} 
 

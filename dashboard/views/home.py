@@ -2,10 +2,13 @@ import os
 import tempfile
 from django.shortcuts import render, redirect
 import pdfplumber
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from dashboard.models import Empresa, Endereco, Estagiario, Estagio, Supervisor, Cursos
+from dashboard.models import Empresa, Endereco, Estagiario, Estagio, StatusChoices, Supervisor, Cursos, TurnoChoices, CoordenadorExtensao
 from dashboard.views.utils import parse_sections
-from dashboard.forms import CursosCadastroForm
+from dashboard.forms import CursosCadastroForm, CoordenadorEditForm
+from django.db.models import Q
+
 def home(request):
     if request.user.is_authenticated:
         return redirect('/dashboard/')
@@ -32,12 +35,42 @@ def dashboard_cursos(request):
     }
     return render(request, 'dashboard_cursos.html', context)
 def dashboard_empresa(request):
+    search = request.GET.get('search', '')
+    cidade = request.GET.get('cidade', '')
     empresas = Empresa.objects.all()
-    context = { 'empresas': empresas}
+
+    if search:
+        empresas = empresas.filter(empresa_nome__icontains=search) | empresas.filter(cnpj__icontains=search)
+    if cidade:
+        empresas = empresas.filter(endereco__cidade__icontains=cidade)
+    
+    cidades = Empresa.objects.values_list('endereco__cidade', flat=True).distinct()
+    context = {
+        'empresas': empresas,
+        'cidades': cidades,
+    }
     return render(request, 'dashboard_empresa.html', context)
 def dashboard_estagiario(request):
+    search = request.GET.get('search', '')
+    curso = request.GET.get('curso', '')
+    instituicao = request.GET.get('instituicao', '')
+
     estagiarios = Estagiario.objects.all()
-    context = { 'estagiarios': estagiarios}
+    if search:
+        estagiarios = estagiarios.filter(Q(primeiro_nome__icontains=search) | Q(sobrenome__icontains=search))
+    if curso:
+        estagiarios = estagiarios.filter(curso__nome_curso__icontains=curso)
+    if instituicao:
+        estagiarios = estagiarios.filter(instituicao__nome__icontains=instituicao)
+    
+    cursos = Cursos.objects.values_list('nome_curso', flat=True).distinct()
+    instituicoes = Estagiario.objects.values_list('instituicao__nome', flat=True).distinct()
+
+    context = {
+        'estagiarios': estagiarios,
+        'cursos': cursos,
+        'instituicoes': instituicoes,
+    }
     return render(request, 'dashboard_estagiario.html', context)
 @login_required
 def dashboard_instituicao(request):
@@ -137,7 +170,26 @@ def dashboard_instituicao(request):
         finally:
             os.remove(file_path)
 
+    area = request.GET.get('area', '')
+    status = request.GET.get('status', '')
+    turno = request.GET.get('turno', '')
+
+    estagios = Estagio.objects.all()
+    if area:
+        estagios = estagios.filter(area=area)
+    if status:
+        estagios = estagios.filter(status=status)
+    if turno:
+        estagios = estagios.filter(turno=turno)
+
+    areas = Estagio.objects.values_list('area', flat=True).distinct()
+    status_choices = [choice[0] for choice in StatusChoices.choices]
+    turnos = [choice[0] for choice in TurnoChoices.choices]
+
     context = {
+        'areas': areas,
+        'status_choices': status_choices,
+        'turnos': turnos,
         'estagios': estagios,
         'estagios_ativos': len(estagios),
         'instituicao': estagios.first().instituicao if estagios.exists() else None,
@@ -150,8 +202,25 @@ def cadastrar_cursos(request):
         form = CursosCadastroForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Curso cadastrado com sucesso!')
             return redirect('dashboard_cursos')
     else:
         form = CursosCadastroForm()
 
     return render(request, 'cadastrar_cursos.html', {'form': form}, )
+
+
+@login_required
+def editar_perfil(request):
+    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = CoordenadorEditForm(request.POST, coordenador=coordenador, instance=coordenador)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Seu perfil foi atualizado com sucesso!')
+            return redirect('dashboard')
+    else:
+        form = CoordenadorEditForm(coordenador=coordenador, instance=coordenador)
+
+    return render(request, 'dashboard/editar_perfil.html', {'form': form})

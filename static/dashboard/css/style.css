@@ -9,12 +9,12 @@ body {
     min-height: 100vh;
 }
 
-.navbar, .sidebar {
+.navbar-dashboard, .sidebar {
     position: fixed;
     z-index: 10; /* Garante que a navbar e a sidebar fiquem acima do conteúdo */
 }
 
-.navbar {
+.navbar-dashboard {
     top: 0;
     left: 0;
     right: 0;
@@ -196,8 +196,9 @@ body {
 
 /* Sidebar fixa na tela */
 .sidebar {
+    top: 78px;
     left: 0;
-    height: calc(100svh - 83px); /* Subtrair a altura da navbar */
+    height: 100%; /* Subtrair a altura da navbar */
     width: 250px;
     background-color: #E3FFE3;
     padding: 0px 20px 20px 40px;

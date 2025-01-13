@@ -2,12 +2,12 @@
 body {
     font-family: 'Inter', sans-serif;
 }   
-.navbar, .sidebar {
+.navbar-dashboard, .sidebar {
     position: fixed;
     z-index: 10; /* Garante que a navbar e a sidebar fiquem acima do conteúdo */
 }
 
-.navbar {
+.navbar-dashboard {
     top: 0;
     left: 0;
     right: 0;

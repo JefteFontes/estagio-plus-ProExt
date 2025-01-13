@@ -2,25 +2,25 @@
 
 {% block content %}
     <div class="cadastro-container-dashboard">
-        <h2>Cadastro de Empresa</h2>
+        <h2>Cadastro de Curso</h2>
         <form method="post">
             {% csrf_token %}
             <div class="form-linha1">
                 <div class="form-inicial">
-                    <label for="{{ form.nome_curso.id_for_label }}" class="form-label">curso:</label>
+                    <label for="{{ form.nome_curso.id_for_label }}" class="form-label">Curso:</label>
                     {{ form.nome_curso }}
                 </div>
                 <div class="form-inicial">
-                    <label for="{{ form.area.id_for_label }}" class="form-label">Area:</label>
+                    <label for="{{ form.area.id_for_label }}" class="form-label">Área:</label>
                     {{ form.area }}
                 </div>
                 <div class="form-inicial">
-                    <label for="{{ form.cordenador.id_for_label }}" class="form-label">cordenador:</label>
+                    <label for="{{ form.cordenador.id_for_label }}" class="form-label">Coordenador:</label>
                     {{ form.coordenador }}
                 </div>
                 
                 <div class="form-inicial">
-                    <label for="{{ form.email_coordenador.id_for_label }}" class="form-label">e-mail coordenação:</label>
+                    <label for="{{ form.email_coordenador.id_for_label }}" class="form-label">E-mail coordenação:</label>
                     {{ form.email_coordenador }}
                 </div>
                 

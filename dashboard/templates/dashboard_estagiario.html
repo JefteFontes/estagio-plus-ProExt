@@ -1,6 +1,14 @@
 {% extends "dashboard/base.html" %}
 
 {% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
 <div class="container">
     <h2>Estagiários Cadastrados</h2>
     
@@ -8,6 +16,23 @@
     <div class="add-button mb-3">
         <a href="{% url 'cadastrar_estagiario' %}" class="btn btn-primary">Cadastrar Novo Estagiário</a>
     </div>
+
+    <form method="get">
+        <input type="text" name="search" placeholder="Buscar por nome">
+        <select name="curso">
+            <option value="">Todos os cursos</option>
+            {% for curso in cursos %}
+            <option value="{{ curso }}">{{ curso }}</option>
+            {% endfor %}
+        </select>
+        <select name="instituicao">
+            <option value="">Todas as instituições</option>
+            {% for instituicao in instituicoes %}
+            <option value="{{ instituicao }}">{{ instituicao }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
 
     <!-- Lista de estagiários -->
     {% if estagiarios %}
