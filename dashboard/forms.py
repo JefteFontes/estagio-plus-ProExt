@@ -16,11 +16,10 @@ class CursosCadastroForm(forms.ModelForm):
             'email_coordenador': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'E-mail'}),
         }
 
+from .views.utils import validate_cpf
 
 
-##############################################
-############ CADASTRO ESTÁGIO ################
-##############################################
+
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}))
     area = forms.ChoiceField(choices=Areachoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
@@ -61,9 +60,6 @@ class EstagioCadastroForm(forms.ModelForm):
         return estagio
 
 
-###############################################
-######CADASTRO DE ESTAGIARIO - ALUNO ##########
-###############################################
 class EstagiarioCadastroForm(forms.ModelForm):
     rua = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Rua das Flores'}))
     numero = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Número (ex: 123)'}))
@@ -71,6 +67,12 @@ class EstagiarioCadastroForm(forms.ModelForm):
     cidade = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cidade (ex: São Paulo)'}))
     estado = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado (ex: SP)'}))
     cep = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CEP (ex: 12345-678)'}))
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
+        if not validate_cpf(cpf):
+            raise forms.ValidationError("CPF inválido")
+        return cpf
 
     class Meta:
         model = Estagiario
@@ -103,9 +105,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
         return estagiario
 
-#####################################
-########CADASTRO DE EMPRESA##########
-#####################################
+
 class EmpresaCadastroForm(forms.ModelForm):
     # Campos para os dados do usuário
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'exemplo@dominio.com'}))
@@ -122,6 +122,13 @@ class EmpresaCadastroForm(forms.ModelForm):
     empresa_nome = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da Empresa (ex: Empresa XYZ)'}))
     empresa_cnpj = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNPJ (ex: 12.345.678/0001-90)'}))
     empresa_razao_social = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Razão Social (ex: XYZ Ltda)'}))
+    empresa_atividades = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Atividade', "rows": 4, "cols": 50}))
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
+        if not validate_cpf(cpf):
+            raise forms.ValidationError("CPF inválido")
+        return cpf
 
     class Meta:
         model = Supervisor
@@ -161,7 +168,8 @@ class EmpresaCadastroForm(forms.ModelForm):
             supervisor.save()
 
         return supervisor
-    
+
+
 class ImportEmpresaPDFForm(forms.Form):
     file = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}))
 
