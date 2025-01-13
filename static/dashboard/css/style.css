@@ -219,7 +219,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
 }
 
 .sidebar-top {
@@ -302,6 +301,26 @@ body {
     transform: rotate(0deg);
 }
 
+a.btn-sidebar {
+    text-decoration: none;
+    color: #000000;
+    width: 100%;
+    font-size: 16px;
+    transition: color 0.3s ease;
+    display: block; /* Para garantir que o link ocupe toda a largura do item */
+}
+
+li {
+    width: 100%; /* Garante que todos os itens tenham a mesma largura */
+}
+
+li span.icon {
+    margin-right: 10px; /* Espaçamento entre o ícone e o texto */
+}
+
+li.actived a {
+    font-weight: bold; /* Opcional: Destacar o item ativo */
+}
 .toggle-btn i {
     transition: transform 0.3s ease;
     font-size: 14px;
@@ -309,7 +328,7 @@ body {
 
 /* Para esconder a sidebar */
 .sidebar.collapsed {
-    width: 60px;
+    width: 80px;
     padding: 0px 10px;
     transition: width 0.9s ease;
 }

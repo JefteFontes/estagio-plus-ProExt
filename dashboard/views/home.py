@@ -17,8 +17,19 @@ def details(request):
 def dashboard(request):
     return render(request, 'dashboard.html')
 def dashboard_cursos(request):
+    search = request.GET.get('search', '')
+    area = request.GET.get('area', '')
     cursos = Cursos.objects.all()
-    context = { 'cursos': cursos}
+    if search:
+        cursos = cursos.filter(nome_curso__icontains=search)
+    if area:
+        cursos = cursos.filter(area=area)
+    
+    areas = Cursos.objects.values_list('area', flat=True).distinct()
+    context = { 
+        'cursos': cursos,
+        'areas': areas,
+    }
     return render(request, 'dashboard_cursos.html', context)
 def dashboard_empresa(request):
     empresas = Empresa.objects.all()
