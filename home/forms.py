@@ -17,7 +17,7 @@ class CoordenadorCadastroForm(forms.ModelForm):
     # Campos para os dados da instituição
     instituicao_nome = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da Instituição (ex: Universidade XYZ)'}))
     instituicao_cnpj = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNPJ (ex: 12.345.678/0001-90)'}))
-    instituicao_telefone = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone (ex: 11 1234-5678)'})) 
+    instituicao_telefone = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone (ex: 86 1234-5678)'})) 
 
     class Meta: 
             model = CoordenadorExtensao

@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
-from .forms import CoordenadorCadastroForm
+from urllib import request
+from django.shortcuts import get_object_or_404, render, redirect
+from .forms import CoordenadorCadastroForm, Instituicao
 
 # Create your views here.
 def home(request):
@@ -17,3 +18,17 @@ def cadastrar_instituicao(request):
     else:
         form = CoordenadorCadastroForm()
     return render(request, 'cadastro/cadastrar_instituicao.html', {'form': form})
+
+from django.shortcuts import get_object_or_404
+
+def editar_instituicao(request, instituicao):
+    instituicao = get_object_or_404(CoordenadorCadastroForm, id=instituicao)
+
+    if request.method == 'POST':
+        form = CoordenadorCadastroForm(request.POST, instance=instituicao)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard_instituicao')
+    else:
+        form = CoordenadorCadastroForm(instance=instituicao)
+    return render(request, 'cadastro/cadastrar_instituicao.html', {'form': form, 'instituicao': instituicao})

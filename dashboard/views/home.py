@@ -1,6 +1,6 @@
 import os
 import tempfile
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 import pdfplumber
 from django.contrib.auth.decorators import login_required
 from dashboard.models import Empresa, Endereco, Estagiario, Estagio, Supervisor, Cursos
@@ -144,3 +144,21 @@ def cadastrar_cursos(request):
         form = CursosCadastroForm()
 
     return render(request, 'cadastrar_cursos.html', {'form': form}, )
+
+def editar_curso(request, curso_id):
+    curso = get_object_or_404(Cursos, id=curso_id)
+
+    if request.method == 'POST':
+        form = CursosCadastroForm(request.POST, instance=curso)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard_cursos')
+    else:
+        form = CursosCadastroForm(instance=curso)
+    return render(request, 'cadastrar_cursos.html', {'form': form, 'curso': curso})
+
+def deletar_curso(request, curso_id):
+    curso = get_object_or_404(Cursos, id=curso_id)
+    if request.method == 'POST':
+        curso.delete()
+        return redirect('dashboard_cursos', curso_id=curso.id)

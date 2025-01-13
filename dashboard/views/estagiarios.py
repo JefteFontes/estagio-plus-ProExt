@@ -8,7 +8,7 @@ def cadastrar_estagiario(request):
         form = EstagiarioCadastroForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('dashboard_instituicao')
+            return redirect('dashboard_estagiario')
     else:
         form = EstagiarioCadastroForm()
 

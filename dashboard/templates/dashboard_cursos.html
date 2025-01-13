@@ -14,8 +14,8 @@
                     <span>{{ curso.coordenador }}</span>
                     <span>{{ curso.email_coordenador }}</span>
                     <div>
-                        <a href="" class="btn btn-primary">Editar</a>
-                        <a href="" class="btn btn-danger">Deletar</a>
+                        <a href="{% url 'editar_curso' curso.id %}" class="btn btn-primary">Editar</a>
+                        <a href="{% url 'deletar_curso' curso.id %}" class="btn btn-danger">Deletar</a>
                     </div>
                 </li>
             {% endfor %}

@@ -5,6 +5,6 @@ from .estagiarios import cadastrar_estagiario
 from .pdfimport import importar_pdf
 from .utils import parse_sections
 from .estagios import add_estagios
-from .utils import buscar_cep
+from .utils import buscar_cep,validate_cnpj
 
 
