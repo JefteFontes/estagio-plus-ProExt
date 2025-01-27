@@ -464,15 +464,19 @@ li.actived a {
 .vaga-item {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
     background-color: #e1f3e2;
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 10px;
-    justify-content: space-between;
 }
 
 .vaga-item p {
     font-size: 14px;
+    width: 250px;
+    align-items: center;
+    margin: 0px;
 }
 
 .status {

@@ -74,9 +74,12 @@ class CoordenadorCadastroForm(forms.ModelForm):
         coordenador = super().save(commit=False)
         coordenador.instituicao = instituicao
         coordenador.email = self.cleaned_data['email'] 
+
         if commit:
-            coordenador.save()
             user.save()
+            coordenador.user = user
+            coordenador.save()
+            
 
         return user, coordenador
 

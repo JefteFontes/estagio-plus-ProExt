@@ -14,9 +14,24 @@ class CursosCadastroForm(forms.ModelForm):
             'email_coordenador': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'E-mail'}),
         }
 
+    def __init__(self, *args, **kwargs):
+    # Remover 'coordenador_extensao' de kwargs para passá-lo manualmente
+        self.coordenador_extensao = kwargs.pop('coordenador_extensao', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        # Criação do objeto 'cursos'
+        cursos = super().save(commit=False)
+        
+        # Se o coordenador_extensao foi passado, atribui a instituição
+        if self.coordenador_extensao:
+            cursos.instituicao = self.coordenador_extensao.instituicao
+        
+        if commit:
+            cursos.save()
+        return cursos
+
 from .views.utils import validate_cpf
-
-
 
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}))
@@ -48,8 +63,7 @@ class EstagioCadastroForm(forms.ModelForm):
             'instituicao': forms.Select(attrs={'class': 'form-control'})
         }
         def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-        
+            
             # Filtra o campo de supervisor baseado no valor de 'empresa' selecionada
             if 'empresa' in self.data:
                 empresa_id = self.data.get('empresa')
@@ -95,6 +109,10 @@ class EstagiarioCadastroForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'exemplo@dominio.com'})
         }
 
+    def __init__(self, *args, **kwargs):
+        self.coordenador = kwargs.pop('coordenador', None)
+        super().__init__(*args, **kwargs)
+
     def save(self, commit=True):
         endereco = Endereco.objects.create(
             rua=self.cleaned_data['rua'],
@@ -107,6 +125,9 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
         estagiario = super().save(commit=False)
         estagiario.endereco = endereco
+
+        if self.coordenador:
+            estagiario.instituicao = self.coordenador.instituicao
 
         if commit:
             estagiario.save()
@@ -155,6 +176,10 @@ class EmpresaCadastroForm(forms.ModelForm):
                 raise forms.ValidationError("CPF inválido")
             return cpf
 
+    def __init__(self, *args, **kwargs):
+        self.coordenador = kwargs.pop('coordenador', None)
+        super().__init__(*args, **kwargs)      
+
     def save(self, commit=True):
         endereco = Endereco.objects.create(
             rua=self.cleaned_data['rua'],
@@ -164,14 +189,16 @@ class EmpresaCadastroForm(forms.ModelForm):
             estado=self.cleaned_data['estado'],
             cep=self.cleaned_data['cep']
         )
-
-        empresa = Empresa.objects.create(
-            empresa_nome=self.cleaned_data['empresa_nome'],
-            cnpj=self.cleaned_data['empresa_cnpj'],
-            razao_social=self.cleaned_data['empresa_razao_social'],
-            endereco=endereco,
-            email = self.cleaned_data['email'] 
-        )
+        
+        if self.coordenador:
+            empresa = Empresa.objects.create(
+                empresa_nome=self.cleaned_data['empresa_nome'],
+                cnpj=self.cleaned_data['empresa_cnpj'],
+                razao_social=self.cleaned_data['empresa_razao_social'],
+                endereco=endereco,
+                email = self.cleaned_data['email'],
+                instituicao = self.coordenador.instituicao
+            )
 
         # Cria o coordenador de extensão
         supervisor = super().save(commit=False)
@@ -241,4 +268,5 @@ class CoordenadorEditForm(forms.ModelForm):
             coordenador.save()
 
         return coordenador, user
+
     
