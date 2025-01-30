@@ -20,9 +20,13 @@ def details(request):
 def dashboard(request):
     return render(request, 'dashboard.html')
 def dashboard_cursos(request):
+    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+    instituicao = coordenador.instituicao
+
     search = request.GET.get('search', '')
     area = request.GET.get('area', '')
-    cursos = Cursos.objects.all()
+    cursos = Cursos.objects.filter(instituicao=instituicao)
+
     if search:
         cursos = cursos.filter(nome_curso__icontains=search)
     if area:
@@ -35,9 +39,12 @@ def dashboard_cursos(request):
     }
     return render(request, 'dashboard_cursos.html', context)
 def dashboard_empresa(request):
+    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+    instituicao = coordenador.instituicao
+
     search = request.GET.get('search', '')
     cidade = request.GET.get('cidade', '')
-    empresas = Empresa.objects.all()
+    empresas = Empresa.objects.filter(instituicao=instituicao)
 
     if search:
         empresas = empresas.filter(empresa_nome__icontains=search) | empresas.filter(cnpj__icontains=search)
@@ -51,11 +58,14 @@ def dashboard_empresa(request):
     }
     return render(request, 'dashboard_empresa.html', context)
 def dashboard_estagiario(request):
+    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+    instituicao = coordenador.instituicao
+
     search = request.GET.get('search', '')
     curso = request.GET.get('curso', '')
     search_matricula = request.GET.get('search-matricula', '')
 
-    estagiarios = Estagiario.objects.all()
+    estagiarios = Estagiario.objects.filter(instituicao=instituicao)
     if search:
         estagiarios = estagiarios.filter(Q(primeiro_nome__icontains=search) | Q(sobrenome__icontains=search))
     if curso:
@@ -73,7 +83,8 @@ def dashboard_estagiario(request):
 @login_required
 def dashboard_instituicao(request):
     errors = []
-    estagios = Estagio.objects.all()
+    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+    instituicao = coordenador.instituicao
 
     if request.method == 'POST' and request.FILES.get('pdf_file'):
         pdf_file = request.FILES['pdf_file']
@@ -172,7 +183,7 @@ def dashboard_instituicao(request):
     status = request.GET.get('status', '')
     turno = request.GET.get('turno', '')
 
-    estagios = Estagio.objects.all()
+    estagios = Estagio.objects.filter(instituicao=instituicao)
     if area:
         estagios = estagios.filter(area=area)
     if status:
@@ -190,14 +201,16 @@ def dashboard_instituicao(request):
         'turnos': turnos,
         'estagios': estagios,
         'estagios_ativos': len(estagios),
-        'instituicao': estagios.first().instituicao if estagios.exists() else None,
+        'instituicao': instituicao,
         'errors': errors,
     }
     return render(request, 'dashboard_instituicao.html', context)
 
 def cadastrar_cursos(request):
+    coordenador_extensao = CoordenadorExtensao.objects.get(user=request.user)
+    
     if request.method == 'POST':
-        form = CursosCadastroForm(request.POST)
+        form = CursosCadastroForm(coordenador_extensao=coordenador_extensao, data=request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Curso cadastrado com sucesso!')

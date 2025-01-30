@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.forms import ValidationError
+from django.contrib.auth.models import User
+
 
 
 class Endereco(models.Model):
@@ -15,7 +17,18 @@ class Endereco(models.Model):
         return f'{self.rua}, {self.numero} - {self.bairro}'
 
 
+class Instituicao(models.Model):
+    cnpj = models.CharField(max_length=14, unique=True, validators=[RegexValidator(regex='^[0-9]{14}$', message='Use apenas números.')])
+    nome = models.CharField(max_length=250)
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(max_length=20, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
+    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.nome
+    
 class Empresa(models.Model):
+    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE)
     empresa_nome = models.CharField(max_length=250)
     cnpj = models.CharField(max_length=250)
     razao_social = models.CharField(max_length=250)
@@ -27,26 +40,17 @@ class Empresa(models.Model):
         return self.empresa_nome
 
 
-class Instituicao(models.Model):
-    cnpj = models.CharField(max_length=14, unique=True, validators=[RegexValidator(regex='^[0-9]{14}$', message='Use apenas números.')])
-    nome = models.CharField(max_length=250)
-    email = models.EmailField(unique=True)
-    telefone = models.CharField(max_length=20, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
-    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True, blank=True)
-
-    def __str__(self):
-        return self.nome
-
 class Areachoices(models.TextChoices):
-   saude = 'Saude'
-   tecnologia = 'Tecnologia'
-   gestao_e_negocios = 'Gestão e Negocios'
-   engenharia_e_construcao = 'Engenharia e Construção'
-   eletronica_e_automacao = 'Eletronica e Automacao'
-   educacao = 'Educacao'
-   outros = 'Outros'   
-   
+    saude = 'Saude'
+    tecnologia = 'Tecnologia'
+    gestao_e_negocios = 'Gestão e Negocios'
+    engenharia_e_construcao = 'Engenharia e Construção'
+    eletronica_e_automacao = 'Eletronica e Automacao'
+    educacao = 'Educacao'
+    outros = 'Outros'   
+
 class Cursos(models.Model):
+    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE)
     nome_curso = models.CharField(max_length=50)
     descricao = models.CharField(max_length=250)
     area = models.CharField(max_length=50,choices=Areachoices.choices, default=Areachoices.tecnologia)
@@ -61,7 +65,7 @@ class Estagiario(models.Model):
     primeiro_nome = models.CharField(max_length=50)
     sobrenome = models.CharField(max_length=50)
     cpf = models.CharField(max_length=12, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
-    matricula = models.CharField(max_length=55, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
+    matricula = models.CharField(max_length=55)
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20)
     curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, null=True, blank=True)
@@ -74,6 +78,7 @@ class Estagiario(models.Model):
 
 
 class CoordenadorExtensao(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, )
     cpf = models.CharField(max_length=12, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
     email = models.EmailField(unique=True)
     primeiro_nome = models.CharField(max_length=50)

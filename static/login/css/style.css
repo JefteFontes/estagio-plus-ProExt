@@ -1,22 +1,16 @@
 /* Ajuste do conteúdo principal */
-body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column; /* Garante que o header esteja na parte superior */
-    align-items: center;
-    background-color: rgb(245, 245, 245);
-}
-
 .content-login {
-    margin-top: 80px;
+    margin-top: 160px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 /* Adiciona margem ao conteúdo para não sobrepor o header */
 .custom-container {
+    position: absolute; /* Posiciona o container fora do fluxo normal */
+    top: 50%; /* Alinha no meio verticalmente */
+    left: 50%; /* Alinha no meio horizontalmente */
+    transform: translate(-50%, -50%); /* Centraliza completamente */
     width: 100%;
     max-width: 600px;
     display: flex;
@@ -96,4 +90,24 @@ body {
     display: flex;
     justify-content: center; 
     margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .content-login, .custom-container, .content {
+        margin-top: 20px;
+        padding: 10px;
+    }
+    .custom-container button {
+        font-size: 14px;
+    }
+}
+
+.alert {
+    position: absolute; /* Remove o alerta do fluxo normal do layout */
+    top: 90px; /* Ajusta a posição do alerta no topo */
+    left: 50%; /* Centraliza horizontalmente */
+    transform: translateX(-50%); /* Ajusta a centralização */
+    z-index: 1000; /* Garante que fique acima de outros elementos */
+    width: 90%; /* Ajuste opcional para garantir responsividade */
+    max-width: 500px;
 }
