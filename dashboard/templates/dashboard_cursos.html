@@ -1,0 +1,63 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="container">
+    <h2>Cursos</h2>
+    <div class="add-button mb-3">
+        <a href="{% url 'cadastrar_cursos' %}" class="btn btn-primary">Cadastrar Novo Curso</a>
+    </div>
+    <form method="GET" class="mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Buscar por nome do curso" value="{{ request.GET.search }}">
+            </div>
+            <div class="col-md-4">
+                <select name="area" class="form-select">
+                    <option value="">Todas as Áreas</option>
+                    {% for area in areas %}
+                        <option value="{{ area }}" {% if area == request.GET.area %}selected{% endif %}>{{ area }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="{% url 'dashboard_cursos' %}" class="btn btn-secondary">Limpar</a>
+            </div>
+        </div>
+    </form>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Area</th>
+                <th>Coordenador</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for curso in cursos %}
+                <tr>
+                    <td>{{ curso.nome_curso }}</td>
+                    <td>{{ curso.area }}</td>
+                    <td>{{ curso.coordenador }}</td>
+                    <td>{{ curso.email_coordenador }}</td>
+                    <td>
+                        <a href="{% url 'editar_curso' curso.id %}" class="btn btn-primary">Editar</a>
+                        <a href="{% url 'deletar_curso' curso.id %}" class="btn btn-danger">Deletar</a>
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

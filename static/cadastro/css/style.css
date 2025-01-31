@@ -1,5 +1,4 @@
-.cadastro-container {
-    margin: 120px auto;
+.cadastro-container-home, .cadastro-container-dashboard {
     display: flex;
     flex-direction: column;
     background-color: #E3FFE3;
@@ -11,12 +10,19 @@
     box-sizing: border-box;
 }
 
-h2 {
+.cadastro-container-home {
+    margin: 110px auto;
+}
+.cadastro-container-dashboard {
+    margin: 0px auto;
+}
+
+form h2 {
     margin-bottom: 20px;
     color: #14AE5C;
 }
 
-label {
+form label {
     font-weight: bold;
 }
 
@@ -25,7 +31,7 @@ form {
     width: 100%;
 }
 
-input {
+form input, form select {
     display: block;
     padding: 8px;
     width: 100%;
@@ -34,8 +40,7 @@ input {
     border: 1px solid #ccc;
     margin-top: 10px;
 }
-
-p {
+form p {
     margin-bottom: 4px;
     font-weight: bold;
     color: #14AE5C;
@@ -64,7 +69,7 @@ p {
     margin-bottom: 30px;
 }
 
-button {
+.btn-user-signup {
     background-color: #14AE5C;
     color: #FFF;
     padding: 10px 20px;
@@ -79,9 +84,10 @@ button {
     z-index: 10;
 }
 
-button:hover {
+.btn-user-signup:hover {
     background-color: #11833D;
 }
+
 
 /* Responsividade para telas pequenas */
 @media (max-width: 768px) {

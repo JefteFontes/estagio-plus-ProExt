@@ -1,17 +1,16 @@
 /* Ajuste do conteúdo principal */
-body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
+.content-login {
+    margin-top: 160px;
     display: flex;
-    flex-direction: column; /* Garante que o header esteja na parte superior */
+    flex-direction: column;
     align-items: center;
-    background-color: rgb(245, 245, 245);
 }
-
 /* Adiciona margem ao conteúdo para não sobrepor o header */
-.container {
-    margin-top: 80px; /* Espaço suficiente para compensar a altura do header */
+.custom-container {
+    position: absolute; /* Posiciona o container fora do fluxo normal */
+    top: 50%; /* Alinha no meio verticalmente */
+    left: 50%; /* Alinha no meio horizontalmente */
+    transform: translate(-50%, -50%); /* Centraliza completamente */
     width: 100%;
     max-width: 600px;
     display: flex;
@@ -39,9 +38,9 @@ body {
 }
 
 /* Inputs */
-input[type="text"], 
-input[type="email"], 
-input[type="password"] {
+.custom-container input[type="text"],
+.custom-container input[type="email"],
+.custom-container input[type="password"] {
     width: 85%;
     padding: 10px;
     margin: 10px 0;
@@ -53,21 +52,21 @@ input[type="password"] {
 }
 
 /* Títulos */
-h1 {
+.custom-container h1 {
     color: #14AE5C;
     font-size: 28px;
     margin-bottom: 20px;
 }
 
 /* Links */
-a {
+.custom-container a {
     text-decoration: none;
     color: rgb(20, 174, 92); 
     font-weight: bold;
 }
 
 /* Botões */
-button {
+.custom-container button {
     width: 80%;
     padding: 10px;
     background-color: rgb(20, 174, 92);
@@ -79,14 +78,36 @@ button {
     transition: background-color 0.3s;
 }
 
-button:hover {
+.custom-container button:hover {
     background-color: rgb(16, 140, 75); /* Cor ao passar o mouse */
 }
-
+.custom-container label{
+    display: block;
+}
 /* Botões no container */
 .button-container {
     width: 100%;
     display: flex;
     justify-content: center; 
     margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .content-login, .custom-container, .content {
+        margin-top: 20px;
+        padding: 10px;
+    }
+    .custom-container button {
+        font-size: 14px;
+    }
+}
+
+.alert {
+    position: absolute; /* Remove o alerta do fluxo normal do layout */
+    top: 90px; /* Ajusta a posição do alerta no topo */
+    left: 50%; /* Centraliza horizontalmente */
+    transform: translateX(-50%); /* Ajusta a centralização */
+    z-index: 1000; /* Garante que fique acima de outros elementos */
+    width: 90%; /* Ajuste opcional para garantir responsividade */
+    max-width: 500px;
 }

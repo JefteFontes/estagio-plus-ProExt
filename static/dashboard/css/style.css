@@ -9,12 +9,12 @@ body {
     min-height: 100vh;
 }
 
-.navbar, .sidebar {
+.navbar-dashboard, .sidebar {
     position: fixed;
     z-index: 10; /* Garante que a navbar e a sidebar fiquem acima do conteúdo */
 }
 
-.navbar {
+.navbar-dashboard {
     top: 0;
     left: 0;
     right: 0;
@@ -30,6 +30,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: 20px;
 }
 
 .logo img {
@@ -195,9 +196,9 @@ body {
 
 /* Sidebar fixa na tela */
 .sidebar {
-    top: 83px; /* Espaçamento da navbar */
+    top: 78px;
     left: 0;
-    height: calc(100svh - 83px); /* Subtrair a altura da navbar */
+    height: 100%; /* Subtrair a altura da navbar */
     width: 250px;
     background-color: #E3FFE3;
     padding: 0px 20px 20px 40px;
@@ -219,7 +220,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
 }
 
 .sidebar-top {
@@ -275,6 +275,13 @@ body {
     border-radius: 50%;
 }
 
+.sidebar-top .text a{
+    text-decoration: none;
+    color: #000000;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
 /* Ajuste da seta para fechar a sidebar */
 .toggle {
     height: calc(100vh - 83px);
@@ -295,6 +302,26 @@ body {
     transform: rotate(0deg);
 }
 
+a.btn-sidebar {
+    text-decoration: none;
+    color: #000000;
+    width: 100%;
+    font-size: 16px;
+    transition: color 0.3s ease;
+    display: block; /* Para garantir que o link ocupe toda a largura do item */
+}
+
+li {
+    width: 100%; /* Garante que todos os itens tenham a mesma largura */
+}
+
+li span.icon {
+    margin-right: 10px; /* Espaçamento entre o ícone e o texto */
+}
+
+li.actived a {
+    font-weight: bold; /* Opcional: Destacar o item ativo */
+}
 .toggle-btn i {
     transition: transform 0.3s ease;
     font-size: 14px;
@@ -302,7 +329,7 @@ body {
 
 /* Para esconder a sidebar */
 .sidebar.collapsed {
-    width: 60px;
+    width: 80px;
     padding: 0px 10px;
     transition: width 0.9s ease;
 }
@@ -351,14 +378,14 @@ body {
 
 /* Quando a sidebar estiver escondida */
 .container-main.sidebar-collapsed {
-    margin-left: 100px;
+    margin-left: 10px;
     transition: margin-left 0.9s ease;
 }
 
 /* Estilos do conteúdo */
 .main-content {
     flex-grow: 1;
-    padding: 40px 20px 20px 10px;
+    padding: 20px;
     margin-top: 70px;
     transition: margin-left 0.9s ease;
 }
@@ -403,9 +430,11 @@ body {
     gap: 30px;
     width: 25%;
 }
-
 .summary-item {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    
     flex-direction: column;
     align-items: center;
 }
@@ -435,19 +464,23 @@ body {
 .vaga-item {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
     background-color: #e1f3e2;
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 10px;
-    justify-content: space-between;
 }
 
 .vaga-item p {
     font-size: 14px;
+    width: 250px;
+    align-items: center;
+    margin: 0px;
 }
 
 .status {
-    background-color: #d89f62;
+    background-color: #086b17;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
@@ -486,7 +519,6 @@ body {
     margin: 0 5px;
     font-weight: bold;
 }
-
 /* Estilização do botão */
 .btn-danger {
     background-color: #dc3545;
@@ -517,6 +549,9 @@ body {
 }
 
 /* Estilização do modal */
+#logout-form{
+    width: auto;
+}
 .modal {
     display: none; /* Oculto por padrão */
     position: fixed;
@@ -619,4 +654,16 @@ body {
 .import-from-pdf button:hover {
     background-color: #1A5722;
     transition: background-color 0.3s ease;
+}
+
+.details-link a {
+    text-decoration: none;
+}
+select, #form-control{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #C1F9C1;
+    border-radius: 5px;
+    background-color: #FFF;
+    cursor: pointer;
 }

@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+
+.content {
+    padding: 2px 25px;
+    width: 60%;
+    height: 670px;
+}
+
+.header {
+    width: 88%;
+    height: 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.header h1 {
+    margin-left: 20px;
+}
+
+.date {
+    font-weight: bold;
+}
+
+.info-right {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.center {
+    margin-left: 10%;
+    width: 80%;
+
+    height: 80%;
+}
+
+.center hr {
+    height: 2px;
+    background-color: black;
+}
+
+.info {
+    display: flex;
+    width: 70%;
+    justify-content: space-between;
+    padding:  6px 0;
+}
+
+.info .info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.info .info-right {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.image {
+    width: 20px;
+}
+
+.Attachment-text {
+    color: #2d8538;
+    font-weight: bold;
+}
+
+.return {
+    width: 100%;
+    display: flex;
+    justify-content: right;   
+}
+
+.btn-return {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 30px;
+    background-color: #2d8538;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-right: 2%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+.btn-return:hover {
+    background-color: green; 
+    color: white; 
+    transform: scale(1.1); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+ul.breadcrumb {
+    padding: 0 16px;
+    list-style: none;
+    color:gray;
+  }
+  
+  ul.breadcrumb li {
+    display: inline;
+    font-size: 16px;
+    color:gray;
+    
+  }
+  
+  ul.breadcrumb li+li:before {
+    padding: 6px;
+    content: "/\00a0";
+    color:gray;
+  }
+  
+  ul.breadcrumb li a {
+    color: gray;
+    text-decoration: none;
+    
+  }
+  
+  ul.breadcrumb li a:hover {
+    color: #01447e;
+    text-decoration: underline;
+    font-weight: bolder;
+  }
+  

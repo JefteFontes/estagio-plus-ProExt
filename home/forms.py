@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from dashboard.models import CoordenadorExtensao, Instituicao, Endereco
+from dashboard.views.utils import validate_cpf
 
 class CoordenadorCadastroForm(forms.ModelForm):
     # Campos para os dados do usuário
@@ -17,16 +18,16 @@ class CoordenadorCadastroForm(forms.ModelForm):
     # Campos para os dados da instituição
     instituicao_nome = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da Instituição (ex: Universidade XYZ)'}))
     instituicao_cnpj = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNPJ (ex: 12.345.678/0001-90)'}))
-    instituicao_telefone = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone (ex: 11 1234-5678)'})) 
+    instituicao_telefone = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefone (ex: 86 1234-5678)'})) 
 
-    class Meta:
-        model = CoordenadorExtensao
-        fields = ['primeiro_nome', 'sobrenome', 'cpf']
-        widgets = {
-            'primeiro_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Primeiro Nome (ex: João)'}),
-            'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sobrenome (ex: Silva)'}),
-            'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CPF (ex: 12345678900)'}),
-        }
+    class Meta: 
+            model = CoordenadorExtensao
+            fields = ['primeiro_nome', 'sobrenome', 'cpf']
+            widgets = {
+                'primeiro_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Primeiro Nome (ex: João)'}),
+                'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sobrenome (ex: Silva)'}),
+                'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CPF (ex: 12345678900)'}),
+            }
 
     def save(self, commit=True):
         # Captura os dados do formulário
@@ -34,9 +35,18 @@ class CoordenadorCadastroForm(forms.ModelForm):
             'username': self.cleaned_data['primeiro_nome'] + " " + self.cleaned_data['sobrenome'],
             'email': self.cleaned_data['email'],
         }
-        password = f"{self.cleaned_data['cpf']}"
+
+        def clean_cpf(self):
+            cpf = self.cleaned_data['cpf']
+            if not validate_cpf(cpf):
+                print("CPF inválido")
+                raise forms.ValidationError("CPF inválido")
+            return cpf
+    
+        password = f"{clean_cpf(self)}"
         
-        print(password)   # Gera uma senha com CPF
+        print(password)
+        # Gera uma senha com CPF
 
         # Cria o usuário
         user = User.objects.create_user(**user_data, password=password)
@@ -64,8 +74,14 @@ class CoordenadorCadastroForm(forms.ModelForm):
         coordenador = super().save(commit=False)
         coordenador.instituicao = instituicao
         coordenador.email = self.cleaned_data['email'] 
+
         if commit:
-            coordenador.save()
             user.save()
+            coordenador.user = user
+            coordenador.save()
+            
 
         return user, coordenador
+
+
+
