@@ -15,13 +15,12 @@ class Endereco(models.Model):
 
     def __str__(self):
         return f'{self.rua}, {self.numero} - {self.bairro}'
-
-
+    
 class Instituicao(models.Model):
     cnpj = models.CharField(max_length=14, unique=True, validators=[RegexValidator(regex='^[0-9]{14}$', message='Use apenas números.')])
     nome = models.CharField(max_length=250)
     email = models.EmailField(unique=True)
-    telefone = models.CharField(max_length=20, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
+    telefone = models.CharField(max_length=20, validators=[RegexValidator(regex='^\(\d{2}\) \d{4,5}-\d{4}$', message='Formato de telefone inválido.')])
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -64,10 +63,10 @@ class Cursos(models.Model):
 class Estagiario(models.Model):
     primeiro_nome = models.CharField(max_length=50)
     sobrenome = models.CharField(max_length=50)
-    cpf = models.CharField(max_length=12, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
+    cpf = models.CharField(max_length=14, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
     matricula = models.CharField(max_length=55)
     email = models.EmailField(unique=True)
-    telefone = models.CharField(max_length=20)
+    telefone = models.CharField(max_length=20, validators=[RegexValidator(regex='^\(\d{2}\) \d{4,5}-\d{4}$', message='Formato de telefone inválido.')])
     curso = models.ForeignKey(Cursos, on_delete=models.CASCADE, null=True, blank=True)
     status = models.BooleanField(default=False)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True, blank=True)
@@ -92,7 +91,7 @@ class CoordenadorExtensao(models.Model):
 class Supervisor(models.Model):
     cpf = models.CharField(max_length=50, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
     email = models.EmailField(unique=True)
-    telefone = models.CharField(max_length=20, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
+    telefone = models.CharField(max_length=20, validators=[RegexValidator(regex='^\(\d{2}\) \d{4,5}-\d{4}$', message='Formato de telefone inválido.')])
     primeiro_nome = models.CharField(max_length=50)
     sobrenome = models.CharField(max_length=50)
     cargo = models.CharField(max_length=254)
@@ -113,10 +112,15 @@ class StatusChoices(models.TextChoices):
     em_andamento = 'Em andamento'
     concluido = 'Concluido'
 
+class TipoChoices(models.TextChoices):
+    não_obrigatorio = 'Não obrigatório'
+    obrigatorio = 'Obrigatório'
+
 
 class Estagio(models.Model):
     bolsa_estagio = models.FloatField(blank=True, null=True,default=0)
     area = models.CharField(max_length=250)
+    tipo_estagio = models.TextField(choices = TipoChoices.choices, default=TipoChoices.não_obrigatorio)
     status = models.TextField(choices=StatusChoices.choices, default=StatusChoices.em_andamento)
     descricao = models.TextField(max_length=1000)
     data_inicio = models.DateField()

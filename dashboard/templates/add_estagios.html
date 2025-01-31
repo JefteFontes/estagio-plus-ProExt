@@ -71,6 +71,13 @@
         <div class="error-message">{{ error }}</div>
         {% endfor %}
       </div>
+      <div class="form-inicial {% if form.tipo_estagio.errors %}has-error{% endif %}">
+        <label for="{{ form.tipo_estagio.id_for_label }}" class="form-label">Tipo:</label>
+        {{ form.tipo_estagio }}
+        {% for error in form.tipo_estagio.errors %}
+        <div class="error-message">{{ error }}</div>
+        {% endfor %}
+      </div>
     </div>
 
     <div class="form-linha1">

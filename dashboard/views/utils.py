@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 import requests
+import re
 
 
 def parse_sections(text):
@@ -99,3 +100,5 @@ def validate_cpf(cpf: str) -> bool:
 #     print("CPF is valid")
 # else:
 #     print("CPF is invalid")
+
+

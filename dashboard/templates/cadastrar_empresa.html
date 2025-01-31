@@ -123,6 +123,7 @@
     });
 
     $(document).ready(function() {
+        $('#id_telefone').mask('(00) 00000-0000');
         $('#id_empresa_cnpj').on('blur', function() {
             let cnpj = $(this).val().replace(/\D/g, ''); // Remove caracteres não numéricos
     

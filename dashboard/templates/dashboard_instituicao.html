@@ -51,6 +51,14 @@
             </select>
         </div>
         <div class="col-md-4">
+            <select name="tipo_estagio" class = "col-md-4">
+                <option value="">Todos os tipos</option>
+                {% for tipo in tipos %}
+                <option value="{{ tipo }}">{{ tipo }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
             <select name="turno" class = "col-md-4">
                 <option value="">Todos os turnos</option>
                 {% for turno in turnos %}
