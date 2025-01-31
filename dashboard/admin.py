@@ -50,7 +50,7 @@ class CursosAdmin(admin.ModelAdmin):
 
 @admin.register(models.Estagio)
 class EstagioAdmin(admin.ModelAdmin):
-    list_display = ('area', 'bolsa_estagio', 'status', 'data_inicio', 'data_fim', 'turno', 'estagiario', 'supervisor', 'empresa', 'instituicao')
+    list_display = ('area','tipo_estagio', 'bolsa_estagio', 'status', 'data_inicio', 'data_fim', 'turno', 'estagiario', 'supervisor', 'empresa', 'instituicao')
     search_fields = ('area', 'estagiario__primeiro_nome', 'supervisor__primeiro_nome', 'empresa__nome', 'instituicao__nome')
-    list_filter = ('status', 'turno', 'empresa', 'instituicao', 'data_inicio', 'data_fim')
+    list_filter = ('status', 'turno','tipo_estagio', 'empresa', 'instituicao', 'data_inicio', 'data_fim')
     date_hierarchy = 'data_inicio'

@@ -4,9 +4,9 @@ from django.shortcuts import get_object_or_404, render, redirect
 import pdfplumber
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from dashboard.models import Empresa, Endereco, Estagiario, Estagio, StatusChoices, Supervisor, Cursos, TurnoChoices, CoordenadorExtensao
+from dashboard.models import Empresa, Endereco, Estagiario, Estagio, StatusChoices, Supervisor, Cursos, TurnoChoices,  CoordenadorExtensao, TipoChoices
 from dashboard.views.utils import parse_sections
-from dashboard.forms import CursosCadastroForm, CoordenadorEditForm
+from dashboard.forms import CursosCadastroForm, CoordenadorEditForm, EstagiarioCadastroForm
 from django.db.models import Q
 
 def home(request):
@@ -163,6 +163,7 @@ def dashboard_instituicao(request):
             Estagio.objects.create(
                 bolsa_estagio=estagio_data.get('bolsa', ''),
                 area=estagio_data.get('area', ''),
+                tipo_estagio = estagio_data.get('tipo_estagio', ''),
                 descricao=estagio_data.get('descricao', ''),
                 data_inicio=estagio_data.get('data_inicio', None),
                 data_fim=estagio_data.get('data_fim', None),
@@ -182,6 +183,8 @@ def dashboard_instituicao(request):
     area = request.GET.get('area', '')
     status = request.GET.get('status', '')
     turno = request.GET.get('turno', '')
+    tipo = request.GET.get('tipo_estagio', '')
+
 
     estagios = Estagio.objects.filter(instituicao=instituicao)
     if area:
@@ -190,13 +193,17 @@ def dashboard_instituicao(request):
         estagios = estagios.filter(status=status)
     if turno:
         estagios = estagios.filter(turno=turno)
+    if tipo:
+        estagios = estagios.filter(tipo_estagio=tipo)
 
     areas = Estagio.objects.values_list('area', flat=True).distinct()
     status_choices = [choice[0] for choice in StatusChoices.choices]
     turnos = [choice[0] for choice in TurnoChoices.choices]
+    tipos = [choice[0] for choice in TipoChoices.choices]
 
     context = {
         'areas': areas,
+        'tipos' : tipos,
         'status_choices': status_choices,
         'turnos': turnos,
         'estagios': estagios,
@@ -240,6 +247,28 @@ def deletar_curso(request, curso_id):
         return redirect('dashboard_cursos')  # Certifique-se que 'dashboard_cursos' seja a URL correta    
     # Renderizar uma página de confirmação (opcional)
     return render(request, 'dashboard_cursos.html', {'cursos': cursos})
+
+def editar_estagiario(request, estagiario_id):
+    estagiario = get_object_or_404(Estagiario, id=estagiario_id)
+
+    if request.method == 'POST':
+        form = EstagiarioCadastroForm(request.POST, instance=estagiario)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard_estagiario')
+    else:
+        form = EstagiarioCadastroForm(instance=estagiario)
+    return render(request, 'cadastrar_estagiario.html', {'form': form, 'estagiario': estagiario})
+
+def deletar_estagiario(request, estagiario_id):
+    estagiario = get_object_or_404(Estagiario, id=estagiario_id)
+    estagiarios = Estagiario.objects.all()
+    if request.method == 'POST':
+        estagiario.delete()
+        messages.success(request, 'Estagiario deletado com sucesso!')
+        return redirect('dashboard_estagiario')  # Certifique-se que 'dashboard_cursos' seja a URL correta    
+    # Renderizar uma página de confirmação (opcional)
+    return render(request, 'dashboard_estagiario.html', {'estagiarios': estagiarios})
 
 @login_required
 def editar_perfil(request):

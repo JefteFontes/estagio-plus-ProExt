@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from .views.utils import validate_cpf, validate_cnpj
-from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices, StatusChoices,Areachoices,Cursos, CoordenadorExtensao
+import re
+from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices, StatusChoices,Areachoices,TipoChoices, Cursos, CoordenadorExtensao
 class CursosCadastroForm(forms.ModelForm):
     class Meta:
         model = Cursos
@@ -36,6 +37,7 @@ from .views.utils import validate_cpf
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}))
     area = forms.ChoiceField(choices=Areachoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
+    tipo_estagio = forms.ChoiceField(choices=TipoChoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
     status = forms.ChoiceField(choices=StatusChoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
     descricao = forms.CharField(max_length=255, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição', "rows": 4, "cols": 50}))
     auxilio_transporte = forms.FloatField(widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Auxilio de Transporte'}))
@@ -55,6 +57,7 @@ class EstagioCadastroForm(forms.ModelForm):
             'bolsa_estagio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}),
             'auxilio_transporte': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Auxilio de Transporte'}),
             'area': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Área'}),
+            'tipo_estagio': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Tipo Estágio'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição'}),
             'turno': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Turno'}),
             'estagiario': forms.Select(attrs={'class': 'form-control'}),
@@ -91,6 +94,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
     def clean_cpf(self):
         cpf = self.cleaned_data['cpf']
+        cpf = re.sub(r'[^0-9]', '', cpf)
         if not validate_cpf(cpf):
             raise forms.ValidationError("CPF inválido")
         return cpf

@@ -4,7 +4,7 @@ from dashboard.views.estagiarios import cadastrar_estagiario
 from dashboard.views.pdfimport import importar_pdf
 from dashboard.views.estagios import detalhes_estagio
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
-from dashboard.views.home import home, details, dashboard_instituicao, dashboard_empresa, dashboard_estagiario, dashboard_cursos,cadastrar_cursos,deletar_curso,editar_curso
+from dashboard.views.home import home, details, dashboard_instituicao, dashboard_empresa, dashboard_estagiario, dashboard_cursos,cadastrar_cursos,deletar_curso,editar_curso, editar_estagiario, deletar_estagiario
 from dashboard.views.estagios import add_estagios, complementar_estagio
 
 
@@ -24,6 +24,8 @@ urlpatterns = [
     path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),
     path('cadastrar-empresa', cadastrar_empresa, name='cadastrar_empresa'),
     path('cadastrar_estagiario', cadastrar_estagiario, name='cadastrar_estagiario'),
+    path('editar_estagiario/<int:estagiario_id>', editar_estagiario, name='editar_estagiario'),
+    path('deletar_estagiario/<int:estagiario_id>', deletar_estagiario, name='deletar_estagiario'),
     path('add-estagio', add_estagios, name='add_estagio'),
     path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),
     path('complementar-estagio', complementar_estagio, name='complementar_estagio'),

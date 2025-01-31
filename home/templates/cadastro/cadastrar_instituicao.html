@@ -76,7 +76,10 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+
+
         $(document).ready(function() {
+            $('#id_instituicao_telefone').mask('(00) 00000-0000');
             $('#id_cep').on('blur', function() {
                 let cep = $(this).val().replace(/\D/g, ''); // Remove caracteres não numéricos
         
