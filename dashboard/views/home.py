@@ -80,6 +80,8 @@ def dashboard_estagiario(request):
         'cursos': cursos,
     }
     return render(request, 'dashboard_estagiario.html', context)
+
+
 @login_required
 def dashboard_instituicao(request):
     errors = []
@@ -238,38 +240,19 @@ def editar_curso(request, curso_id):
     else:
         form = CursosCadastroForm(instance=curso)
     return render(request, 'cadastrar_cursos.html', {'form': form, 'curso': curso})
+
+
 def deletar_curso(request, curso_id):
     curso = get_object_or_404(Cursos, id=curso_id)
-    cursos = Cursos.objects.all()
-    if request.method == 'POST':
+    #mensagem de erro se tiver estagiario vinculado ao curso
+    if Estagiario.objects.filter(curso=curso).exists():
+        messages.error(request, 'O curso possui estagiarios vinculados e nao pode ser deletado.')
+        return redirect('dashboard_cursos')
+    else:
         curso.delete()
         messages.success(request, 'Curso deletado com sucesso!')
-        return redirect('dashboard_cursos')  # Certifique-se que 'dashboard_cursos' seja a URL correta    
-    # Renderizar uma página de confirmação (opcional)
-    return render(request, 'dashboard_cursos.html', {'cursos': cursos})
-
-def editar_estagiario(request, estagiario_id):
-    estagiario = get_object_or_404(Estagiario, id=estagiario_id)
-
-    if request.method == 'POST':
-        form = EstagiarioCadastroForm(request.POST, instance=estagiario)
-        if form.is_valid():
-            form.save()
-            return redirect('dashboard_estagiario')
-    else:
-        form = EstagiarioCadastroForm(instance=estagiario)
-    return render(request, 'cadastrar_estagiario.html', {'form': form, 'estagiario': estagiario})
-
-def deletar_estagiario(request, estagiario_id):
-    estagiario = get_object_or_404(Estagiario, id=estagiario_id)
-    estagiarios = Estagiario.objects.all()
-    if request.method == 'POST':
-        estagiario.delete()
-        messages.success(request, 'Estagiario deletado com sucesso!')
-        return redirect('dashboard_estagiario')  # Certifique-se que 'dashboard_cursos' seja a URL correta    
-    # Renderizar uma página de confirmação (opcional)
-    return render(request, 'dashboard_estagiario.html', {'estagiarios': estagiarios})
-
+    return redirect('dashboard_cursos')  # Certifique-se de que 'dashboard_cursos' seja a URL correta
+    
 @login_required
 def editar_perfil(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)

@@ -1,19 +1,73 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EmpresaCadastroForm
-from ..models import CoordenadorExtensao
+from ..models import CoordenadorExtensao, Empresa, Endereco, Estagio, Supervisor
 
 @login_required
 def cadastrar_empresa(request):
-    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+    coordenador = CoordenadorExtensao.objects.get(user=request.user) 
     if request.method == 'POST':
-        form = EmpresaCadastroForm(coordenador=coordenador, data=request.POST)
+        form = EmpresaCadastroForm(coordenador=coordenador, data=request.POST)  
         if form.is_valid():
-            form.save()
+            form.save() 
             messages.success(request, 'Empresa cadastrada com sucesso!')
-            return redirect('dashboard_empresa')
+            return redirect('dashboard_empresa') 
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
+            messages.error(request, form.errors)
     else:
-        form = EmpresaCadastroForm()
+        form = EmpresaCadastroForm(coordenador=coordenador) 
 
     return render(request, 'cadastrar_empresa.html', {'form': form})
+
+
+
+@login_required
+def editar_empresa(request, empresa_id):
+    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+    empresa = get_object_or_404(Empresa, id=empresa_id, instituicao=coordenador.instituicao)
+    supervisor = get_object_or_404(Supervisor, empresa=empresa)
+
+    if request.method == 'POST':
+        form = EmpresaCadastroForm(coordenador=coordenador, instance=supervisor, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Empresa atualizada com sucesso!')
+            return redirect('dashboard_empresa')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
+            messages.error(request, form.errors)
+    else:
+        # Preenchendo o formulário com os dados existentes
+        form = EmpresaCadastroForm(
+            coordenador=coordenador,
+            instance=supervisor,
+            initial={
+                'email': empresa.email,
+                'rua': empresa.endereco.rua,
+                'numero': empresa.endereco.numero,
+                'bairro': empresa.endereco.bairro,
+                'cidade': empresa.endereco.cidade,
+                'estado': empresa.endereco.estado,
+                'cep': empresa.endereco.cep,
+                'complemento': empresa.endereco.complemento,
+                'empresa_nome': empresa.empresa_nome,
+                'empresa_cnpj': empresa.cnpj,
+                'empresa_razao_social': empresa.razao_social,
+            }
+        )
+
+    return render(request, 'cadastrar_empresa.html', {'form': form, 'empresa': empresa})
+
+
+
+def deletar_empresa(request, empresa_id):
+    empresa = get_object_or_404(Empresa, id=empresa_id)
+    #conferir se der algum erro
+    if Estagio.objects.filter(empresa=empresa).exists():
+        messages.error(request, 'Esta empresa possui estagiarios vinculados e nao pode ser deletada.')
+        return redirect('dashboard_empresa')
+    else:
+        empresa.delete()
+        return redirect('dashboard_empresa')

@@ -17,11 +17,13 @@ def cadastrar_instituicao(request):
             user, coordenador = form.save()
             messages.success(request, 'Instituição cadastrada com sucesso!')
             return redirect('/login/')  # Redireciona para a página de login após o cadastro
+        else:
+            print(form.errors)  # <-- Depuração para verificar os erros
     else:
         form = CoordenadorCadastroForm()
+    
     return render(request, 'cadastro/cadastrar_instituicao.html', {'form': form})
 
-from django.shortcuts import get_object_or_404
 
 def editar_instituicao(request, instituicao):
     instituicao = get_object_or_404(CoordenadorCadastroForm, id=instituicao)

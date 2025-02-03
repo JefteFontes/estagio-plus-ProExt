@@ -46,6 +46,10 @@
                         <label for="{{ form.estado.id_for_label }}" class="form-label">Estado:</label>
                         {{ form.estado }}
                     </div>
+                    <div class = "form-inicial">
+                        <label for="{{ form.complemento.id_for_label }}" class="form-label">Complemento:</label>
+                        {{ form.complemento }}
+                    </div>
                 </div>
             </div>
             <div>
@@ -94,6 +98,7 @@
                             $('#id_bairro').val(data.bairro);
                             $('#id_cidade').val(data.cidade);
                             $('#id_estado').val(data.estado);
+                            $('#id_complemento').val(data.complemento);
                         },
                         error: function(xhr) {
                             alert(xhr.responseJSON.error || 'Erro ao buscar o CEP.');
