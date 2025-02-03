@@ -78,6 +78,13 @@
         <div class="error-message">{{ error }}</div>
         {% endfor %}
       </div>
+      <div class="form-inicial {% if form.orientador.errors %}has-error{% endif %}">
+        <label for="{{ form.orientador.id_for_label }}" class="form-label">Orientador:</label>
+        {{ form.orientador }}
+        {% for error in form.orientador.errors %}
+        <div class="error-message">{{ error }}</div>
+        {% endfor %}
+      </div>
     </div>
 
     <div class="form-linha1">

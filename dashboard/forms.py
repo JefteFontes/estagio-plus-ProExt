@@ -46,13 +46,13 @@ class EstagioCadastroForm(forms.ModelForm):
     turno = forms.ChoiceField(choices=TurnoChoices.choices, widget=forms.Select(attrs={'class': 'form-select'}))
     estagiario = forms.ModelChoiceField(queryset=Estagiario.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
     empresa = forms.ModelChoiceField(queryset=Empresa.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}),)
-    # supervisor somente os da empresa selecionada
+    orientador =  forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Orientador Nome'}))
     supervisor = forms.ModelChoiceField(queryset=Supervisor.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
     instituicao = forms.ModelChoiceField(queryset=Instituicao.objects.all(), widget=forms.Select(attrs={'class': 'form-select'}))
 
     class Meta:
         model = Estagio
-        fields = ['bolsa_estagio', 'auxilio_transporte', 'area', 'status', 'descricao', 'data_inicio', 'data_fim', 'turno', 'estagiario', 'empresa', 'supervisor', 'instituicao']
+        fields = ['bolsa_estagio', 'auxilio_transporte', 'area', 'status', 'descricao', 'data_inicio', 'data_fim', 'turno', 'estagiario', 'empresa', 'orientador','supervisor', 'instituicao']
         widgets = {
             'bolsa_estagio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bolsa de Estágio'}),
             'auxilio_transporte': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Auxilio de Transporte'}),
@@ -63,6 +63,7 @@ class EstagioCadastroForm(forms.ModelForm):
             'estagiario': forms.Select(attrs={'class': 'form-control'}),
             'empresa': forms.Select(attrs={'class': 'form-control'}),
             'supervisor': forms.Select(attrs={'class': 'form-control'}),
+            'orientador': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Orientador Nome'}),
             'instituicao': forms.Select(attrs={'class': 'form-control'})
         }
         def __init__(self, *args, **kwargs):

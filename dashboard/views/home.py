@@ -172,6 +172,7 @@ def dashboard_instituicao(request):
                 turno=estagio_data.get('turno', ''),
                 estagiario=estagiario,
                 empresa=empresa,
+                orientador=estagio_data.get('orientador', ''),
                 supervisor=supervisor,
             )
 
