@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from dashboard.models import Empresa, Endereco, Estagiario, Estagio, StatusChoices, Supervisor, Cursos, TurnoChoices,  CoordenadorExtensao, TipoChoices
 from dashboard.views.utils import parse_sections
-from dashboard.forms import CursosCadastroForm, CoordenadorEditForm, EstagiarioCadastroForm
+from dashboard.forms import CursosCadastroForm, CoordenadorEditForm
 from django.db.models import Q
 
 def home(request):
@@ -252,7 +252,7 @@ def deletar_curso(request, curso_id):
     else:
         curso.delete()
         messages.success(request, 'Curso deletado com sucesso!')
-    return redirect('dashboard_cursos')  # Certifique-se de que 'dashboard_cursos' seja a URL correta
+    return redirect('dashboard_cursos') 
     
 @login_required
 def editar_perfil(request):
@@ -268,3 +268,5 @@ def editar_perfil(request):
         form = CoordenadorEditForm(coordenador=coordenador, instance=coordenador)
 
     return render(request, 'dashboard/editar_perfil.html', {'form': form})
+
+
