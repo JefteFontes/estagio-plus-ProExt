@@ -10,25 +10,35 @@
     {% endfor %}
 {% endif %}
 <div class="container">
-    <h2>Estagiários Cadastrados</h2>
+    <h2>Estagiários</h2>
     
     <!-- Botão para cadastrar novo estagiário -->
     <div class="add-button mb-3">
-        <a href="{% url 'cadastrar_estagiario' %}" class="btn btn-primary">Cadastrar Novo Estagiário</a>
+        <a href="{% url 'cadastrar_estagiario' %}" class="btn btn-success">Cadastrar Novo Estagiário</a>
     </div>
 
     <form method="get">
+        <div class="row">
+            <div class="col-md-3">
         <input type="text" name="search" placeholder="Buscar por nome">
+            </div>
+            <div class="col-md-3">
         <input type="text" name="search-matricula" placeholder="Buscar por matricula">
+            </div>
+            <div class="col-md-3">
         <select name="curso">
             <option value="">Todos os cursos</option>
             {% for curso in cursos %}
             <option value="{{ curso }}">{{ curso }}</option>
             {% endfor %}
         </select>
-        <button type="submit">Filtrar</button>
-    </form>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary" type="submit">Filtrar</button>
+    </div>
+</div>
 
+    </form>
     <!-- Lista de estagiários -->
     {% if estagiarios %}
         <table class="table table-bordered">
@@ -51,7 +61,8 @@
 
                         
                         <td>
-                            <a href="" class="btn btn-info btn-sm">Ver Detalhes</a>
+                            <a href="{% url 'editar_estagiario' estagiario.id %}" class="btn btn-primary">Editar</a>
+                            <a href="{% url 'deletar_estagiario' estagiario.id %}" class="btn btn-danger">Deletar</a>
                         </td>
                     </tr>
                 {% endfor %}

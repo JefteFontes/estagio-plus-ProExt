@@ -2,60 +2,55 @@
 {% load i18n %}
 {% load allauth account %}
 {% load static %} 
+
 {% block head_title %}
     {% trans "+Estagio" %}
 {% endblock head_title %}
 
 {% block extra_head %}
-<link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-{{ block.super }}
-{{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    {{ block.super }}  {# Removida a duplicação de {{ block.super }} #}
 {% endblock extra_head %}
 
 {% block content %}
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            <strong>{{ message }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endfor %}
-{% endif %}
-<div class="custom-container">
-    <div class="content ">
-        {% element h1 %}
-            {% trans "Login" %}
-        {% endelement %}
-        {% url 'cadastro_instituicao' as signup_url %}
-        {% setvar link %}
-            <a href="{{ signup_url }}">
-        {% endsetvar %}
-        {% setvar end_link %}
-            </a>
-        {% endsetvar %}
-        
-        
-        {% if not SOCIALACCOUNT_ONLY %}
-            {% url 'account_login' as login_url %}
-            {% element form form=form method="post" action=login_url tags="entrance,login" %}
-                {% slot body %}
-                    {% csrf_token %}
-                    {% element fields form=form unlabeled=True %}
-                    {% endelement %}
-                    {{ redirect_field }}
-                {% endslot %}
-                {% slot actions %}
-                {% element p %}
-                    {% blocktranslate %}Não tem uma conta? {{ link }}Cadastre-se{{ end_link }}.{% endblocktranslate %}
-                {% endelement %}
-                    <div class="button-container">
-                        {% element button type="submit" tags="prominent,login" %}
-                            {% trans "Entrar" %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="custom-container">
+        <div class="content">
+            {% element h1 %}{% trans "Login" %}{% endelement %}
+
+            {% if not SOCIALACCOUNT_ONLY %}
+                {% url 'account_login' as login_url %}
+                {% url 'cadastro_instituicao' as signup_url %}
+                
+                {% element form form=form method="post" action=login_url tags="entrance,login" %}
+                    {% slot body %}
+                        {% csrf_token %}
+                        {% element fields form=form unlabeled=True %}
                         {% endelement %}
-                    </div>
-                {% endslot %}
-            {% endelement %}
-        {% endif %}
+                        {{ redirect_field }}
+                    {% endslot %}
+
+                    {% slot actions %}
+                        {% element p %}
+                            {% blocktranslate %}Não tem uma conta? <a href="{{ signup_url }}">Cadastre-se</a>.{% endblocktranslate %}
+                        {% endelement %}
+
+                        <div class="button-container">
+                            {% element button type="submit" tags="prominent,login" %}
+                                {% trans "Entrar" %}
+                            {% endelement %}
+                        </div>
+                    {% endslot %}
+                {% endelement %}
+            {% endif %}
+        </div>
     </div>
-</div>
 {% endblock content %}

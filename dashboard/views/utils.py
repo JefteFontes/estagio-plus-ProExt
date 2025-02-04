@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 import requests
+import re
 
 
 def parse_sections(text):
@@ -12,12 +13,12 @@ def parse_sections(text):
             continue
 
         # Identifica uma nova seção
-        if line.startswith('#'):
-            current_section = line.strip('# ').lower()
+        if line.startswith("#"):
+            current_section = line.strip("# ").lower()
             sections[current_section] = {}
         elif current_section:
             # Divide cada linha da seção em chave e valor
-            key_value = line.split(':', 1)
+            key_value = line.split(":", 1)
             if len(key_value) == 2:
                 key, value = key_value
                 sections[current_section][key.strip().lower()] = value.strip()
@@ -26,52 +27,56 @@ def parse_sections(text):
 
 
 def buscar_cep(request):
-    cep = request.GET.get('cep', '').replace('-', '')
+    cep = request.GET.get("cep", "").replace("-", "")
 
     if len(cep) != 8 or not cep.isdigit():
-        return JsonResponse({'error': 'CEP inválido'}, status=400)
+        return JsonResponse({"error": "CEP inválido"}, status=400)
 
-    response = requests.get(f'https://viacep.com.br/ws/{cep}/json/')
+    response = requests.get(f"https://viacep.com.br/ws/{cep}/json/")
     if response.status_code == 200:
         data = response.json()
-        if 'erro' in data:
-            return JsonResponse({'error': 'CEP não encontrado'}, status=404)
+        if "erro" in data:
+            return JsonResponse({"error": "CEP não encontrado"}, status=404)
 
-        return JsonResponse({
-            'logradouro': data.get('logradouro', ''),
-            'bairro': data.get('bairro', ''),
-            'cidade': data.get('localidade', ''),
-            'estado': data.get('uf', '')
-        })
+        return JsonResponse(
+            {
+                "logradouro": data.get("logradouro", ""),
+                "bairro": data.get("bairro", ""),
+                "cidade": data.get("localidade", ""),
+                "estado": data.get("uf", ""),
+            }
+        )
 
-    return JsonResponse({'error': 'Erro ao buscar CEP'}, status=500)
+    return JsonResponse({"error": "Erro ao buscar CEP"}, status=500)
 
 
 def validate_cnpj(request):
-    cnpj = request.GET.get('cnpj', '')
+    cnpj = request.GET.get("cnpj", "")
 
     if len(cnpj) != 14 or not cnpj.isdigit():
-        return JsonResponse({'error': 'CNPJ inválido'}, status=400)
+        return JsonResponse({"error": "CNPJ inválido"}, status=400)
 
-    response = requests.get(f'https://open.cnpja.com/office/{cnpj}')
+    response = requests.get(f"https://open.cnpja.com/office/{cnpj}")
     if response.status_code == 200:
         data = response.json()
-        if 'error' in data:
-            return JsonResponse({'error': 'CNPJ não encontrado'}, status=404)
+        if "error" in data:
+            return JsonResponse({"error": "CNPJ não encontrado"}, status=404)
 
         return JsonResponse({
-            'name': data.get('alias', ''),
+            'name': data.get('alias', '') or data.get('company', {}).get('name', ''),
             'razao_social': data.get('company', {}).get('name', ''),
             'cep': data.get('address', {}).get('zip', ''),
             'numero': data.get('address', {}).get('number', ''),
+            'atividades': data.get('mainActivity', {}).get('text', ''),
+            'complemento': data.get('address', {}).get('details', ''),
         })
 
-    return JsonResponse({'error': 'Erro ao buscar CNPJ'}, status=500)
+    return JsonResponse({"error": "Erro ao buscar CNPJ"}, status=500)
 
 
 def validate_cpf(cpf: str) -> bool:
     # Remove any non-numeric characters
-    cpf = ''.join(filter(str.isdigit, cpf))
+    cpf = "".join(filter(str.isdigit, cpf))
 
     # Check if the CPF has 11 digits
     if len(cpf) != 11:
@@ -99,3 +104,5 @@ def validate_cpf(cpf: str) -> bool:
 #     print("CPF is valid")
 # else:
 #     print("CPF is invalid")
+
+
