@@ -4,7 +4,17 @@ from dashboard.views.estagiarios import cadastrar_estagiario, editar_estagiario,
 from dashboard.views.pdfimport import importar_pdf
 from dashboard.views.estagios import detalhes_estagio
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
-from dashboard.views.home import home, details, dashboard_instituicao, dashboard_empresa, dashboard_estagiario, dashboard_cursos, cadastrar_cursos, deletar_curso, editar_curso
+from dashboard.views.home import (
+    home,
+    details,
+    dashboard_instituicao,
+    dashboard_empresa,
+    dashboard_estagiario,
+    dashboard_cursos,
+    cadastrar_cursos,
+    deletar_curso,
+    editar_curso,
+)
 from dashboard.views.estagios import add_estagios, complementar_estagio
 
 

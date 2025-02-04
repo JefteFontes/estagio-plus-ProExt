@@ -3,6 +3,7 @@
 import django.core.validators
 import django.db.models.deletion
 from django.conf import settings
+from django.conf import settings
 from django.db import migrations, models
 
 
@@ -16,122 +17,406 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Cursos',
+            name="Cursos",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome_curso', models.CharField(max_length=50)),
-                ('descricao', models.CharField(max_length=250)),
-                ('area', models.CharField(choices=[('Saude', 'Saude'), ('Tecnologia', 'Tecnologia'), ('Gestão e Negocios', 'Gestao E Negocios'), ('Engenharia e Construção', 'Engenharia E Construcao'), ('Eletronica e Automacao', 'Eletronica E Automacao'), ('Educacao', 'Educacao'), ('Outros', 'Outros')], default='Tecnologia', max_length=50)),
-                ('coordenador', models.CharField(max_length=50)),
-                ('email_coordenador', models.EmailField(max_length=254)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome_curso", models.CharField(max_length=50)),
+                ("descricao", models.CharField(max_length=250)),
+                (
+                    "area",
+                    models.CharField(
+                        choices=[
+                            ("Saude", "Saude"),
+                            ("Tecnologia", "Tecnologia"),
+                            ("Gestão e Negocios", "Gestao E Negocios"),
+                            ("Engenharia e Construção", "Engenharia E Construcao"),
+                            ("Eletronica e Automacao", "Eletronica E Automacao"),
+                            ("Educacao", "Educacao"),
+                            ("Outros", "Outros"),
+                        ],
+                        default="Tecnologia",
+                        max_length=50,
+                    ),
+                ),
+                ("coordenador", models.CharField(max_length=50)),
+                ("email_coordenador", models.EmailField(max_length=254)),
             ],
         ),
         migrations.CreateModel(
-            name='Endereco',
+            name="Endereco",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rua', models.CharField(max_length=255)),
-                ('numero', models.CharField(max_length=10)),
-                ('bairro', models.CharField(max_length=100)),
-                ('cidade', models.CharField(max_length=100)),
-                ('estado', models.CharField(max_length=50)),
-                ('cep', models.CharField(max_length=20, validators=[django.core.validators.RegexValidator(message='Use apenas números.', regex='^[0-9]+$')])),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("rua", models.CharField(max_length=255)),
+                ("numero", models.CharField(max_length=10)),
+                ("bairro", models.CharField(max_length=100)),
+                ("cidade", models.CharField(max_length=100)),
+                ("estado", models.CharField(max_length=50)),
+                (
+                    "cep",
+                    models.CharField(
+                        max_length=20,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Use apenas números.", regex="^[0-9]+$"
+                            )
+                        ],
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ImportTermoEstagio',
+            name="ImportTermoEstagio",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(upload_to='termo_estagio/%Y/%m/%d/')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("file", models.FileField(upload_to="termo_estagio/%Y/%m/%d/")),
             ],
         ),
         migrations.CreateModel(
-            name='Instituicao',
+            name="Instituicao",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cnpj', models.CharField(max_length=14, unique=True, validators=[django.core.validators.RegexValidator(message='Use apenas números.', regex='^[0-9]{14}$')])),
-                ('nome', models.CharField(max_length=250)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('telefone', models.CharField(max_length=20, validators=[django.core.validators.RegexValidator(message='Formato de telefone inválido.', regex='^\\(\\d{2}\\) \\d{4,5}-\\d{4}$')])),
-                ('endereco', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.endereco')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "cnpj",
+                    models.CharField(
+                        max_length=14,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Use apenas números.", regex="^[0-9]{14}$"
+                            )
+                        ],
+                    ),
+                ),
+                ("nome", models.CharField(max_length=250)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                (
+                    "telefone",
+                    models.CharField(
+                        max_length=20,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Use apenas números.", regex="^[0-9]+$"
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    "endereco",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.endereco",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Estagiario',
+            name="Estagiario",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('primeiro_nome', models.CharField(max_length=50)),
-                ('sobrenome', models.CharField(max_length=50)),
-                ('cpf', models.CharField(max_length=14, unique=True, validators=[django.core.validators.RegexValidator(message='Use apenas números.', regex='^[0-9]+$')])),
-                ('matricula', models.CharField(max_length=55)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('telefone', models.CharField(max_length=20, validators=[django.core.validators.RegexValidator(message='Formato de telefone inválido.', regex='^\\(\\d{2}\\) \\d{4,5}-\\d{4}$')])),
-                ('status', models.BooleanField(default=False)),
-                ('curso', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.cursos')),
-                ('endereco', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.endereco')),
-                ('instituicao', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.instituicao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("primeiro_nome", models.CharField(max_length=50)),
+                ("sobrenome", models.CharField(max_length=50)),
+                (
+                    "cpf",
+                    models.CharField(
+                        max_length=12,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Use apenas números.", regex="^[0-9]+$"
+                            )
+                        ],
+                    ),
+                ),
+                ("matricula", models.CharField(max_length=55)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("telefone", models.CharField(max_length=20)),
+                ("status", models.BooleanField(default=False)),
+                (
+                    "curso",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.cursos",
+                    ),
+                ),
+                (
+                    "endereco",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.endereco",
+                    ),
+                ),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.instituicao",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Empresa',
+            name="Empresa",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('empresa_nome', models.CharField(max_length=250)),
-                ('cnpj', models.CharField(max_length=250)),
-                ('razao_social', models.CharField(max_length=250)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('atividades', models.TextField(max_length=500, null=True)),
-                ('endereco', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.endereco')),
-                ('instituicao', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dashboard.instituicao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("empresa_nome", models.CharField(max_length=250)),
+                ("cnpj", models.CharField(max_length=250)),
+                ("razao_social", models.CharField(max_length=250)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("atividades", models.TextField(max_length=500, null=True)),
+                (
+                    "endereco",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.endereco",
+                    ),
+                ),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.instituicao",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='cursos',
-            name='instituicao',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dashboard.instituicao'),
+            model_name="cursos",
+            name="instituicao",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="dashboard.instituicao"
+            ),
         ),
         migrations.CreateModel(
-            name='CoordenadorExtensao',
+            name="CoordenadorExtensao",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cpf', models.CharField(max_length=12, unique=True, validators=[django.core.validators.RegexValidator(message='Use apenas números.', regex='^[0-9]+$')])),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('primeiro_nome', models.CharField(max_length=50)),
-                ('sobrenome', models.CharField(max_length=50)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('instituicao', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.instituicao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "cpf",
+                    models.CharField(
+                        max_length=12,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Use apenas números.", regex="^[0-9]+$"
+                            )
+                        ],
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("primeiro_nome", models.CharField(max_length=50)),
+                ("sobrenome", models.CharField(max_length=50)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.instituicao",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Supervisor',
+            name="Supervisor",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cpf', models.CharField(max_length=50, unique=True, validators=[django.core.validators.RegexValidator(message='Use apenas números.', regex='^[0-9]+$')])),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('telefone', models.CharField(max_length=20, validators=[django.core.validators.RegexValidator(message='Formato de telefone inválido.', regex='^\\(\\d{2}\\) \\d{4,5}-\\d{4}$')])),
-                ('primeiro_nome', models.CharField(max_length=50)),
-                ('sobrenome', models.CharField(max_length=50)),
-                ('cargo', models.CharField(max_length=254)),
-                ('empresa', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.empresa')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "cpf",
+                    models.CharField(
+                        max_length=50,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Use apenas números.", regex="^[0-9]+$"
+                            )
+                        ],
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                (
+                    "telefone",
+                    models.CharField(
+                        max_length=20,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Use apenas números.", regex="^[0-9]+$"
+                            )
+                        ],
+                    ),
+                ),
+                ("primeiro_nome", models.CharField(max_length=50)),
+                ("sobrenome", models.CharField(max_length=50)),
+                ("cargo", models.CharField(max_length=254)),
+                (
+                    "empresa",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.empresa",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Estagio',
+            name="Estagio",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('bolsa_estagio', models.FloatField(blank=True, default=0, null=True)),
-                ('area', models.CharField(max_length=250)),
-                ('tipo_estagio', models.TextField(choices=[('Não obrigatório', 'Nao Obrigatorio'), ('Obrigatório', 'Obrigatorio')], default='Não obrigatório')),
-                ('status', models.TextField(choices=[('Em andamento', 'Em Andamento'), ('Concluido', 'Concluido')], default='Em andamento')),
-                ('descricao', models.TextField(max_length=1000)),
-                ('data_inicio', models.DateField()),
-                ('data_fim', models.DateField()),
-                ('turno', models.TextField(choices=[('Manha', 'Manha'), ('Tarde', 'Tarde'), ('Noite', 'Noite')], default='Manha')),
-                ('auxilio_transporte', models.FloatField(blank=True, default=0, null=True)),
-                ('empresa', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.empresa')),
-                ('estagiario', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.estagiario')),
-                ('instituicao', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.instituicao')),
-                ('supervisor', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='dashboard.supervisor')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("bolsa_estagio", models.FloatField(blank=True, default=0, null=True)),
+                ("area", models.CharField(max_length=250)),
+                (
+                    "status",
+                    models.TextField(
+                        choices=[
+                            ("Em andamento", "Em Andamento"),
+                            ("Concluido", "Concluido"),
+                        ],
+                        default="Em andamento",
+                    ),
+                ),
+                ("descricao", models.TextField(max_length=1000)),
+                ("data_inicio", models.DateField()),
+                ("data_fim", models.DateField()),
+                (
+                    "turno",
+                    models.TextField(
+                        choices=[
+                            ("Manha", "Manha"),
+                            ("Tarde", "Tarde"),
+                            ("Noite", "Noite"),
+                        ],
+                        default="Manha",
+                    ),
+                ),
+                (
+                    "auxilio_transporte",
+                    models.FloatField(blank=True, default=0, null=True),
+                ),
+                (
+                    "empresa",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.empresa",
+                    ),
+                ),
+                (
+                    "estagiario",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.estagiario",
+                    ),
+                ),
+                (
+                    "instituicao",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.instituicao",
+                    ),
+                ),
+                (
+                    "supervisor",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="dashboard.supervisor",
+                    ),
+                ),
             ],
         ),
     ]

@@ -9,12 +9,12 @@ from ..forms import EstagiarioCadastroForm,Estagiario
 @login_required
 def cadastrar_estagiario(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
-    if request.method == 'POST':
+    if request.method == "POST":
         form = EstagiarioCadastroForm(coordenador=coordenador, data=request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Estágiario cadastrado com sucesso!')
-            return redirect('dashboard_estagiario')
+            messages.success(request, "Estágiario cadastrado com sucesso!")
+            return redirect("dashboard_estagiario")
     else:
         form = EstagiarioCadastroForm()
 
