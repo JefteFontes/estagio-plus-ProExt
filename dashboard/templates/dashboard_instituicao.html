@@ -13,24 +13,22 @@
 <div class="welcome-container">
     <div class="welcome-section">
         <h2>Bem-vindo(a) ao +Estágio</h2>
-    
-    <p>{{ instituicao }}</p>
-    <div class="add-estagio-card">
-        <a href="{% url 'add_estagio' %}">
-            <div class="card-content">
-                <p> Cadastrar Estágio</p>
-            </div>
-        </a>
-    </div>
-        </div>
-        <div class="summary">
-            <div class="summary-item">
-                <p>Estágios ativos</p>
-                <span>{{ estagios_ativos }}</span>
-            </div>
-            
+        <p>{{ instituicao }}</p>
+        <div class="add-estagio-card">
+            <a href="{% url 'add_estagio' %}">
+                <div class="card-content">
+                    <p> Cadastrar Estágio</p>
+                </div>
+            </a>
         </div>
     </div>
+    <div class="summary">
+        <div class="summary-item">
+            <p>Estágios ativos</p>
+            <span>{{ estagios_ativos }}</span>
+        </div>
+    </div>
+</div>
 
 <form method="get" class = "mb-3">
     <div class = "row">
@@ -78,29 +76,28 @@
             <a class="details-link" href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}">Ver detalhes</a>
         </div>
     {% endfor %}
-</div>
 <div>
-<div class="form-coordenador vaga-item">
-    {% if errors %}
-    <div class="alert alert-danger">
-        <ul>
-        {% for error in errors %}
-            <li>{{ error }}</li>
-        {% endfor %}
-        </ul>
-    </div>
-{% endif %}
-    <div class="form-linha1">
-      <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" name="form_type" value="importar_pdf">
-        <label for="pdf_file">Importar Termo de Estágio (PDF):</label>
+    <div class="form-coordenador vaga-item">
+        {% if errors %}
+        <div class="alert alert-danger">
+            <ul>
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
         <div class="form-linha1">
-        <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf" required />
-        <button type="submit" class="btn-user-signup">Importar</button>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="importar_pdf">
+                <label for="pdf_file">Importar Termo de Estágio (PDF):</label>
+                <div class="form-linha1">
+                    <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf" required />
+                    <button type="submit" class="btn-user-signup">Importar</button>
+                </div>
+            </form>
+        </div>
     </div>
-    </form>
-    </div>
-  </div>
 </div>
 {% endblock %}

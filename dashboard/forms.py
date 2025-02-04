@@ -160,7 +160,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             raise forms.ValidationError("CPF inválido")
         return cpf
 
-    class Meta:
+    class Meta: 
         model = Supervisor
         fields = ['primeiro_nome', 'sobrenome', 'cpf', 'cargo', 'telefone']
         widgets = {

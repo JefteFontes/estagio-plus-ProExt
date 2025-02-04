@@ -16,11 +16,11 @@
         <a href="{% url 'cadastrar_cursos' %}" class="btn btn-primary">Cadastrar Novo Curso</a>
     </div>
     <form method="GET" class="mb-3">
-        <div class="row">
-            <div class="col-md-4">
+        <div class="filtro-linha">
+            <div class="col-form-curso">
                 <input type="text" name="search" class="form-control" placeholder="Buscar por nome do curso" value="{{ request.GET.search }}">
             </div>
-            <div class="col-md-4">
+            <div class="col-form-curso">
                 <select name="area" class="form-select">
                     <option value="">Todas as Áreas</option>
                     {% for area in areas %}
@@ -28,7 +28,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-form-curso">
                 <button type="submit" class="btn btn-primary">Filtrar</button>
                 <a href="{% url 'dashboard_cursos' %}" class="btn btn-secondary">Limpar</a>
             </div>
