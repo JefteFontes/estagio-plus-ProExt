@@ -17,7 +17,7 @@ from dashboard.models import (
     CoordenadorExtensao,
 )
 from dashboard.views.utils import parse_sections
-from dashboard.forms import CursosCadastroForm, CoordenadorEditForm, EstagiarioCadastroForm
+from dashboard.forms import CursosCadastroForm, CoordenadorEditForm
 from django.db.models import Q
 
 
@@ -103,7 +103,7 @@ def dashboard_estagiario(request):
         "estagiarios": estagiarios,
         "cursos": cursos,
     }
-    return render(request, 'dashboard_estagiario.html', context)
+    return render(request, "dashboard_estagiario.html", context)
 
 
 @login_required
@@ -200,6 +200,7 @@ def dashboard_instituicao(request):
                 turno=estagio_data.get('turno', ''),
                 estagiario=estagiario,
                 empresa=empresa,
+                orientador=estagio_data.get('orientador', ''),
                 supervisor=supervisor,
             )
 
@@ -286,9 +287,14 @@ def deletar_curso(request, curso_id):
         return redirect('dashboard_cursos')
     else:
         curso.delete()
-        messages.success(request, 'Curso deletado com sucesso!')
-    return redirect('dashboard_cursos')  # Certifique-se de que 'dashboard_cursos' seja a URL correta
-    
+        messages.success(request, "Curso deletado com sucesso!")
+        return redirect(
+            "dashboard_cursos"
+        )  # Certifique-se que 'dashboard_cursos' seja a URL correta
+    # Renderizar uma página de confirmação (opcional)
+    return render(request, "dashboard_cursos.html", {"cursos": cursos})
+
+
 @login_required
 def editar_perfil(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
@@ -304,4 +310,6 @@ def editar_perfil(request):
     else:
         form = CoordenadorEditForm(coordenador=coordenador, instance=coordenador)
 
-    return render(request, "dashboard/editar_perfil.html", {"form": form})
+    return render(request, 'dashboard/editar_perfil.html', {'form': form})
+
+

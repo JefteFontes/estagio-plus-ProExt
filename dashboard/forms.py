@@ -1,18 +1,40 @@
 from django import forms
 from django.contrib.auth.models import User
 from .views.utils import validate_cpf, validate_cnpj
-import re
-from .models import Estagiario, Endereco, Estagio, Supervisor, Empresa, Instituicao, TurnoChoices, StatusChoices,Areachoices,TipoChoices, Cursos, CoordenadorExtensao
+from .models import (
+    Estagiario,
+    Endereco,
+    Estagio,
+    Supervisor,
+    Empresa,
+    Instituicao,
+    TipoChoices,
+    TurnoChoices,
+    StatusChoices,  
+    Areachoices,
+    Cursos,
+    CoordenadorExtensao,
+)
+
+
 class CursosCadastroForm(forms.ModelForm):
     class Meta:
         model = Cursos
         fields = ["nome_curso", "descricao", "area", "coordenador", "email_coordenador"]
         widgets = {
-            'nome_curso': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do Curso'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição'}),
-            'area': forms.Select(attrs={'class': 'form-control'}),
-            'coordenador': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Coordenador'}),
-            'email_coordenador': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'E-mail'}),
+            "nome_curso": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Nome do Curso"}
+            ),
+            "descricao": forms.Textarea(
+                attrs={"class": "form-control", "placeholder": "Descrição"}
+            ),
+            "area": forms.Select(attrs={"class": "form-control"}),
+            "coordenador": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Coordenador"}
+            ),
+            "email_coordenador": forms.EmailInput(
+                attrs={"class": "form-control", "placeholder": "E-mail"}
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -35,62 +57,35 @@ class CursosCadastroForm(forms.ModelForm):
 
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "Bolsa de Estágio"}
-        )
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Bolsa de Estágio"})
     )
     area = forms.ChoiceField(
         choices=Areachoices.choices, widget=forms.Select(attrs={"class": "form-select"})
     )
     status = forms.ChoiceField(
-        choices=StatusChoices.choices,
-        widget=forms.Select(attrs={"class": "form-select"}),
+        choices=StatusChoices.choices, widget=forms.Select(attrs={"class": "form-select"})
     )
     descricao = forms.CharField(
         max_length=255,
-        widget=forms.Textarea(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Descrição",
-                "rows": 4,
-                "cols": 100,
-            }
-        ),
+        widget=forms.Textarea(attrs={"class": "form-control", "placeholder": "Descrição", "rows": 4, "cols": 50})
     )
     auxilio_transporte = forms.FloatField(
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "Auxilio de Transporte"}
-        )
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Auxílio de Transporte"})
     )
     data_inicio = forms.DateField(
-        widget=forms.DateInput(
-            attrs={
-                "class": "form-control",
-                "type": "date",
-                "placeholder": "Data de Início",
-            }
-        )
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date", "placeholder": "Data de Início"})
     )
     data_fim = forms.DateField(
-        widget=forms.DateInput(
-            attrs={
-                "class": "form-control",
-                "type": "date",
-                "placeholder": "Data de Fim",
-            }
-        )
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date", "placeholder": "Data de Fim"})
     )
     turno = forms.ChoiceField(
-        choices=TurnoChoices.choices,
-        widget=forms.Select(attrs={"class": "form-select"}),
+        choices=TurnoChoices.choices, widget=forms.Select(attrs={"class": "form-select"})
     )
     estagiario = forms.ModelChoiceField(
-        queryset=Estagiario.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        queryset=Estagiario.objects.all(), widget=forms.Select(attrs={"class": "form-select"})
     )
     empresa = forms.ModelChoiceField(
-        queryset=Empresa.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        queryset=Empresa.objects.all(), widget=forms.Select(attrs={"class": "form-select", "id": "empresa-select"})
     )
     tipo_estagio = forms.ChoiceField(
         choices=TipoChoices.choices,
@@ -98,29 +93,17 @@ class EstagioCadastroForm(forms.ModelForm):
     )
     # supervisor somente os da empresa selecionada
     supervisor = forms.ModelChoiceField(
-        queryset=Supervisor.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        queryset=Supervisor.objects.none(), widget=forms.Select(attrs={"class": "form-select", "id": "supervisor-select"}), required=False
     )
     instituicao = forms.ModelChoiceField(
-        queryset=Instituicao.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        queryset=Instituicao.objects.all(), widget=forms.Select(attrs={"class": "form-select"})
     )
 
     class Meta:
         model = Estagio
         fields = [
-            "bolsa_estagio",
-            "auxilio_transporte",
-            "area",
-            "status",
-            "descricao",
-            "data_inicio",
-            "data_fim",
-            "turno",
-            "estagiario",
-            "empresa",
-            "supervisor",
-            "instituicao",
+            "bolsa_estagio", "auxilio_transporte", "area", "status", "descricao",
+            "data_inicio", "data_fim", "turno", "estagiario", "empresa", "supervisor", "instituicao"
         ]
         widgets = {
             "bolsa_estagio": forms.NumberInput(
@@ -170,6 +153,11 @@ class EstagioCadastroForm(forms.ModelForm):
 
         
         self.fields["empresa"].queryset = Empresa.objects.all()
+        empresa_id = self.data.get("empresa") or (self.instance.empresa.id if self.instance.pk else None)
+        if empresa_id:
+            self.fields["supervisor"].queryset = Supervisor.objects.filter(empresa_id=empresa_id)
+        else:
+            self.fields["supervisor"].queryset = Supervisor.objects.all()
 
 
 
@@ -336,88 +324,18 @@ class EmpresaCadastroForm(forms.ModelForm):
     )
 
     # Campos para os dados de endereço da empresa
-    rua = forms.CharField(
-        max_length=255,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Rua das Flores"}
-        ),
-    )
-    numero = forms.CharField(
-        max_length=10,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Número (ex: 123)"}
-        ),
-    )
-    bairro = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Bairro (ex: Centro)"}
-        ),
-    )
-    cidade = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Cidade (ex: Parnaíba)"}
-        ),
-    )
-    estado = forms.CharField(
-        max_length=50,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Estado (ex: PI)"}
-        ),
-    )
-    cep = forms.CharField(
-        max_length=20,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "CEP (ex: 12345-678)"}
-        ),
-    )
-    complemento = forms.CharField(
-        max_length=100, required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Complemento"}
-        ),
-    )
+    rua = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Rua das Flores'}))
+    numero = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Número (ex: 123)'}))
+    bairro = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Bairro (ex: Centro)'}))
+    cidade = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cidade (ex: Parnaíba)'}))
+    estado = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado (ex: PI)'}))
+    cep = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CEP (ex: 12345-678)'}))
 
     # Campos para dados da empresa
-    empresa_nome = forms.CharField(
-        max_length=250,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Nome da Empresa (ex: Empresa XYZ)",
-            }
-        ),
-    )
-    empresa_cnpj = forms.CharField(
-        max_length=20,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "CNPJ (ex: 12.345.678/0001-90)",
-            }
-        ),
-    )
-    empresa_razao_social = forms.CharField(
-        max_length=250,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Razão Social (ex: XYZ Ltda)",
-            }
-        ),
-    )
-    empresa_atividades = forms.CharField(
-        max_length=500,
-        widget=forms.Textarea(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Atividade",
-                "rows": 4,
-                "cols": 50,
-            }
-        ),
-    )
+    empresa_nome = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da Empresa (ex: Empresa XYZ)'}))
+    empresa_cnpj = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNPJ (ex: 12.345.678/0001-90)'}))
+    empresa_razao_social = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Razão Social (ex: XYZ Ltda)'}))
+    empresa_atividades = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Atividade', "rows": 4, "cols": 50}))
 
     def clean_cpf(self):
         cpf = self.cleaned_data["cpf"]
@@ -427,7 +345,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             raise forms.ValidationError("CPF inválido")
         return cpf
 
-    class Meta:
+    class Meta: 
         model = Supervisor
         fields = ["primeiro_nome", "sobrenome", "cpf", "cargo", "telefone"]
         widgets = {
@@ -502,7 +420,7 @@ class EmpresaCadastroForm(forms.ModelForm):
 
     # Atualizando os dados do supervisor
         supervisor.empresa = empresa
-        supervisor.email = self.cleaned_data["email"]
+        supervisor.email = self.cleaned_data['email']
 
         if commit:
             supervisor.save()

@@ -61,7 +61,7 @@ class Empresa(models.Model):
     email = models.EmailField(unique=True)
     atividades = models.TextField(max_length=500, null=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, null=True, blank=True)
-
+    
     def __str__(self):
         return self.empresa_nome
 
@@ -112,15 +112,36 @@ class Estagiario(models.Model):
         return f"{self.primeiro_nome} {self.sobrenome}"
 
 
-class Supervisor(models.Model):
-    cpf = models.CharField(max_length=15, unique=True)
+class CoordenadorExtensao(models.Model):
+    user = models.OneToOneField(User, on_delete=models.PROTECT, )
+    cpf = models.CharField(max_length=15, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
     email = models.EmailField(unique=True)
-    telefone = models.CharField(max_length=20, validators=[RegexValidator(regex='^\(\d{2}\) \d{4,5}-\d{4}$', message='Formato de telefone inválido.')])
+    primeiro_nome = models.CharField(max_length=50)
+    sobrenome = models.CharField(max_length=50)
+    instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.primeiro_nome} {self.sobrenome}"
+
+
+class Supervisor(models.Model):
+    cpf = models.CharField(
+        max_length=14,
+        unique=True,
+        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
+    )
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(
+        max_length=20,
+        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
+    )
     primeiro_nome = models.CharField(max_length=50)
     sobrenome = models.CharField(max_length=50)
     cargo = models.CharField(max_length=254)
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)#cascade deletar empresa deleta supervisor
-    
+    empresa = models.ForeignKey(
+        Empresa, on_delete=models.CASCADE, null=True, blank=True
+    )
+
     def __str__(self):
         return f"{self.primeiro_nome} {self.sobrenome}"
 
@@ -134,6 +155,10 @@ class TurnoChoices(models.TextChoices):
 class StatusChoices(models.TextChoices):
     em_andamento = "Em andamento"
     concluido = "Concluido"
+
+class TipoChoices(models.TextChoices):
+    nao_obrigatorio = 'Não obrigatório'
+    obrigatorio = 'Obrigatório'
 
 class TipoChoices(models.TextChoices):
     obrigatorio = 'Obrigatório'

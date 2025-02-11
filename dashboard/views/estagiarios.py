@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from dashboard.models import CoordenadorExtensao, Estagio
 from ..forms import EstagiarioCadastroForm,Estagiario
 
-
 @login_required
 def cadastrar_estagiario(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)

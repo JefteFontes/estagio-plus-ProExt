@@ -59,9 +59,8 @@ def validate_cnpj(request):
     response = requests.get(f"https://open.cnpja.com/office/{cnpj}")
     if response.status_code == 200:
         data = response.json()
-        if 'error' in data:
-            return JsonResponse({'error': 'CNPJ não encontrado'}, status=404)
-        
+        if "error" in data:
+            return JsonResponse({"error": "CNPJ não encontrado"}, status=404)
 
         return JsonResponse({
             'name': data.get('alias', '') or data.get('company', {}).get('name', ''),

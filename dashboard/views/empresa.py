@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from ..forms import EmpresaCadastroForm
 from ..models import CoordenadorExtensao, Empresa, Endereco, Estagio, Supervisor
 
-
 @login_required
 def cadastrar_empresa(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user) 
