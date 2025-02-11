@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EstagioCadastroForm
-from ..models import Empresa, Estagio
+from ..models import Empresa, Estagio, Supervisor
 from dateutil.relativedelta import relativedelta
 
 
@@ -41,7 +41,7 @@ def detalhes_estagio(request):
     estagio = get_object_or_404(Estagio, id=selected)
     duracao = estagio_duracao(request, selected)
     tempo_falta = estagio_falta_dias(request, selected)
- 
+
     return render(request, 'details.html', {
         'estagio': estagio, 
         'duracao': duracao, 
@@ -90,3 +90,11 @@ def estagio_falta_dias(request, estagio_id):
 
     diferenca = relativedelta(estagio.data_fim, datetime.date.today())
     return formatar_duracao(diferenca)
+
+
+def get_supervisores(request):
+    empresa_id = request.GET.get("empresa_id")
+    if empresa_id:
+        supervisores = Supervisor.objects.filter(empresa_id=empresa_id).values("id", "primeiro_nome","sobrenome")
+        return JsonResponse(list(supervisores), safe=False)
+    return JsonResponse([], safe=False)

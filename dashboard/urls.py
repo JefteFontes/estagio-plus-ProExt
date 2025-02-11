@@ -2,7 +2,7 @@ from django.urls import include, path
 from dashboard.views.empresa import cadastrar_empresa, editar_empresa, deletar_empresa
 from dashboard.views.estagiarios import cadastrar_estagiario, editar_estagiario, deletar_estagiario
 from dashboard.views.pdfimport import importar_pdf
-from dashboard.views.estagios import detalhes_estagio
+from dashboard.views.estagios import detalhes_estagio, get_supervisores
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
 from dashboard.views.home import (
     home,
@@ -52,5 +52,7 @@ urlpatterns = [
     path('parse-sections', parse_sections, name='parse_sections'),
     path('buscar-cep', buscar_cep, name='buscar_cep'),
     path('validate_cnpj', validate_cnpj, name='validate_cnpj'),
+
+    path('get-supervisores/', get_supervisores, name='get_supervisores'),
 
 ]

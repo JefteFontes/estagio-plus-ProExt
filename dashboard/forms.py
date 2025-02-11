@@ -9,7 +9,7 @@ from .models import (
     Empresa,
     Instituicao,
     TurnoChoices,
-    StatusChoices,
+    StatusChoices,  
     Areachoices,
     Cursos,
     CoordenadorExtensao,
@@ -56,138 +56,58 @@ class CursosCadastroForm(forms.ModelForm):
 
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "Bolsa de Estágio"}
-        )
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Bolsa de Estágio"})
     )
     area = forms.ChoiceField(
         choices=Areachoices.choices, widget=forms.Select(attrs={"class": "form-select"})
     )
     status = forms.ChoiceField(
-        choices=StatusChoices.choices,
-        widget=forms.Select(attrs={"class": "form-select"}),
+        choices=StatusChoices.choices, widget=forms.Select(attrs={"class": "form-select"})
     )
     descricao = forms.CharField(
         max_length=255,
-        widget=forms.Textarea(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Descrição",
-                "rows": 4,
-                "cols": 50,
-            }
-        ),
+        widget=forms.Textarea(attrs={"class": "form-control", "placeholder": "Descrição", "rows": 4, "cols": 50})
     )
     auxilio_transporte = forms.FloatField(
-        widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "Auxilio de Transporte"}
-        )
+        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Auxílio de Transporte"})
     )
     data_inicio = forms.DateField(
-        widget=forms.DateInput(
-            attrs={
-                "class": "form-control",
-                "type": "date",
-                "placeholder": "Data de Início",
-            }
-        )
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date", "placeholder": "Data de Início"})
     )
     data_fim = forms.DateField(
-        widget=forms.DateInput(
-            attrs={
-                "class": "form-control",
-                "type": "date",
-                "placeholder": "Data de Fim",
-            }
-        )
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date", "placeholder": "Data de Fim"})
     )
     turno = forms.ChoiceField(
-        choices=TurnoChoices.choices,
-        widget=forms.Select(attrs={"class": "form-select"}),
+        choices=TurnoChoices.choices, widget=forms.Select(attrs={"class": "form-select"})
     )
     estagiario = forms.ModelChoiceField(
-        queryset=Estagiario.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        queryset=Estagiario.objects.all(), widget=forms.Select(attrs={"class": "form-select"})
     )
     empresa = forms.ModelChoiceField(
-        queryset=Empresa.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        queryset=Empresa.objects.all(), widget=forms.Select(attrs={"class": "form-select", "id": "empresa-select"})
     )
-    # supervisor somente os da empresa selecionada
     supervisor = forms.ModelChoiceField(
-        queryset=Supervisor.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        queryset=Supervisor.objects.none(), widget=forms.Select(attrs={"class": "form-select", "id": "supervisor-select"}), required=False
     )
     instituicao = forms.ModelChoiceField(
-        queryset=Instituicao.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        queryset=Instituicao.objects.all(), widget=forms.Select(attrs={"class": "form-select"})
     )
 
     class Meta:
         model = Estagio
         fields = [
-            "bolsa_estagio",
-            "auxilio_transporte",
-            "area",
-            "status",
-            "descricao",
-            "data_inicio",
-            "data_fim",
-            "turno",
-            "estagiario",
-            "empresa",
-            "supervisor",
-            "instituicao",
+            "bolsa_estagio", "auxilio_transporte", "area", "status", "descricao",
+            "data_inicio", "data_fim", "turno", "estagiario", "empresa", "supervisor", "instituicao"
         ]
-        widgets = {
-            "bolsa_estagio": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "Bolsa de Estágio"}
-            ),
-            "auxilio_transporte": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "Auxilio de Transporte"}
-            ),
-            "area": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Área"}
-            ),
-            "descricao": forms.Textarea(
-                attrs={"class": "form-control", "placeholder": "Descrição"}
-            ),
-            "turno": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Turno"}
-            ),
-            "estagiario": forms.Select(attrs={"class": "form-control"}),
-            "empresa": forms.Select(attrs={"class": "form-control"}),
-            "supervisor": forms.Select(attrs={"class": "form-control"}),
-            "instituicao": forms.Select(attrs={"class": "form-control"}),
-        }
-
-    def clean(self):
-        cleaned_data = super().clean()
-        estagio = Estagio(
-            data_inicio=cleaned_data.get("data_inicio"),
-            data_fim=cleaned_data.get("data_fim"),
-        )
-        estagio.clean()
-        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # Filtra o campo de supervisor baseado no valor de 'empresa' selecionada
-        if "empresa" in self.data:
-            empresa_id = self.data.get("empresa")
-            self.fields["supervisor"].queryset = Supervisor.objects.filter(
-                empresa_id=empresa_id
-            )
-        elif self.instance.pk and self.instance.empresa:
-            # Caso esteja editando um estágio existente (GET)
-            self.fields["supervisor"].queryset = self.instance.empresa.supervisores.all()
-        else:
-            self.fields["supervisor"].queryset = (
-                Supervisor.objects.none()
-            )  # Se não houver empresa, nenhum supervisor é exibido
-        # Preenche o campo de empresa com todas as empresas
         self.fields["empresa"].queryset = Empresa.objects.all()
+        empresa_id = self.data.get("empresa") or (self.instance.empresa.id if self.instance.pk else None)
+        if empresa_id:
+            self.fields["supervisor"].queryset = Supervisor.objects.filter(empresa_id=empresa_id)
+        else:
+            self.fields["supervisor"].queryset = Supervisor.objects.all()
 
     def save(self, commit=True):
         estagio = super().save(commit=False)
@@ -419,8 +339,6 @@ class EmpresaCadastroForm(forms.ModelForm):
     # Atualizando os dados do supervisor
         supervisor.empresa = empresa
         supervisor.email = self.cleaned_data['email']
-    
-        supervisor.email = self.cleaned_data["email"]
 
         if commit:
             supervisor.save()

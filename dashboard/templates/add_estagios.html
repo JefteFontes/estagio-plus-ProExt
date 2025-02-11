@@ -137,4 +137,27 @@
   <button class="btn-user-signup" type="submit" name="cadastrar_estagio">Cadastrar</button>
 </form>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $("#empresa-select").change(function () {
+        var empresaId = $(this).val();
+        if (empresaId) {
+            $.ajax({
+                url: "{% url 'get_supervisores' %}",
+                data: { empresa_id: empresaId },
+                success: function (data) {
+                    var supervisorSelect = $("#supervisor-select");
+                    supervisorSelect.empty();
+                    data.forEach(function (supervisor) {
+                        supervisorSelect.append(
+                            '<option value="">' + supervisor.primeiro_nome + ' ' + supervisor.sobrenome + '</option>'
+                        );
+                    });
+                },
+            });
+        } 
+    });
+});
+</script>
 {% endblock %}
