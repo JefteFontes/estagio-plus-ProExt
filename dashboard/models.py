@@ -193,17 +193,27 @@ class Estagio(models.Model):
                 raise ValidationError(
                     "O período de estágio não pode exceder 2 anos."
                 )
-            if self.status == StatusChoices.em_andamento and self.data_fim < date.today():
-                raise ValidationError(
-                    "Estágio ja deve estar concluido"
-                    )
-            if self.status == StatusChoices.concluido and self.data_fim > date.today():
-                raise ValidationError("Estágio ainda não foi concluido")
+            # if self.status == StatusChoices.em_andamento and self.data_fim < date.today():
+            #     raise ValidationError(
+            #         "Estágio ja deve estar concluido"
+            #         )
+            # if self.status == StatusChoices.concluido and self.data_fim > date.today():
+            #     raise ValidationError("Estágio ainda não foi concluido")
 
         if self.supervisor:
             estagios_count = Estagio.objects.filter(supervisor=self.supervisor).count()
             if estagios_count >= 20:
                 raise ValidationError("Um supervisor não pode ter mais de 20 estagiários.")
+
+    def save(self, *args, **kwargs):
+        # salvar automaticamente o status do estágio
+        if self.data_fim and self.data_inicio:
+            if self.data_fim < date.today():
+                self.status = StatusChoices.concluido
+            elif self.data_inicio <= date.today() <= self.data_fim:
+                self.status = StatusChoices.em_andamento
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.area} - {self.status}"
