@@ -1,10 +1,20 @@
 from django.urls import include, path
-from dashboard.views.empresa import cadastrar_empresa, editar_empresa, deletar_empresa
+from dashboard.views.empresa import cadastrar_empresa, editar_empresa, deletar_empresa, get_supervisores
 from dashboard.views.estagiarios import cadastrar_estagiario, editar_estagiario, deletar_estagiario
 from dashboard.views.pdfimport import importar_pdf
-from dashboard.views.estagios import detalhes_estagio
+from dashboard.views.estagios import detalhes_estagio, editar_estagio
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
-from dashboard.views.home import home, details, dashboard_instituicao, dashboard_empresa, dashboard_estagiario, dashboard_cursos, cadastrar_cursos, deletar_curso, editar_curso
+from dashboard.views.home import (
+    home,
+    details,
+    dashboard_instituicao,
+    dashboard_empresa,
+    dashboard_estagiario,
+    dashboard_cursos,
+    cadastrar_cursos,
+    deletar_curso,
+    editar_curso,
+)
 from dashboard.views.estagios import add_estagios, complementar_estagio
 
 
@@ -27,6 +37,7 @@ urlpatterns = [
     path('dashboard_empresa',dashboard_empresa, name='dashboard_empresa'),
     path('editar_empresa/<int:empresa_id>', editar_empresa, name='editar_empresa'),
     path('deletar_empresa/<int:empresa_id>', deletar_empresa, name='deletar_empresa'),
+    path("get_supervisores/", get_supervisores, name="get_supervisores"),
     
     path('cadastrar_estagiario', cadastrar_estagiario, name='cadastrar_estagiario'),
     path('editar_estagiario/<int:estagiario_id>', editar_estagiario, name='editar_estagiario'),
@@ -34,8 +45,8 @@ urlpatterns = [
     
     path('add-estagio', add_estagios, name='add_estagio'),
     path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),
-    path('complementar-estagio', complementar_estagio, name='complementar_estagio'),   
-    path('complementar-estagio', complementar_estagio, name='complementar_estagio'),    
+    path('complementar-estagio', complementar_estagio, name='complementar_estagio'), 
+    path('editar_estagio/<int:estagio_id>', editar_estagio, name='editar_estagio'),   
 
     
     path('importar-pdf', importar_pdf, name='importar_pdf'),

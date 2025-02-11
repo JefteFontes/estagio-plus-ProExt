@@ -1,8 +1,10 @@
 from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EmpresaCadastroForm
 from ..models import CoordenadorExtensao, Empresa, Endereco, Estagio, Supervisor
+
 
 @login_required
 def cadastrar_empresa(request):
@@ -55,11 +57,19 @@ def editar_empresa(request, empresa_id):
                 'empresa_nome': empresa.empresa_nome,
                 'empresa_cnpj': empresa.cnpj,
                 'empresa_razao_social': empresa.razao_social,
+                'empresa_atividades': empresa.atividades
             }
         )
 
     return render(request, 'cadastrar_empresa.html', {'form': form, 'empresa': empresa})
 
+def get_supervisores(request):
+    empresa_id = request.GET.get("empresa_id")
+    if empresa_id:
+        supervisores = Supervisor.objects.filter(empresa_id=empresa_id).values("id", "primeiro_nome","sobrenome")
+        return JsonResponse(list(supervisores), safe=False)
+    return JsonResponse([], safe=False)
+    
 
 
 def deletar_empresa(request, empresa_id):

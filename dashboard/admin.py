@@ -4,49 +4,65 @@ from . import models
 
 @admin.register(models.Endereco)
 class EnderecoAdmin(admin.ModelAdmin):
-    list_display = ('rua', 'numero', 'bairro', 'cidade', 'estado', 'cep')
-    search_fields = ('rua', 'bairro', 'cidade', 'estado', 'cep')
+    list_display = ("rua", "numero", "bairro", "cidade", "estado", "cep")
+    search_fields = ("rua", "bairro", "cidade", "estado", "cep")
 
 
 @admin.register(models.Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
-    list_display = ('empresa_nome', 'cnpj', 'razao_social', 'email', 'endereco')
-    search_fields = ('empresa_nome', 'cnpj', 'razao_social')
-    list_filter = ('endereco__cidade', 'endereco__estado')
+    list_display = ("empresa_nome", "cnpj", "razao_social", "email", "endereco")
+    search_fields = ("empresa_nome", "cnpj", "razao_social")
+    list_filter = ("endereco__cidade", "endereco__estado")
 
 
 @admin.register(models.Instituicao)
 class InstituicaoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'cnpj', 'email', 'telefone', 'endereco')
-    search_fields = ('nome', 'cnpj', 'email')
-    list_filter = ('endereco__cidade', 'endereco__estado')
+    list_display = ("nome", "cnpj", "email", "telefone", "endereco")
+    search_fields = ("nome", "cnpj", "email")
+    list_filter = ("endereco__cidade", "endereco__estado")
 
 
 @admin.register(models.Estagiario)
 class EstagiarioAdmin(admin.ModelAdmin):
-    list_display = ('primeiro_nome', 'sobrenome', 'cpf', 'matricula', 'email', 'status', 'instituicao')
-    search_fields = ('primeiro_nome', 'sobrenome', 'cpf', 'matricula', 'email')
-    list_filter = ('instituicao', 'status', 'endereco__cidade')
+    list_display = (
+        "primeiro_nome",
+        "sobrenome",
+        "cpf",
+        "matricula",
+        "email",
+        "status",
+        "instituicao",
+    )
+    search_fields = ("primeiro_nome", "sobrenome", "cpf", "matricula", "email")
+    list_filter = ("instituicao", "status", "endereco__cidade")
 
 
 @admin.register(models.CoordenadorExtensao)
 class CoordenadorExtensaoAdmin(admin.ModelAdmin):
-    list_display = ('primeiro_nome', 'sobrenome', 'cpf', 'email', 'instituicao')
-    search_fields = ('primeiro_nome', 'sobrenome', 'cpf', 'email')
-    list_filter = ('instituicao',)
+    list_display = ("primeiro_nome", "sobrenome", "cpf", "email", "instituicao")
+    search_fields = ("primeiro_nome", "sobrenome", "cpf", "email")
+    list_filter = ("instituicao",)
 
 
 @admin.register(models.Supervisor)
 class SupervisorAdmin(admin.ModelAdmin):
-    list_display = ('primeiro_nome', 'sobrenome', 'cpf', 'email', 'cargo', 'empresa')
-    search_fields = ('primeiro_nome', 'sobrenome', 'cpf', 'email', 'cargo')
-    list_filter = ('empresa',)
+    list_display = ("primeiro_nome", "sobrenome", "cpf", "email", "cargo", "empresa")
+    search_fields = ("primeiro_nome", "sobrenome", "cpf", "email", "cargo")
+    list_filter = ("empresa",)
+
 
 @admin.register(models.Cursos)
 class CursosAdmin(admin.ModelAdmin):
-    list_display = ('nome_curso', 'descricao','coordenador', 'email_coordenador', 'area')
-    search_fields = ('nome_curso', 'coordenador', 'email_coordenador')
-    list_filter = ('area',)
+    list_display = (
+        "nome_curso",
+        "descricao",
+        "coordenador",
+        "email_coordenador",
+        "area",
+    )
+    search_fields = ("nome_curso", "coordenador", "email_coordenador")
+    list_filter = ("area",)
+
 
 @admin.register(models.Estagio)
 class EstagioAdmin(admin.ModelAdmin):

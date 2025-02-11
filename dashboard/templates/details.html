@@ -4,84 +4,97 @@
 
 {% block content %}
 
-        <ul class="breadcrumb">
-            <li><a href="{% url 'dashboard_instituicao' %}">dashboard</a></li>
-            <li>detalhes</li>
-        </ul>
-        
-        
+    <ul class="breadcrumb">
+        <li><a href="{% url 'dashboard_instituicao' %}">dashboard</a>/ detalhes</li>
+    </ul>
 
-        <div class="header">
-            <h1>{{ estagio.estagiario }}</h1>
+    <div class="header">
+        <h1>{{ estagio.estagiario }}</h1>
 
-            <div class="info-right">
-                <span class="date">{{ estagio.data_inicio }}</span>
+        <div class="info-right">
+            <span class="date">restam {{ tempo_falta }}</span>
 
-                {% if estagio.status == 'True' %}
-                    <span class="status concluido">{{ estagio.status }}</span>
-                {% else %}
-                    <span class="status">{{ estagio.status }}</span>
-                {% endif %}
-            </div>
+            {% if estagio.status == 'True' %}
+                <span class="status concluido">{{ estagio.status }}</span>
+            {% else %}
+                <span class="status">{{ estagio.status }}</span>
+            {% endif %}
         </div>
-        
-            <hr>
-            <div class="info">
-                <div class="info-left">
-                    <strong>Nome do Aluno</strong>
-                    <span>{{ estagio.estagiario}}</span>
-                </div>
 
-                <div class="info-right">
-                    <strong>Empresa Concedente</strong>
-                    <span>{{ estagio.empresa }}</span>
-                </div>
-            </div>
-            <hr>
-            <div class="info">
-                <div class="info-left">
-                    <strong>Supervisor de Estágio</strong>
-                    <span>{{ estagio.supervisor }}</span>
-                </div>
+        <!-- Botões lado a lado no canto superior direito -->
+        <div class="d-flex justify-content-end gap-3">
+            <a href="{% url 'editar_estagio' estagio.id %}" class="btn btn-primary">Editar</a>
+            <a href="{% url 'dashboard_instituicao' %}" class="btn btn-danger">Voltar</a>
+        </div>
+    </div>
 
-                <div class="info-right">
-                    <strong>Duração do Estágio</strong>
-                    <span>{{ estagio.data_fim }}</span>
-                </div>
-            </div>
-            <hr>
+    <hr>
 
-            <div class="info">
-                <div class="describle">
-                    <strong><p>Atividades a serem desenvolvidas</p></strong>
+    <div class="info">
+        <div class="info-left">
+            <strong>Nome do Aluno</strong>
+            <span>{{ estagio.estagiario }}</span>
+        </div>
 
-                    <p>{{ estagio.descricao }}</p>
-                </div>
-            </div>
-            <hr>
-            <div class="info">
-                <div class="info-left">
-                    <strong>Valor da bolsa-estágio</strong>
-                    <span>R$ {{estagio.bolsa_estagio}}</span>
-                </div>
+        <div class="info-right">
+            <strong>Empresa Concedente</strong>
+            <span>{{ estagio.empresa }}</span>
+        </div>
+    </div>
+    <hr>
 
-                <div class="info-right">
-                    <strong>Valor do Auxilio-Transporte</strong>
-                    <span>R$ {{estagio.auxilio_transporte}}</span>
-                </div>
-            </div>
-            <hr>
-            
-            <div class="info">
-                <div class="info-left">
-                    <p class="Attachment-text">Documentos anexados</p>
-                    <img class = "image"src="{% static 'img/anexo.png' %}" alt="papel dobrado">
-                </div>
-            </div>
-            <hr>
-            <div class="return">
-                <a href="{% url 'dashboard_instituicao' %}" class="btn-return">Voltar</a>
-            </div>
+    <div class="info">
+        <div class="info-left">
+            <strong>Supervisor de Estágio</strong>
+            <span>{{ estagio.supervisor }}</span>
+        </div>
+
+        <div class="info-right">
+            <strong>Duração do Estágio</strong>
+            <span>{{ duracao }}</span>
+        </div>
+    </div>
+    <hr>
+
+    <div class="info">
+        <div class="describle">
+            <strong><p>Atividades a serem desenvolvidas</p></strong>
+            <p>{{ estagio.descricao }}</p>
+        </div>
+    </div>
+    <hr>
+
+    <div class="info">
+        <div class="info-left">
+            <strong>Valor da bolsa-estágio</strong>
+            <span>R$ {{ estagio.bolsa_estagio }}</span>
+        </div>
+
+        <div class="info-right">
+            <strong>Valor do Auxilio-Transporte</strong>
+            <span>R$ {{ estagio.auxilio_transporte }}</span>
+        </div>
+    </div>
+    <hr>
+
+    <div class="info">
+        <div class="info-left">
+            <p class="Attachment-text">Documentos anexados</p>
+            <img class="image" src="{% static 'img/anexo.png' %}" alt="papel dobrado">
+        </div>
+    </div>
+    <hr>
+
 {% endblock %}
 
-    
+<script>
+    $(document).ready(function() {
+        datahoje = new Date();
+        dataInicio = new Date('{{ estagio.data_inicio }}');
+        dataFim = new Date('{{ estagio.data_fim }}');
+        tempoPrevisto = dataFim - dataInicio;
+        tempoDecorrido = datahoje - dataInicio;
+        
+        
+    });
+    </script>

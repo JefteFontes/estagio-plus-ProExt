@@ -18,7 +18,9 @@ def cadastrar_instituicao(request):
             messages.success(request, 'Instituição cadastrada com sucesso!')
             return redirect('/login/')  # Redireciona para a página de login após o cadastro
         else:
-            print(form.errors)  # <-- Depuração para verificar os erros
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
+            messages.error(request, form.errors)
+            return redirect('cadastro_instituicao')
     else:
         form = CoordenadorCadastroForm()
     

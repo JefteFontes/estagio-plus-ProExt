@@ -4,80 +4,104 @@ from django.shortcuts import get_object_or_404, render, redirect
 import pdfplumber
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from dashboard.models import Empresa, Endereco, Estagiario, Estagio, StatusChoices, Supervisor, Cursos, TurnoChoices,  CoordenadorExtensao, TipoChoices
+from dashboard.models import (
+    Empresa,
+    Endereco,
+    Estagiario,
+    Estagio,
+    StatusChoices,
+    Supervisor,
+    Cursos,
+    TipoChoices,
+    TurnoChoices,
+    CoordenadorExtensao,
+)
 from dashboard.views.utils import parse_sections
 from dashboard.forms import CursosCadastroForm, CoordenadorEditForm, EstagiarioCadastroForm
 from django.db.models import Q
 
+
 def home(request):
     if request.user.is_authenticated:
-        return redirect('/dashboard/')
-    return render(request, 'cadastro/home.html')
+        return redirect("/dashboard/")
+    return render(request, "cadastro/home.html")
+
 
 def details(request):
-    return render(request, 'details.html')
+    return render(request, "details.html")
+
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    return render(request, "dashboard.html")
+
+
 def dashboard_cursos(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     instituicao = coordenador.instituicao
 
-    search = request.GET.get('search', '')
-    area = request.GET.get('area', '')
+    search = request.GET.get("search", "")
+    area = request.GET.get("area", "")
     cursos = Cursos.objects.filter(instituicao=instituicao)
 
     if search:
         cursos = cursos.filter(nome_curso__icontains=search)
     if area:
         cursos = cursos.filter(area=area)
-    
-    areas = Cursos.objects.values_list('area', flat=True).distinct()
-    context = { 
-        'cursos': cursos,
-        'areas': areas,
+
+    areas = Cursos.objects.values_list("area", flat=True).distinct()
+    context = {
+        "cursos": cursos,
+        "areas": areas,
     }
-    return render(request, 'dashboard_cursos.html', context)
+    return render(request, "dashboard_cursos.html", context)
+
+
 def dashboard_empresa(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     instituicao = coordenador.instituicao
 
-    search = request.GET.get('search', '')
-    cidade = request.GET.get('cidade', '')
+    search = request.GET.get("search", "")
+    cidade = request.GET.get("cidade", "")
     empresas = Empresa.objects.filter(instituicao=instituicao)
 
     if search:
-        empresas = empresas.filter(empresa_nome__icontains=search) | empresas.filter(cnpj__icontains=search)
+        empresas = empresas.filter(empresa_nome__icontains=search) | empresas.filter(
+            cnpj__icontains=search
+        )
     if cidade:
         empresas = empresas.filter(endereco__cidade__icontains=cidade)
-    
-    cidades = Empresa.objects.values_list('endereco__cidade', flat=True).distinct()
+
+    cidades = Empresa.objects.values_list("endereco__cidade", flat=True).distinct()
     context = {
-        'empresas': empresas,
-        'cidades': cidades,
+        "empresas": empresas,
+        "cidades": cidades,
     }
-    return render(request, 'dashboard_empresa.html', context)
+    return render(request, "dashboard_empresa.html", context)
+
+
 def dashboard_estagiario(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     instituicao = coordenador.instituicao
 
-    search = request.GET.get('search', '')
-    curso = request.GET.get('curso', '')
-    search_matricula = request.GET.get('search-matricula', '')
+    search = request.GET.get("search", "")
+    curso = request.GET.get("curso", "")
+    search_matricula = request.GET.get("search-matricula", "")
 
     estagiarios = Estagiario.objects.filter(instituicao=instituicao)
     if search:
-        estagiarios = estagiarios.filter(Q(primeiro_nome__icontains=search) | Q(sobrenome__icontains=search))
+        estagiarios = estagiarios.filter(
+            Q(primeiro_nome__icontains=search) | Q(sobrenome__icontains=search)
+        )
     if curso:
         estagiarios = estagiarios.filter(curso__nome_curso__icontains=curso)
     if search_matricula:
         estagiarios = estagiarios.filter(matricula__startswith=search_matricula)
-    
-    cursos = Cursos.objects.values_list('nome_curso', flat=True).distinct()
+
+    cursos = Cursos.objects.values_list("nome_curso", flat=True).distinct()
 
     context = {
-        'estagiarios': estagiarios,
-        'cursos': cursos,
+        "estagiarios": estagiarios,
+        "cursos": cursos,
     }
     return render(request, 'dashboard_estagiario.html', context)
 
@@ -88,80 +112,84 @@ def dashboard_instituicao(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     instituicao = coordenador.instituicao
 
-    if request.method == 'POST' and request.FILES.get('pdf_file'):
-        pdf_file = request.FILES['pdf_file']
+    if request.method == "POST" and request.FILES.get("pdf_file"):
+        pdf_file = request.FILES["pdf_file"]
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
             temp_file.write(pdf_file.read())
             file_path = temp_file.name
 
         try:
             with pdfplumber.open(file_path) as pdf:
-                text = "\n".join(page.extract_text() or '' for page in pdf.pages)
+                text = "\n".join(page.extract_text() or "" for page in pdf.pages)
 
                 sections = parse_sections(text)
-                print(f"Seções extraídas: {sections.keys()}")  # Log das seções extraídas
+                print(
+                    f"Seções extraídas: {sections.keys()}"
+                )  # Log das seções extraídas
             print("- - - - - - - - - - - - - - - - - - - - - -")
 
             # Tratamento dos dados da empresa
-            empresa_data = sections.get('empresa', {})
+            empresa_data = sections.get("empresa", {})
             if not empresa_data:
                 errors.append("Dados da empresa não encontrados no PDF.")
                 raise Exception("Erro: Dados da empresa ausentes no PDF.")
 
             try:
-                empresa = Empresa.objects.get(email=empresa_data.get('email', ''))
-                print(f"Empresa já existente: {empresa.nome}")  # Log da empresa encontrada
+                empresa = Empresa.objects.get(email=empresa_data.get("email", ""))
+                print(
+                    f"Empresa já existente: {empresa.nome}"
+                )  # Log da empresa encontrada
             except Empresa.DoesNotExist:
                 endereco_empresa = Endereco.objects.create(
-                    rua=empresa_data.get('rua', ''),
-                    numero=empresa_data.get('numero', ''),
-                    bairro=empresa_data.get('bairro', ''),
-                    cidade=empresa_data.get('cidade', ''),
-                    estado=empresa_data.get('estado', ''),
-                    cep=empresa_data.get('cep', ''),
+                    rua=empresa_data.get("rua", ""),
+                    numero=empresa_data.get("numero", ""),
+                    bairro=empresa_data.get("bairro", ""),
+                    cidade=empresa_data.get("cidade", ""),
+                    estado=empresa_data.get("estado", ""),
+                    cep=empresa_data.get("cep", ""),
                 )
                 empresa = Empresa.objects.create(
-                    nome=empresa_data.get('nome', ''),
-                    cnpj=empresa_data.get('cnpj', ''),
-                    razao_social=empresa_data.get('razao_social', ''),
+                    nome=empresa_data.get("nome", ""),
+                    cnpj=empresa_data.get("cnpj", ""),
+                    razao_social=empresa_data.get("razao_social", ""),
                     endereco=endereco_empresa,
-                    email=empresa_data.get('email', ''),
+                    email=empresa_data.get("email", ""),
                 )
 
             # Tratamento dos dados do estagiário
-            estagiario_data = sections.get('estagiário', {})
+            estagiario_data = sections.get("estagiário", {})
             if not estagiario_data:
                 errors.append("Dados do estagiário não encontrados no PDF.")
                 raise Exception("Erro: Dados do estagiário ausentes no PDF.")
 
             endereco_estagiario = Endereco.objects.create(
-                rua=estagiario_data.get('rua', ''),
-                numero=estagiario_data.get('numero', ''),
-                bairro=estagiario_data.get('bairro', ''),
-                cidade=estagiario_data.get('cidade', ''),
-                estado=estagiario_data.get('estado', ''),
-                cep=estagiario_data.get('cep', ''),
+                rua=estagiario_data.get("rua", ""),
+                numero=estagiario_data.get("numero", ""),
+                bairro=estagiario_data.get("bairro", ""),
+                cidade=estagiario_data.get("cidade", ""),
+                estado=estagiario_data.get("estado", ""),
+                cep=estagiario_data.get("cep", ""),
             )
 
             estagiario = Estagiario.objects.create(
-                primeiro_nome=estagiario_data.get('primeiro_nome', ''),
-                sobrenome=estagiario_data.get('sobrenome', ''),
-                cpf=estagiario_data.get('cpf', ''),
-                matricula=estagiario_data.get('matricula', ''),
-                curso=estagiario_data.get('curso', ''),
-                telefone=estagiario_data.get('telefone', ''),
-                email=estagiario_data.get('email', ''),
+                primeiro_nome=estagiario_data.get("primeiro_nome", ""),
+                sobrenome=estagiario_data.get("sobrenome", ""),
+                cpf=estagiario_data.get("cpf", ""),
+                matricula=estagiario_data.get("matricula", ""),
+                curso=estagiario_data.get("curso", ""),
+                telefone=estagiario_data.get("telefone", ""),
+                email=estagiario_data.get("email", ""),
                 endereco=endereco_estagiario,  # Associando o endereço ao estagiário
             )
 
             # Tratamento dos dados do estágio
-            estagio_data = sections.get('estágio', {})
+            estagio_data = sections.get("estágio", {})
             if not estagio_data:
                 errors.append("Dados do estágio não encontrados no PDF.")
                 raise Exception("Erro: Dados do estágio ausentes no PDF.")
 
-            supervisor = Supervisor.objects.get(nome=estagio_data.get('supervisor', ''))
+            supervisor = Supervisor.objects.get(nome=estagio_data.get("supervisor", ""))
             Estagio.objects.create(
                 bolsa_estagio=estagio_data.get('bolsa', ''),
                 area=estagio_data.get('area', ''),
@@ -198,7 +226,7 @@ def dashboard_instituicao(request):
     if tipo:
         estagios = estagios.filter(tipo_estagio=tipo)
 
-    areas = Estagio.objects.values_list('area', flat=True).distinct()
+    areas = Estagio.objects.values_list("area", flat=True).distinct()
     status_choices = [choice[0] for choice in StatusChoices.choices]
     turnos = [choice[0] for choice in TurnoChoices.choices]
     tipos = [choice[0] for choice in TipoChoices.choices]
@@ -213,30 +241,38 @@ def dashboard_instituicao(request):
         'instituicao': instituicao,
         'errors': errors,
     }
-    return render(request, 'dashboard_instituicao.html', context)
+    return render(request, "dashboard_instituicao.html", context)
+
 
 def cadastrar_cursos(request):
     coordenador_extensao = CoordenadorExtensao.objects.get(user=request.user)
-    
-    if request.method == 'POST':
-        form = CursosCadastroForm(coordenador_extensao=coordenador_extensao, data=request.POST)
+
+    if request.method == "POST":
+        form = CursosCadastroForm(
+            coordenador_extensao=coordenador_extensao, data=request.POST
+        )
         if form.is_valid():
             form.save()
-            messages.success(request, 'Curso cadastrado com sucesso!')
-            return redirect('dashboard_cursos')
+            messages.success(request, "Curso cadastrado com sucesso!")
+            return redirect("dashboard_cursos")
     else:
         form = CursosCadastroForm()
 
-    return render(request, 'cadastrar_cursos.html', {'form': form}, )
+    return render(
+        request,
+        "cadastrar_cursos.html",
+        {"form": form},
+    )
+
 
 def editar_curso(request, curso_id):
     curso = get_object_or_404(Cursos, id=curso_id)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CursosCadastroForm(request.POST, instance=curso)
         if form.is_valid():
             form.save()
-            return redirect('dashboard_cursos')
+            return redirect("dashboard_cursos")
     else:
         form = CursosCadastroForm(instance=curso)
     return render(request, 'cadastrar_cursos.html', {'form': form, 'curso': curso})
@@ -257,13 +293,15 @@ def deletar_curso(request, curso_id):
 def editar_perfil(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
 
-    if request.method == 'POST':
-        form = CoordenadorEditForm(request.POST, coordenador=coordenador, instance=coordenador)
+    if request.method == "POST":
+        form = CoordenadorEditForm(
+            request.POST, coordenador=coordenador, instance=coordenador
+        )
         if form.is_valid():
             form.save()
-            messages.success(request, 'Seu perfil foi atualizado com sucesso!')
-            return redirect('dashboard')
+            messages.success(request, "Seu perfil foi atualizado com sucesso!")
+            return redirect("dashboard")
     else:
         form = CoordenadorEditForm(coordenador=coordenador, instance=coordenador)
 
-    return render(request, 'dashboard/editar_perfil.html', {'form': form})
+    return render(request, "dashboard/editar_perfil.html", {"form": form})
