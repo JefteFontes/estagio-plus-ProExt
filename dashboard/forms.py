@@ -93,7 +93,7 @@ class EstagioCadastroForm(forms.ModelForm):
     )
     # supervisor somente os da empresa selecionada
     supervisor = forms.ModelChoiceField(
-        queryset=Supervisor.objects.none(), widget=forms.Select(attrs={"class": "form-select", "id": "supervisor-select"}), required=False
+        queryset=Supervisor.objects.all(), widget=forms.Select(attrs={"class": "form-select", "id": "supervisor-select"}), required=False
     )
     instituicao = forms.ModelChoiceField(
         queryset=Instituicao.objects.all(), widget=forms.Select(attrs={"class": "form-select"})
@@ -107,7 +107,7 @@ class EstagioCadastroForm(forms.ModelForm):
         model = Estagio
         fields = [
             "bolsa_estagio", "auxilio_transporte", "area", "status", "descricao",
-            "data_inicio", "data_fim", "turno", "estagiario", "empresa", "supervisor", "instituicao"
+            "data_inicio", "data_fim", "turno", "estagiario", "empresa", "supervisor", "instituicao", "orientador"
         ]
         widgets = {
             "bolsa_estagio": forms.NumberInput(
@@ -129,6 +129,8 @@ class EstagioCadastroForm(forms.ModelForm):
             "empresa": forms.Select(attrs={"class": "form-control"}),
             "supervisor": forms.Select(attrs={"class": "form-control"}),
             "instituicao": forms.Select(attrs={"class": "form-control"}),
+            "orientador": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Orientador"})
         }
 
     def clean(self):
