@@ -10,37 +10,50 @@
     {% endfor %}
 {% endif %}
 
-<div class="container">
+<div class="container-fluid">
     <h2>Cursos</h2>
-    <div class="add-button mb-3">
+    <div class="add-button mb-4">
         <a href="{% url 'cadastrar_cursos' %}" class="btn btn-success">Cadastrar Novo Curso</a>
     </div>
-    <form method="GET" class="mb-3">
-        <div class="filtro-linha">
-            <div class="col-form-curso">
-                <input type="text" name="search" class="form-control" placeholder="Buscar por nome do curso" value="{{ request.GET.search }}">
+    <!--filtros-->
+    <form method="GET">
+        <div class="row">
+            <div class="col-md-4">
+                <input 
+                    type="text" 
+                    name="search" 
+                    class="form-control" 
+                    placeholder="Buscar por nome do curso" 
+                    value="{{ request.GET.search }}"
+                >
             </div>
-            <div class="col-form-curso">
+    
+            <div class="col-md-4">
                 <select name="area" class="form-select">
                     <option value="">Todas as Áreas</option>
                     {% for area in areas %}
-                        <option value="{{ area }}" {% if area == request.GET.area %}selected{% endif %}>{{ area }}</option>
+                        <option value="{{ area }}" {% if area == request.GET.area %}selected{% endif %}>
+                            {{ area }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-form-curso">
-                <button type="submit" class="btn btn-primary">Filtrar</button>
-                <a href="{% url 'dashboard_cursos' %}" class="btn btn-secondary">Limpar</a>
+    
+            <div class="col-md-4 d-flex">
+                <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-filter"></i> Filtrar</button>
             </div>
         </div>
     </form>
+        <hr>
+    <!--listagem de cursos-->
     <table class="table table-bordered">
-        <thead>
+        <thead class="table-success">
             <tr>
                 <th>Nome</th>
                 <th>Area</th>
                 <th>Coordenador</th>
                 <th>Email</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -51,8 +64,8 @@
                     <td>{{ curso.coordenador }}</td>
                     <td>{{ curso.email_coordenador }}</td>
                     <td>
-                        <a href="{% url 'editar_curso' curso.id %}" class="btn btn-primary">Editar</a>
-                        <a href="{% url 'deletar_curso' curso.id %}" class="btn btn-danger">Deletar</a>
+                        <a href="{% url 'editar_curso' curso.id %}" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Editar</a>
+                        <a href="{% url 'deletar_curso' curso.id %}" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Deletar</a>
                         
                     </td>
                 </tr>

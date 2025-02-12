@@ -15,22 +15,38 @@ def add_estagios(request):
 
         if form.is_valid():
             print(form.cleaned_data)
-            form.save()  # Salva o Estágio no banco de dados
+            form.save()  
             messages.success(request, "Estágio cadastrado com sucesso!")
             return redirect(
                 "dashboard_instituicao"
-            )  # Redireciona para a página de sucesso
+            ) 
         else:
             print("Formulário inválido")
             print(
                 form.errors
-            )  # Exibe erros no console, caso o formulário não seja válido
+            )
     else:
-        form = EstagioCadastroForm()  # Cria um formulário vazio para GET
+        form = EstagioCadastroForm()  
 
     return render(request, "add_estagios.html", {"form": form})
 
 
+def editar_estagio(request, estagio_id):
+    estagio = get_object_or_404(Estagio, id=estagio_id) 
+
+    if request.method == "POST":
+        print("Dados do formulário:", request.POST)
+        form = EstagioCadastroForm(request.POST, instance=estagio) 
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Estágio atualizado com sucesso!")
+            return redirect("dashboard_instituicao")
+        else:
+            messages.error(request, "Erro ao atualizar o estágio. Verifique os dados.")
+    else:
+        form = EstagioCadastroForm(instance=estagio)
+
+    return render(request, "add_estagios.html", {"form": form, "estagio": estagio})
 
 
 def detalhes_estagio(request):

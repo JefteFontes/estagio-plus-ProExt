@@ -9,45 +9,49 @@
         </div>
     {% endfor %}
 {% endif %}
-<div class="container">
+<div class="container-fluid">
     <h2>Estagiários</h2>
     
     <!-- Botão para cadastrar novo estagiário -->
     <div class="add-button mb-3">
         <a href="{% url 'cadastrar_estagiario' %}" class="btn btn-success">Cadastrar Novo Estagiário</a>
     </div>
-
+    <!-- Filtro de estagiários -->
     <form method="get">
         <div class="row">
             <div class="col-md-3">
-        <input type="text" name="search" placeholder="Buscar por nome">
+                <input type="text" name="search" class="form-control" placeholder="Buscar por nome">
             </div>
+            
             <div class="col-md-3">
-        <input type="text" name="search-matricula" placeholder="Buscar por matricula">
+                <input type="text" name="search-matricula" class="form-control" placeholder="Buscar por matrícula">
             </div>
+            
             <div class="col-md-3">
-        <select name="curso">
-            <option value="">Todos os cursos</option>
-            {% for curso in cursos %}
-            <option value="{{ curso }}">{{ curso }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-3">
-        <button class="btn btn-primary" type="submit">Filtrar</button>
-    </div>
-</div>
-
+                <select name="curso" class="form-select">
+                    <option value="">Todos os cursos</option>
+                    {% for curso in cursos %}
+                        <option value="{{ curso }}">{{ curso }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+    
+            <div class="col-md-3 d-flex">
+                <button class="btn btn-primary w-100" type="submit"><i class="fa-solid fa-filter"></i> Filtrar</button>
+            </div>
+        </div>
     </form>
+    <hr>
     <!-- Lista de estagiários -->
     {% if estagiarios %}
         <table class="table table-bordered">
-            <thead>
+            <thead class="table-success">
                 <tr>
                     <th>Nome</th>
                     <th>Curso</th>
                     <th>Matricula</th>
                     <th>Email</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,8 +65,8 @@
 
                         
                         <td>
-                            <a href="{% url 'editar_estagiario' estagiario.id %}" class="btn btn-primary">Editar</a>
-                            <a href="{% url 'deletar_estagiario' estagiario.id %}" class="btn btn-danger">Deletar</a>
+                            <a href="{% url 'editar_estagiario' estagiario.id %}" class="btn btn-primary"><i class="fa-solid fa-pen"></i>Editar</a>
+                            <a href="{% url 'deletar_estagiario' estagiario.id %}" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Deletar</a>
                         </td>
                     </tr>
                 {% endfor %}

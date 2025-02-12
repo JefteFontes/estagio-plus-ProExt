@@ -31,7 +31,6 @@ class Instituicao(models.Model):
     email = models.EmailField(unique=True)
     telefone = models.CharField(
         max_length=20,
-        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
     )
     endereco = models.ForeignKey(
         Endereco, on_delete=models.PROTECT, null=True, blank=True
@@ -131,10 +130,7 @@ class Supervisor(models.Model):
         validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
     )
     email = models.EmailField(unique=True)
-    telefone = models.CharField(
-        max_length=20,
-        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
-    )
+    telefone = models.CharField(max_length=20)
     primeiro_nome = models.CharField(max_length=50)
     sobrenome = models.CharField(max_length=50)
     cargo = models.CharField(max_length=254)
@@ -179,28 +175,9 @@ class Estagio(models.Model):
     empresa = models.ForeignKey(Empresa, on_delete=models.PROTECT, null=True, blank=True)
     supervisor = models.ForeignKey(Supervisor, on_delete=models.PROTECT, null=True, blank=True)
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT, null=True, blank=True)
+    orientador = models.TextField(max_length=100, null=True, blank=True)
     def clean(self):
-        if self.data_fim and self.data_inicio:
-            if self.data_fim <= self.data_inicio:
-                raise ValidationError(
-                    "DATA DE TÉRMINO deve ser maior que a DATA INÍCIO."
-                )
-            if self.data_fim > self.data_inicio + timedelta(days=730):
-                raise ValidationError(
-                    "O período de estágio não pode exceder 2 anos."
-                )
-            if self.status == StatusChoices.em_andamento and self.data_fim < date.today():
-                raise ValidationError(
-                    "Estágio ja deve estar concluido"
-                    )
-            if self.status == StatusChoices.concluido and self.data_fim > date.today():
-                raise ValidationError("Estágio ainda não foi concluido")
-
-        if self.supervisor:
-            estagios_count = Estagio.objects.filter(supervisor=self.supervisor).count()
-            if estagios_count >= 20:
-                raise ValidationError("Um supervisor não pode ter mais de 20 estagiários.")
-
+        return f"{self.area} - {self.status}"
     def __str__(self):
         return f"{self.area} - {self.status}"
 

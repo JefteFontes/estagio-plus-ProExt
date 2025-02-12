@@ -30,75 +30,80 @@
     </div>
 </div>
 
-<form method="get" class = "mb-4">
-    <div class = "row">
+<!--FILTRO DE ESTAGIOS-->
+<form method="get">
+    <div class="row">
         <div class="col-md-3">
-            <select name="area">
+            <select name="area" class="form-select">
                 <option value="">Todas as áreas</option>
                 {% for area in areas %}
-                <option value="{{ area }}">{{ area }}</option>
+                    <option value="{{ area }}">{{ area }}</option>
                 {% endfor %}
             </select>
         </div>
+
         <div class="col-md-3">
-            <select name="status" class = "col-md-5">
+            <select name="status" class="form-select">
                 <option value="">Todos os status</option>
                 {% for status in status_choices %}
-                <option value="{{ status }}">{{ status }}</option>
+                    <option value="{{ status }}">{{ status }}</option>
                 {% endfor %}
             </select>
         </div>
-        
+
         <div class="col-md-3">
-            <select name="turno" class = "col-md-5">
+            <select name="turno" class="form-select">
                 <option value="">Todos os turnos</option>
                 {% for turno in turnos %}
-                <option value="{{ turno }}">{{ turno }}</option>
+                    <option value="{{ turno }}">{{ turno }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-3">
-            <button class = "col-md-4 btn btn-primary" type="submit">Filtrar</button>
+
+        <div class="col-md-3 d-flex">
+            <button class="btn btn-primary w-100" type="submit"><i class="fa-solid fa-filter"></i> Filtrar</button>
         </div>
     </div>
 </form>
-    {% for estagio in estagios %}
-        <div class="vaga-item">
-            <p><strong>{{ estagio.empresa }}</strong></p>
-            <p>{{ estagio.estagiario }}</p>
-            <p><i class="fa fa-calendar"></i> {{ estagio.data_inicio }}</p>
-            
-            <p><i class="fa fa-calendar"></i> {{ estagio.data_fim }}</p>
-            {% if vaga.status == 'True' %}
-                <span class="status concluido">{{estagio.status}}</span>
-            {% else %}
-                <span class="status">{{ estagio.status }}</span>
-            {% endif %}
-            <a class="details-link" href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}">Ver detalhes</a>
-        </div>
-    {% endfor %}
-<div>
-    <div class="form-coordenador vaga-item">
-        {% if errors %}
-        <div class="alert alert-danger">
-            <ul>
-            {% for error in errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-        <div class="form-linha1">
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="form_type" value="importar_pdf">
-                <label for="pdf_file">Importar Termo de Estágio (PDF):</label>
-                <div class="form-linha1">
-                    <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf" required />
-                    <button type="submit" class="btn-user-signup">Importar</button>
-                </div>
-            </form>
-        </div>
+<hr>
+    <!--LISTAGEM DE ESTAGIOS CADASTRADOS-->
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-success">
+                <tr>
+                    <th>#</th>
+                    <th>Estagiário</th>
+                    <th>Empresa</th>
+                    <th>Supervisor</th>
+                    <th>Início</th>
+                    <th>Término</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estagio in estagios %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ estagio.estagiario }}</td>
+                    <td>{{ estagio.empresa }}</td>
+                    <td>{{ estagio.supervisor }}</td>
+                    <td>{{ estagio.data_inicio|date:"d/m/Y" }}</td>
+                    <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if estagio.status == 'Concluido' %}
+                            <span class="badge bg-success">Concluido</span>
+                        {% else %}
+                            <span class="badge bg-danger">Em andamento</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'editar_estagio' estagio.id %}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i> Editar</a>
+                        <a class="details-link" href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}">Ver detalhes</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}

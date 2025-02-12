@@ -98,6 +98,10 @@ class EstagioCadastroForm(forms.ModelForm):
     instituicao = forms.ModelChoiceField(
         queryset=Instituicao.objects.all(), widget=forms.Select(attrs={"class": "form-select"})
     )
+    orientador = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Orientador"})
+    )
 
     class Meta:
         model = Estagio
@@ -330,7 +334,7 @@ class EmpresaCadastroForm(forms.ModelForm):
     cidade = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cidade (ex: Parnaíba)'}))
     estado = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Estado (ex: PI)'}))
     cep = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CEP (ex: 12345-678)'}))
-
+    complemento = forms.CharField(max_length=200, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Complemento'}))
     # Campos para dados da empresa
     empresa_nome = forms.CharField(max_length=250, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da Empresa (ex: Empresa XYZ)'}))
     empresa_cnpj = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNPJ (ex: 12.345.678/0001-90)'}))

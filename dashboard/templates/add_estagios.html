@@ -113,7 +113,7 @@
         {% endfor %}
       </div>
       <div class="form-inicial {% if form.status.errors %}has-error{% endif %}">
-        <label for="{{ form.status.id_for_label }}" class="form-label">Ativo:</label>
+        <label for="{{ form.status.id_for_label }}" class="form-label">Status:</label>
         {{ form.status }}
         {% for error in form.status.errors %}
         <div class="error-message">{{ error }}</div>
@@ -124,6 +124,8 @@
   <button class="btn-user-signup" type="submit" name="cadastrar_estagio">Cadastrar</button>
 </form>
 </div>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
@@ -147,65 +149,33 @@ $(document).ready(function () {
     });
 });
 </script>
-{% endblock %}
-
-
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
-  $(document).ready(function () {
-    $("#empresa-select").change(function () {
-        var empresaId = $(this).val();
-        if (empresaId) {
-            $.ajax({
-                url: "{% url 'get_supervisores' %}",
-                data: { empresa_id: empresaId },
-                success: function (data) {
-                    var supervisorSelect = $("#supervisor-select");
-                    supervisorSelect.empty();
-                    data.forEach(function (supervisor) {
-                        supervisorSelect.append(
-                            '<option value="">' + supervisor.primeiro_nome + ' ' + supervisor.sobrenome + '</option>'
-                        );
-                    });
-                },
-            });
-        } 
-    });
-});
-</script>
-<script>
-  $(document).ready(function(){
-    $("#form.data_fim").change(function(){
-      const dataInicio = $("#id_data_inicio").val();
-      const dataFim = $(this).val();
-      const dataHoje = new Date();
-      const status = $("#id_status").val();
+  document.addEventListener("DOMContentLoaded", function () {
+    let dataFimInput = document.getElementById("{{ form.data_fim.id_for_label }}");
+    let statusInput = document.getElementById("{{ form.status.id_for_label }}");
 
-      dataHoje = dataHoje.toISOString().split("T")[0];
-      if (dataInicio && dataFim) {
-        const dataInicioObj = new Date(dataInicio);
-        const dataFimObj = new Date(dataFim);
-
-        if (dataFimObj < dataInicioObj) {
-          alert("Data de término deve ser maior que a data de início!");
-          $(this).val("");
-        }
-        elif(dataFimObj < dataHoje){
-          status = 1;
-          $("#id_status").val(status);
-        elif(dataFimObj > dataHoje){
-          status = 0;
-          $("#id_status").val(status);
-                  }
-
+    function atualizarStatus() {
+      if (dataFimInput.value) {
+        let dataFim = new Date(dataFimInput.value);
+        dataFim = new Date(dataFim.getFullYear(), dataFim.getMonth(), dataFim.getDate());
+        console.log(dataFim);
+        let hoje = new Date();
+        hoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+        console.log(hoje);
+        if (dataFim < hoje) {
+          statusInput.value = "Concluido";
+      }if (dataFim > hoje) {
+          statusInput.value = "Em andamento";
       }
-    });
-  })
-  </script>
-  <script>
+    }
+  }
+  dataFimInput.addEventListener("change", atualizarStatus);
+  atualizarStatus();
+});
+
+</script>
+
+<script>
   $(document).ready(function(){
     $("#id_bolsa_estagio").change(function(){
       const bolsa = $(this).val();
@@ -215,9 +185,10 @@ $(document).ready(function () {
       } })
     })
   </script>
-      
+  
+   <script>   
   $(document).ready(function(){
-    $("#form.auxilio_transporte").change(function(){
+    $("#id_auxilio_transporte").change(function(){
       const bolsa = $(this).val();
       if(bolsa < 0){
         alert("Auxílio transporte deve ser maior ou igual a 0!");
@@ -226,3 +197,4 @@ $(document).ready(function () {
     })
  
 </script>
+{% endblock %}

@@ -480,15 +480,16 @@ li.actived a {
 }
 
 .status {
-    background-color: #086b17;
-    color: white;
+    color: green;
+    font-weight: bold;
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 12px;
 }
 
 .concluido {
-    background-color: #2d8538;
+    background-color: #757575;
+    color:black;
 }
 
 
