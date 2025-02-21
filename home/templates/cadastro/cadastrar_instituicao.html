@@ -3,50 +3,52 @@
 {% block content %}
     <div class="cadastro-container-home">
         <h2>Cadastro de Instituição de Ensino</h2>
+        <div id="error-alert" class="alert alert-danger d-none" role="alert"></div>
         <form method="post">
             {% csrf_token %}
-            <div class = "form-linha1">
-                <div class = "form-inicial">
+            <div class="form-linha1">
+                <div class="form-inicial">
                     <label for="{{ form.instituicao_cnpj.id_for_label }}" class="form-label">CNPJ:</label>
                     {{ form.instituicao_cnpj }}
+                    <span id="cnpj-error" class="error-message"></span>
                 </div>
-                <div class = "form-inicial">
+                <div class="form-inicial">
                     <label for="{{ form.instituicao_nome.id_for_label }}" class="form-label">Nome da Instituição:</label>
                     {{ form.instituicao_nome }}
                 </div>
-                <div class = "form-inicial">
+                <div class="form-inicial">
                     <label for="{{ form.instituicao_telefone.id_for_label }}" class="form-label">Telefone:</label>
                     {{ form.instituicao_telefone }}
                 </div>
             </div>
             <p>Endereço:</p>
-            <div class = "form-endereco">
+            <div class="form-endereco">
                 <label for="{{ form.cep.id_for_label }}" class="form-label">CEP:</label>
                 {{ form.cep }}
-                <div class = "form-linha1">
-                    <div class = "form-inicial">
+                <div class="form-linha1">
+                    <div class="form-inicial">
                         <label for="{{ form.rua.id_for_label }}" class="form-label">Rua:</label>
                         {{ form.rua }}
                     </div>
-                    <div class = "form-inicial">
+                    <div class="form-inicial">
                         <label for="{{ form.numero.id_for_label }}" class="form-label">Numero:</label>
                         {{ form.numero }}
                     </div>
-                    <div class = "form-inicial">
+                    <div class="form-inicial">
                         <label for="{{ form.bairro.id_for_label }}" class="form-label">Bairro:</label>
                         {{ form.bairro }}
                     </div>
                 </div>
-                <div class = "form-linha1">
-                    <div class = "form-inicial">
+                <div class="form-linha1">
+                    <div class="form-inicial">
                         <label for="{{ form.cidade.id_for_label }}" class="form-label">Cidade:</label>
                         {{ form.cidade }}
                     </div>
-                    <div class = "form-inicial">
+                    <div class="form-inicial">
                         <label for="{{ form.estado.id_for_label }}" class="form-label">Estado:</label>
                         {{ form.estado }}
                     </div>
-                    <div class = "form-inicial">
+                    <div class="form-inicial">
                         <label for="{{ form.complemento.id_for_label }}" class="form-label">Complemento:</label>
                         {{ form.complemento }}
                     </div>
@@ -56,22 +58,23 @@
                 <p>Coordenador de Extensão:</p>
                 <div class="form-coordenador">
                     <div class="form-linha1">
-                        <div class = "form-inicial">
+                        <div class="form-inicial">
                             <label for="{{ form.primeiro_nome.id_for_label }}" class="form-label">Primeiro Nome:</label>
                             {{ form.primeiro_nome }}
                         </div>
-                        <div class = "form-inicial">
+                        <div class="form-inicial">
                             <label for="{{ form.sobrenome.id_for_label }}" class="form-label">Sobrenome:</label>
                             {{ form.sobrenome }}
                         </div>
-                        <div class = "form-inicial">
+                        <div class="form-inicial">
                             <label for="{{ form.cpf.id_for_label }}" class="form-label">CPF:</label>
                             {{ form.cpf }}
+                            <span id="cpf-error" class="error-message"></span>
                         </div>
                     </div>
-                    <div class = "form-inicial">
+                    <div class="form-inicial">
                         <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
-                        {{ form.email}}
+                        {{ form.email }}
                     </div>
                 </div>
             </div>
@@ -79,9 +82,10 @@
         </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    
+
     <script>
-
-
         $(document).ready(function() {
             $('#id_instituicao_telefone').mask('(00) 00000-0000');
             $('#id_cep').on('blur', function() {
@@ -109,31 +113,83 @@
                 }
             });
         });
-    
-        $(document).ready(function() {
-            $('#id_instituicao_cnpj').on('blur', function() {
-                let cnpj = $(this).val().replace(/\D/g, ''); // Remove caracteres não numéricos
         
+        $(document).ready(function() {
+            $('#id_instituicao_telefone').mask('(00) 00000-0000');
+
+            function showError(inputId, message) {
+                $('#' + inputId + '-error').text(message).css('color', 'red');
+            }
+
+            function clearError(inputId) {
+                $('#' + inputId + '-error').text('');
+            }
+
+            function showBootstrapError(message) {
+                $('#error-alert').removeClass('d-none').text(message);
+            }
+
+            function clearBootstrapError() {
+                $('#error-alert').addClass('d-none').text('');
+            }
+
+            $('#id_cpf, #id_instituicao_cnpj').on('blur', function() {
+                let cpf = $('#id_cpf').val().replace(/\D/g, '');
+                let cnpj = $('#id_instituicao_cnpj').val().replace(/\D/g, '');
+                let cpfValid = false, cnpjValid = false;
+
+                if (cpf.length === 11) {
+                    $.ajax({
+                        url: "{% url 'validate_cpf' %}",
+                        method: "GET",
+                        data: { cpf: cpf },
+                        success: function() {
+                            clearError('cpf');
+                            cpfValid = true;
+                            if (cpfValid && cnpjValid) {
+                                clearBootstrapError();
+                            }
+                        },
+                        error: function(xhr) {
+                            showError('cpf', xhr.responseJSON.error || 'CPF inválido.');
+                            cpfValid = false;
+                        }
+                    });
+                } else {
+                    showError('cpf', 'CPF inválido! Digite 11 números.');
+                    cpfValid = false;
+                }
+
                 if (cnpj.length === 14) {
                     $.ajax({
-                        url: "{% url 'validate_cnpj' %}", // URL da view
+                        url: "{% url 'validate_cnpj' %}",
                         method: "GET",
-                        data: { cnpj: cnpj }, // Dados enviados para o servidor
+                        data: { cnpj: cnpj },
                         success: function(data) {
-                            // Preenche os campos com os dados retornados
+                            clearError('cnpj');
+                            cnpjValid = true;
+                            if (cpfValid && cnpjValid) {
+                                clearBootstrapError();
+                            }
                             $('#id_instituicao_nome').val(data.name);
                             $('#id_cep').val(data.cep);
                             $('#id_numero').val(data.numero);
                         },
                         error: function(xhr) {
-                            alert(xhr.responseJSON.error || 'Erro ao buscar o CNPJ.');
+                            showError('cnpj', xhr.responseJSON.error || 'CNPJ inválido.');
+                            cnpjValid = false;
                         }
                     });
                 } else {
-                    alert('CNPJ inválido! Digite 14 números.');
+                    showError('cnpj', 'CNPJ inválido! Digite 14 números.');
+                    cnpjValid = false;
+                }
+
+                // Exibir erro se ambos forem inválidos
+                if (!cpfValid || !cnpjValid) {
+                    showBootstrapError('Não é possível prosseguir. Informe um CNPJ e um CPF válidos.');
                 }
             });
         });
     </script>
-{% endblock%} 
-
+{% endblock %}

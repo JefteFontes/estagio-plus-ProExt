@@ -16,6 +16,8 @@ from dashboard.views.home import (
     editar_curso,
 )
 from dashboard.views.estagios import add_estagios, complementar_estagio
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -56,4 +58,4 @@ urlpatterns = [
 
     path('get-supervisores/', get_supervisores, name='get_supervisores'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

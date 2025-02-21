@@ -182,8 +182,26 @@ class Estagio(models.Model):
         return f"{self.area} - {self.status}"
 
 
-class ImportTermoEstagio(models.Model):
-    file = models.FileField(upload_to="termo_estagio/%Y/%m/%d/")
+class DocumentoEstagio(models.Model):
+    estagio = models.ForeignKey('Estagio', on_delete=models.CASCADE, related_name='documentos')
+    arquivo = models.FileField(upload_to='documentos_estagio/')
+    nome = models.CharField(max_length=255)
+    data_envio = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.file}"
+        return self.nome
+
+
+class RelatorioSemestral(models.Model):
+    STATUS_OPCOES = [
+        ('solicitado', 'Solicitado'),
+        ('completo', 'Completo'),
+    ]
+
+    estagio = models.ForeignKey('Estagio', on_delete=models.CASCADE, related_name='relatorios')
+    arquivo = models.FileField(upload_to='relatorios/')
+    status = models.CharField(max_length=15, choices=STATUS_OPCOES, default='solicitado')
+    data_envio = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Relatório - {self.estagio.estagiario}'

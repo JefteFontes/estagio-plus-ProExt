@@ -25,9 +25,8 @@ SECRET_KEY = 'django-insecure-!u0dmm10!4n7sttos(9rmw$2&+1v4odirueew=j09=0-&o0t-$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-PORT = os.getenv("PORT", "8000")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -159,9 +158,4 @@ ACCOUNT_SIGNUP_REDIRECT_URL = 'account_login'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATED_REDIRECT_URL = 'accounts/profile/instituicao/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'jeftefontes04@gmail.com'
-EMAIL_HOST_PASSWORD = 'fiveseer'
+

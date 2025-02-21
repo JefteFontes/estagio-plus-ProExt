@@ -66,6 +66,7 @@
     </div>
 </form>
 <hr>
+    {% if estagios %}
     <!--LISTAGEM DE ESTAGIOS CADASTRADOS-->
     <div class="table-responsive">
         <table class="table table-hover table-striped">
@@ -106,4 +107,7 @@
             </tbody>
         </table>
     </div>
+    {% else %}
+        <p>Nenhum estágio cadastrado.</p>
+    {% endif %}
     {% endblock %}

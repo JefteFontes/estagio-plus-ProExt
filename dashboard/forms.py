@@ -14,6 +14,8 @@ from .models import (
     Areachoices,
     Cursos,
     CoordenadorExtensao,
+    DocumentoEstagio,
+    RelatorioSemestral
 )
 
 
@@ -502,3 +504,17 @@ class CoordenadorEditForm(forms.ModelForm):
             coordenador.save()
 
         return coordenador, user
+
+
+
+class DocumentoEstagioForm(forms.ModelForm):
+    class Meta:
+        model = DocumentoEstagio
+        fields = ['arquivo']
+        labels = {'arquivo': 'Selecionar Arquivo'}
+
+class RelatorioSemestralForm(forms.ModelForm):
+    class Meta:
+        model = RelatorioSemestral
+        fields = ['arquivo']
+        labels = {'arquivo': 'Selecionar Relatório'}
