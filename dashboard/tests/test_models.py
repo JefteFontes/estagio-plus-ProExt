@@ -31,7 +31,7 @@ class TestModels(TestCase):
         )
         empresa = Empresa.objects.create(
             empresa_nome="Empresa Teste", cnpj="12345678000199", razao_social="Razão Social Teste", email="empresa@test.com", 
-            instituicao=instituicao  # Associe a Instituição aqui
+            instituicao=instituicao  
         )
         self.assertEqual(empresa.empresa_nome, "Empresa Teste")
         self.assertEqual(empresa.cnpj, "12345678000199")
@@ -66,7 +66,7 @@ class TestModels(TestCase):
         )
         empresa = Empresa.objects.create(
             empresa_nome="Empresa Teste", cnpj="12345678000199", razao_social="Razão Social Teste", email="empresa@test.com",
-            instituicao=instituicao  # Associe a Instituição aqui
+            instituicao=instituicao  
         )
         supervisor = Supervisor.objects.create(
             cpf="12345678901", email="supervisor@test.com", telefone="1234567890", primeiro_nome="Supervisor", sobrenome="Teste", cargo="Cargo Teste", empresa=empresa
@@ -79,7 +79,7 @@ class TestModels(TestCase):
         )
         empresa = Empresa.objects.create(
             empresa_nome="Empresa Teste", cnpj="12345678000199", razao_social="Razão Social Teste", email="empresa@test.com",
-            instituicao=instituicao  # Adicionando a Instituição aqui
+            instituicao=instituicao  
         )
         estagiario = Estagiario.objects.create(
             primeiro_nome="Estagiário", sobrenome="Teste", cpf="12345678901", matricula="123456", email="estagiario@test.com", telefone="1234567890"

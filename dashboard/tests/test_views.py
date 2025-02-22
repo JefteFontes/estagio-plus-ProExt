@@ -89,7 +89,7 @@ class ValidoCPFTest(TestCase):
 class EstagiarioViewTests(TestCase):
 
     def setUp(self):
-        # Cria um usuário e um coordenador associado
+        
         self.user = User.objects.create_user(username='coordenador', password='senha')
         self.coordenador = CoordenadorExtensao.objects.create(
             user=self.user,
@@ -98,7 +98,7 @@ class EstagiarioViewTests(TestCase):
             primeiro_nome='Coord',
             sobrenome='Test'
         )
-        # Cria uma Instituição e um Curso (campo curso é obrigatório)
+        
         self.instituicao = Instituicao.objects.create(
             cnpj="12345678000199",
             nome="Instituição Teste",
@@ -189,7 +189,6 @@ class EstagiarioViewTests(TestCase):
 
     def test_deletar_estagiario_com_estagio(self):
         self.client.login(username='coordenador', password='senha')
-        # Cria um Estagio vinculado ao estagiário
         estagio = Estagio.objects.create(
             estagiario=self.estagiario,
             empresa=None,
