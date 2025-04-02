@@ -436,18 +436,15 @@ class EmpresaCadastroForm(forms.ModelForm):
         return supervisor
 
 
-
-
 class CoordenadorEditForm(forms.ModelForm):
-    # Campos para os dados do usuário
+    # Fields for user data
     email = forms.EmailField(widget=forms.EmailInput(attrs={"class": "form-control"}))
     primeiro_nome = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control"})
     )
     sobrenome = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     cpf = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-
-    # Campos para os dados da instituição
+    # Fields for institution data
     instituicao_nome = forms.CharField(
         max_length=250,
         widget=forms.TextInput(attrs={"class": "form-control"}),
@@ -463,48 +460,31 @@ class CoordenadorEditForm(forms.ModelForm):
         model = CoordenadorExtensao
         fields = ["primeiro_nome", "sobrenome", "cpf", "email"]
 
-    def clean_cpf(self):
-        cpf = self.cleaned_data["cpf"]
-        cpf = ''.join(filter(str.isdigit, cpf))
-        if not validate_cpf(cpf):
-            print("CPF inválido")
-            raise forms.ValidationError("CPF inválido")
-        return cpf
-
     def __init__(self, *args, **kwargs):
-        coordenador = kwargs.pop("coordenador")
+        # Extract the 'coordenador' argument if provided
+        coordenador = kwargs.pop("coordenador", None)
         super().__init__(*args, **kwargs)
-        self.fields["instituicao_nome"].initial = coordenador.instituicao.nome
-        self.fields["instituicao_telefone"].initial = coordenador.instituicao.telefone
+        # Prepopulate institution fields if 'coordenador' is provided
+        if coordenador and coordenador.instituicao:
+            self.fields["instituicao_nome"].initial = coordenador.instituicao.nome
+            self.fields["instituicao_telefone"].initial = coordenador.instituicao.telefone
 
     def save(self, commit=True):
-        user_data = {
-            "username": self.cleaned_data["primeiro_nome"]
-            + " "
-            + self.cleaned_data["sobrenome"],
-            "email": self.cleaned_data["email"],
-        }
-
-        # Atualiza os dados do usuário
-        user = User.objects.filter(username=user_data["username"]).first()
-
-        if user:
-            user.username = user_data["username"]
-            user.email = user_data["email"]
-            user.save()
-
+        # Update the related User model
         coordenador = super().save(commit=False)
-
-        # Atualiza os dados da instituição
-        coordenador.instituicao.nome = self.cleaned_data["instituicao_nome"]
-        coordenador.instituicao.telefone = self.cleaned_data["instituicao_telefone"]
-        coordenador.instituicao.save()
-
+        user = coordenador.user  # Access the related User model
+        # Update user fields
+        user.username = f"{self.cleaned_data['primeiro_nome']} {self.cleaned_data['sobrenome']}"
+        user.email = self.cleaned_data["email"]
+        user.save()
+        # Update institution fields
+        if coordenador.instituicao:
+            coordenador.instituicao.nome = self.cleaned_data["instituicao_nome"]
+            coordenador.instituicao.telefone = self.cleaned_data["instituicao_telefone"]
+            coordenador.instituicao.save()
         if commit:
             coordenador.save()
-
-        return coordenador, user
-
+        return coordenador
 
 
 class DocumentoEstagioForm(forms.ModelForm):
