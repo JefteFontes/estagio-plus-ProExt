@@ -6,6 +6,7 @@ from .models import (
 )
 from django.urls import reverse
 
+
 class ViewsIntegrationTestCase(TestCase):
     def setUp(self):
         self.client = Client()

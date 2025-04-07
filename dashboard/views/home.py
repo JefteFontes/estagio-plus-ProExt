@@ -195,7 +195,7 @@ def dashboard_instituicao(request):
             Estagio.objects.create(
                 bolsa_estagio=estagio_data.get('bolsa', ''),
                 area=estagio_data.get('area', ''),
-                tipo_estagio = estagio_data.get('tipo_estagio', ''),
+                tipo_estagio=estagio_data.get('tipo_estagio', ''),
                 descricao=estagio_data.get('descricao', ''),
                 data_inicio=estagio_data.get('data_inicio', None),
                 data_fim=estagio_data.get('data_fim', None),
@@ -218,7 +218,6 @@ def dashboard_instituicao(request):
     turno = request.GET.get('turno', '')
     tipo = request.GET.get('tipo_estagio', '')
 
-
     estagios = Estagio.objects.filter(instituicao=instituicao)
     if area:
         estagios = estagios.filter(area=area)
@@ -236,7 +235,7 @@ def dashboard_instituicao(request):
 
     context = {
         'areas': areas,
-        'tipos' : tipos,
+        'tipos': tipos,
         'status_choices': status_choices,
         'turnos': turnos,
         'estagios': estagios,
@@ -295,25 +294,6 @@ def deletar_curso(request, curso_id):
         )  # Certifique-se que 'dashboard_cursos' seja a URL correta
     # Renderizar uma página de confirmação (opcional)
     return render(request, "dashboard_cursos.html", {"cursos": cursos})
-
-
-@login_required
-def editar_perfil(request):
-    coordenador = CoordenadorExtensao.objects.get(user=request.user)
-
-    if request.method == "POST":
-        form = CoordenadorEditForm(
-            request.POST, coordenador=coordenador, instance=coordenador
-        )
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Seu perfil foi atualizado com sucesso!")
-            return redirect("dashboard")
-    else:
-        form = CoordenadorEditForm(coordenador=coordenador, instance=coordenador)
-
-    return render(request, 'dashboard/editar_perfil.html', {'form': form})
-
 
 
 def detalhes_estagio(request, estagio_id):

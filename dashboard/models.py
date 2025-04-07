@@ -40,18 +40,6 @@ class Instituicao(models.Model):
         return self.nome
 
 
-class CoordenadorExtensao(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, )
-    cpf = models.CharField(max_length=15, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
-    email = models.EmailField(unique=True)
-    primeiro_nome = models.CharField(max_length=50)
-    sobrenome = models.CharField(max_length=50)
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.primeiro_nome} {self.sobrenome}"
-
-
 class Empresa(models.Model):
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
     empresa_nome = models.CharField(max_length=250)
@@ -60,7 +48,7 @@ class Empresa(models.Model):
     email = models.EmailField(unique=True)
     atividades = models.TextField(max_length=500, null=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, null=True, blank=True)
-    
+
     def __str__(self):
         return self.empresa_nome
 
@@ -152,19 +140,16 @@ class StatusChoices(models.TextChoices):
     em_andamento = "Em andamento"
     concluido = "Concluido"
 
-class TipoChoices(models.TextChoices):
-    nao_obrigatorio = 'Não obrigatório'
-    obrigatorio = 'Obrigatório'
 
 class TipoChoices(models.TextChoices):
-    obrigatorio = 'Obrigatório'
     nao_obrigatorio = 'Não obrigatório'
+    obrigatorio = 'Obrigatório'
 
 
 class Estagio(models.Model):
     bolsa_estagio = models.FloatField(blank=True, null=True, default=0)
     area = models.CharField(max_length=250)
-    tipo_estagio = models.TextField(choices = TipoChoices.choices, default=TipoChoices.nao_obrigatorio)
+    tipo_estagio = models.TextField(choices=TipoChoices.choices, default=TipoChoices.nao_obrigatorio)
     status = models.TextField(choices=StatusChoices.choices, default=StatusChoices.em_andamento)
     descricao = models.TextField(max_length=1000)
     data_inicio = models.DateField()
