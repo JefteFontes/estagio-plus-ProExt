@@ -16,7 +16,7 @@ def cadastrar_estagiario(request):
             messages.success(request, "Estágiario cadastrado com sucesso!")
             return redirect("dashboard_estagiario")
     else:
-        form = EstagiarioCadastroForm()
+        form = EstagiarioCadastroForm()     
 
     return render(request, 'cadastrar_estagiario.html', {'form': form})
 

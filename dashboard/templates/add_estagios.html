@@ -1,200 +1,198 @@
 {% extends "dashboard/base.html" %}
 
 {% block content %}
-
 <div class="cadastro-container-dashboard">
-<h2>Cadastro de Estágio</h2>
-<form method="post">
-  {% csrf_token %}
-
-  {% if form.errors %}
+    <h2>Cadastro de Estágio</h2>
+    <p class="form-header">Preencha os dados do estágio no formulário abaixo</p>
+    
+    {% if form.errors %}
     <div class="form-errors">
         <p class="error-message">Por favor, corrija os seguintes erros:</p>
         <ul>
             {% for field, errors in form.errors.items %}
                 {% for error in errors %}
-                    <li class="error-message"> {{ error }}</li>
+                    <li class="error-message">{{ error }}</li>
                 {% endfor %}
             {% endfor %}
         </ul>
     </div>
-{% endif %}
-<p>Dados estágio:</p>
-<div class="form-coordenador">
-  <div class="form-linha1">
-    <div class="form-inicial">
-      <label for="{{ form.estagiario.id_for_label }}" class="form-label">Estagiário:</label>
-      {{ form.estagiario }}
-    </div>
-
-    <div class="form-inicial">
-      <label for="{{ form.empresa.id_for_label }}" class="form-label">Empresa:</label>
-      {{ form.empresa }}
-    </div>
-
-    <div class="form-inicial">
-      <label for="{{ form.instituicao.id_for_label }}" class = "form-label">Insittuição:</label>
-      {{ form.instituicao }}
-    </div>
-
-    <div class="form-inicial">
-      <label for="{{ form.supervisor.id_for_label }}" class="form-label">Supervisor:</label>
-      {{ form.supervisor }}
-    </select>
-    </div>
-
-    <div class="form-linha1">
-      <div class="form-inicial {% if form.turno.errors %}has-error{% endif %}">
-        <label for="{{ form.turno.id_for_label }}" class="form-label">Turno:</label>
-        {{ form.turno }}
-        {% for error in form.turno.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <div class="form-inicial {% if form.area.errors %}has-error{% endif %}">
-        <label for="{{ form.area.id_for_label }}" class="form-label">Área:</label>
-        {{ form.area }}
-        {% for error in form.area.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <div class="form-inicial {% if form.tipo_estagio.errors %}has-error{% endif %}">
-        <label for="{{ form.tipo_estagio.id_for_label }}" class="form-label">Tipo:</label>
-        {{ form.tipo_estagio }}
-        {% for error in form.tipo_estagio.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <div class="form-inicial {% if form.orientador.errors %}has-error{% endif %}">
-        <label for="{{ form.orientador.id_for_label }}" class="form-label">Orientador:</label>
-        {{ form.orientador }}
-        {% for error in form.orientador.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="form-linha1">
-      <div class="form-inicial">
-        <label for="{{ form.bolsa_estagio.id_for_label }}" class="form-label">Bolsa de Estágio:</label>
-        {{ form.bolsa_estagio }}
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
         
-      </div>
-      <div class="form-inicial {% if form.auxilio_transporte.errors %}has-error{% endif %}">
-        <label for="{{ form.auxilio_transporte.id_for_label }}" class="form-label">Auxílio Transporte:</label>
-        {{ form.auxilio_transporte }}
-        {% for error in form.auxilio_transporte.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <div class="form-inicial {% if form.data_inicio.errors %}has-error{% endif %}">
-        <label for="{{ form.data_inicio.id_for_label }}" class="form-label">Data Início:</label>
-        {{ form.data_inicio }}
-        {% for error in form.data_inicio.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <div class="form-inicial {% if form.data_fim.errors %}has-error{% endif %}">
-        <label for="{{ form.data_fim.id_for_label }}" class="form-label">Data de Término:</label>
-        {{ form.data_fim }}
+        <div class="form-section">
+            <h3 class="section-title">Dados do estágio</h3>
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.estagiario.id_for_label }}" class="form-label">Estagiário</label>
+                    {{ form.estagiario }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.empresa.id_for_label }}" class="form-label">Empresa</label>
+                    {{ form.empresa }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.instituicao.id_for_label }}" class="form-label">Instituição</label>
+                    {{ form.instituicao }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.supervisor.id_for_label }}" class="form-label">Supervisor</label>
+                    {{ form.supervisor }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group {% if form.turno.errors %}has-error{% endif %}">
+                    <label for="{{ form.turno.id_for_label }}" class="form-label">Turno</label>
+                    {{ form.turno }}
+                    {% for error in form.turno.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group compact-group {% if form.area.errors %}has-error{% endif %}">
+                    <label for="{{ form.area.id_for_label }}" class="form-label">Área</label>
+                    {{ form.area }}
+                    {% for error in form.area.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group {% if form.tipo_estagio.errors %}has-error{% endif %}">
+                    <label for="{{ form.tipo_estagio.id_for_label }}" class="form-label">Tipo</label>
+                    {{ form.tipo_estagio }}
+                    {% for error in form.tipo_estagio.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group compact-group {% if form.orientador.errors %}has-error{% endif %}">
+                    <label for="{{ form.orientador.id_for_label }}" class="form-label">Orientador</label>
+                    {{ form.orientador }}
+                    {% for error in form.orientador.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
         
-        {% for error in form.data_fim.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="form-linha1">
-      <div class="form-inicial {% if form.descricao.errors %}has-error{% endif %}">
-        <label for="{{ form.descricao.id_for_label }}" class="form-label">Descrição:</label>
-        {{ form.descricao }}
-        {% for error in form.descricao.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <div class="form-inicial {% if form.status.errors %}has-error{% endif %}">
-        <label for="{{ form.status.id_for_label }}" class="form-label">Status:</label>
-        {{ form.status }}
-        {% for error in form.status.errors %}
-        <div class="error-message">{{ error }}</div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-  <button class="btn-user-signup" type="submit" name="cadastrar_estagio">Cadastrar</button>
-</form>
+        <div class="form-section">
+            <h3 class="section-title">Remuneração</h3>
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.bolsa_estagio.id_for_label }}" class="form-label">Bolsa de Estágio</label>
+                    {{ form.bolsa_estagio }}
+                </div>
+                <div class="form-group compact-group {% if form.auxilio_transporte.errors %}has-error{% endif %}">
+                    <label for="{{ form.auxilio_transporte.id_for_label }}" class="form-label">Auxílio Transporte</label>
+                    {{ form.auxilio_transporte }}
+                    {% for error in form.auxilio_transporte.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3 class="section-title">Período</h3>
+            <div class="form-row">
+                <div class="form-group compact-group {% if form.data_inicio.errors %}has-error{% endif %}">
+                    <label for="{{ form.data_inicio.id_for_label }}" class="form-label">Data Início</label>
+                    {{ form.data_inicio }}
+                    {% for error in form.data_inicio.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group compact-group {% if form.data_fim.errors %}has-error{% endif %}">
+                    <label for="{{ form.data_fim.id_for_label }}" class="form-label">Data Término</label>
+                    {{ form.data_fim }}
+                    {% for error in form.data_fim.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3 class="section-title">Outras informações</h3>
+            <div class="form-row">
+                <div class="form-group {% if form.descricao.errors %}has-error{% endif %}" style="flex: 2;">
+                    <label for="{{ form.descricao.id_for_label }}" class="form-label">Descrição</label>
+                    {{ form.descricao }}
+                    {% for error in form.descricao.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group compact-group {% if form.status.errors %}has-error{% endif %}">
+                    <label for="{{ form.status.id_for_label }}" class="form-label">Status</label>
+                    {{ form.status }}
+                    {% for error in form.status.errors %}
+                    <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-user-signup" name="cadastrar_estagio">Cadastrar</button>
+            <a href="{% url 'dashboard_instituicao' %}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
 $(document).ready(function () {
-    $("#empresa-select").change(function () {
+    // Máscara para valores monetários
+    $('.money-input').mask('000.000.000.000.000,00', {reverse: true});
+    
+    // Busca de supervisores ao selecionar empresa
+    $("#id_empresa").change(function () {
         var empresaId = $(this).val();
         if (empresaId) {
             $.ajax({
                 url: "{% url 'get_supervisores' %}",
                 data: { empresa_id: empresaId },
                 success: function (data) {
-                    var supervisorSelect = $("#supervisor-select");
+                    var supervisorSelect = $("#id_supervisor");
                     supervisorSelect.empty();
+                    supervisorSelect.append('<option value="">---------</option>');
                     data.forEach(function (supervisor) {
                         supervisorSelect.append(
-                            '<option value="">' + supervisor.primeiro_nome + ' ' + supervisor.sobrenome + '</option>'
+                            '<option value="' + supervisor.id + '">' + supervisor.primeiro_nome + ' ' + supervisor.sobrenome + '</option>'
                         );
                     });
                 },
             });
         } 
     });
-});
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let dataFimInput = document.getElementById("{{ form.data_fim.id_for_label }}");
-    let statusInput = document.getElementById("{{ form.status.id_for_label }}");
-
-    function atualizarStatus() {
-      if (dataFimInput.value) {
-        let dataFim = new Date(dataFimInput.value);
-        dataFim = new Date(dataFim.getFullYear(), dataFim.getMonth(), dataFim.getDate());
-        console.log(dataFim);
+    
+    // Atualização automática do status
+    $("#id_data_fim").change(function () {
+        let dataFim = new Date($(this).val());
         let hoje = new Date();
-        hoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-        console.log(hoje);
+        let statusInput = $("#id_status");
+        
         if (dataFim < hoje) {
-          statusInput.value = "Concluido";
-      }if (dataFim > hoje) {
-          statusInput.value = "Em andamento";
-      }
-    }
-  }
-  dataFimInput.addEventListener("change", atualizarStatus);
-  atualizarStatus();
+            statusInput.val("Concluído");
+        } else {
+            statusInput.val("Em andamento");
+        }
+    });
+    
+    // Validação de valores positivos
+    $("#id_bolsa_estagio, #id_auxilio_transporte").change(function() {
+        const valor = parseFloat($(this).val());
+        if (valor < 0) {
+            alert("O valor deve ser positivo!");
+            $(this).val("");
+        }
+    });
 });
-
-</script>
-
-<script>
-  $(document).ready(function(){
-    $("#id_bolsa_estagio").change(function(){
-      const bolsa = $(this).val();
-      if(bolsa <=0){
-        alert("Bolsa de estágio deve ser maior que 0!");
-        $(this).val("");
-      } })
-    })
-  </script>
-  
-   <script>   
-  $(document).ready(function(){
-    $("#id_auxilio_transporte").change(function(){
-      const bolsa = $(this).val();
-      if(bolsa < 0){
-        alert("Auxílio transporte deve ser maior ou igual a 0!");
-        $(this).val("");
-      } })
-    })
- 
 </script>
 {% endblock %}

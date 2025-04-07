@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EstagioCadastroForm
 from ..models import Empresa, Estagio, Supervisor
-from dateutil.relativedelta import relativedelta
 
 
 @login_required

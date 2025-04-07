@@ -1,113 +1,159 @@
-/* Ajuste do conteúdo principal */
-.content-login {
-    margin-top: 160px;
+/* Estilos específicos para o login do +Estagio */
+.container-login {
+    display: flex;
+    height: 100vh;
+}
+
+.login-form {
+    width: 50%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-/* Adiciona margem ao conteúdo para não sobrepor o header */
-.custom-container {
-    position: absolute; /* Posiciona o container fora do fluxo normal */
-    top: 50%; /* Alinha no meio verticalmente */
-    left: 50%; /* Alinha no meio horizontalmente */
-    transform: translate(-50%, -50%); /* Centraliza completamente */
-    width: 100%;
-    max-width: 600px;
-    display: flex;
+    padding: 50px;
     justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 20px;
 }
 
-/* Estilo para conteúdo */
-.content {
-    width: 100%;
-    max-width: 500px; /* Define um limite claro para o conteúdo */
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
-    background-color: rgb(238, 255, 238);
-    border: 3px solid rgb(204, 237, 201);
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgb(227, 236, 227);  
-    text-align: center; /* Centraliza textos automaticamente */
+.logo {
+    width: 180px;
+    margin-bottom: 40px;
 }
 
-/* Inputs */
-.custom-container input[type="text"],
-.custom-container input[type="email"],
-.custom-container input[type="password"] {
-    width: 85%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid rgb(204, 237, 201);
-    border-radius: 5px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-size: 16px;
-    font-family: 'Inter', sans-serif;
+.text-login h1 {
+    margin-bottom: 10px;
+    color: #2c3e50;
 }
 
-/* Títulos */
-.custom-container h1 {
-    color: #14AE5C;
-    font-size: 28px;
+.text-login p {
     margin-bottom: 20px;
+    color: #7f8c8d;
 }
 
-/* Links */
-.custom-container a {
-    text-decoration: none;
-    color: rgb(20, 174, 92); 
-    font-weight: bold;
-}
-
-/* Botões */
-.custom-container button {
-    width: 80%;
-    padding: 10px;
-    background-color: rgb(20, 174, 92);
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.custom-container button:hover {
-    background-color: rgb(16, 140, 75); /* Cor ao passar o mouse */
-}
-.custom-container label{
-    display: block;
-}
-/* Botões no container */
-.button-container {
+.login-form form {
     width: 100%;
+    max-width: 550px;
     display: flex;
-    justify-content: center; 
+    margin: 40px 0 20px;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.login-form button {
+    padding: 12px;
     margin-top: 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
 }
 
-@media (max-width: 768px) {
-    .content-login, .custom-container, .content {
-        margin-top: 20px;
-        padding: 10px;
-    }
-    .custom-container button {
-        font-size: 14px;
-    }
+.login-form button:hover {
+    background: #2980b9;
 }
 
-.alert {
-    position: absolute; /* Remove o alerta do fluxo normal do layout */
-    top: 90px; /* Ajusta a posição do alerta no topo */
-    left: 50%; /* Centraliza horizontalmente */
-    transform: translateX(-50%); /* Ajusta a centralização */
-    z-index: 1000; /* Garante que fique acima de outros elementos */
-    width: 90%; /* Ajuste opcional para garantir responsividade */
-    max-width: 500px;
+.error-message {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.image-side {
+    width: 50%;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.image-side::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(41, 128, 185, 0.7);
+}
+
+.incentive-message {
+    position: absolute;
+    color: white;
+    text-align: center;
+    max-width: 80%;
+    z-index: 1;
+}
+
+.incentive-message h2 {
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.password-container {
+    position: relative;
+}
+
+.password-container input {
+    padding-right: 40px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #7f8c8d;
+}
+
+.register-link {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.register-link a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.forgot-password {
+    text-align: right;
+    margin: 10px 0 20px;
+}
+
+.forgot-password a {
+    color: #3498db;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo para o ícone de senha */
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #7f8c8d;
 }

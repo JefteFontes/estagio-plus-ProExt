@@ -14,7 +14,7 @@ class TestCadastroInstituio():
         self.driver.quit()
 
     def test_cadastroInstituio(self):
-        self.driver.get("http://127.0.0.1:8000/login/login/")
+        self.driver.get("http://127.0.0.1:8000/login/")
         self.driver.set_window_size(974, 1032)
 
         time.sleep(0.5)
@@ -72,7 +72,7 @@ class TestAlertaErroCNPJCPF():
         self.driver.quit()
     
     def test_alertaErroCNPJCPF(self):
-        self.driver.get("http://127.0.0.1:8000/login/login/")
+        self.driver.get("http://127.0.0.1:8000/login/")
         time.sleep(0.5)
         self.driver.set_window_size(974, 1032)
         time.sleep(0.5)
@@ -115,7 +115,7 @@ class TestLogineCadastrodeCurso():
     self.driver.quit()
   
   def test_logineCadastrodeCurso(self):
-    self.driver.get("http://127.0.0.1:8000/login/login/")
+    self.driver.get("http://127.0.0.1:8000/login/")
     time.sleep(0.5)
     self.driver.set_window_size(1553, 1032)
     time.sleep(0.5)
@@ -168,7 +168,7 @@ class TestCadastrodeEmpresa():
         self.driver.quit()
     
     def test_cadastrodeEmpresa(self):
-        self.driver.get("http://127.0.0.1:8000/login/login/")
+        self.driver.get("http://127.0.0.1:8000/login/")
         time.sleep(0.5)
         self.driver.set_window_size(1553, 1032)
         time.sleep(0.5)
@@ -233,7 +233,7 @@ class TestCadastrodeEstagirio():
     self.driver.quit()
   
   def test_cadastrodeEstagirio(self):
-    self.driver.get("http://127.0.0.1:8000/login/login/")
+    self.driver.get("http://127.0.0.1:8000/login/")
     self.driver.set_window_size(1751, 1032)
     time.sleep(0.5)
     self.driver.find_element(By.ID, "id_login").click()
