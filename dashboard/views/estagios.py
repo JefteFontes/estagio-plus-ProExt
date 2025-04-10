@@ -1,51 +1,96 @@
 import datetime
+from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EstagioCadastroForm
-from ..models import Empresa, Estagio, Supervisor
+from ..models import Empresa, Estagio, Supervisor, RelatorioEstagio
+
+
+def formatar_duracao(diferenca):
+    partes = [
+        f"{diferenca.years} ano(s)" if diferenca.years else "",
+        f"{diferenca.months} mes(es)" if diferenca.months else "",
+        f"{diferenca.days} dia(s)" if diferenca.days or not (diferenca.years or diferenca.months) else "",
+    ]
+    return ", ".join([p for p in partes if p])
+
+
+def estagio_duracao(estagio):
+    diferenca = relativedelta(estagio.data_fim, estagio.data_inicio)
+    return formatar_duracao(diferenca)
+
+
+def estagio_falta_dias(estagio):
+    hoje = datetime.date.today()
+    if estagio.data_fim < hoje:
+        return "0 dias"  # Estágio já finalizado
+    diferenca = relativedelta(estagio.data_fim, hoje)
+    return formatar_duracao(diferenca)
+
+
+def verificar_relatorios_pendentes(estagio):
+    hoje = datetime.date.today()
+    relatorios = []
+
+    # Termo de compromisso
+    if hoje >= estagio.data_inicio:
+        relatorios.append({
+            "tipo": "Termo de Compromisso",
+            "data_prevista": estagio.data_inicio
+        })
+
+    # Relatórios semestrais
+    data = estagio.data_inicio + relativedelta(months=6)
+    while data <= hoje and data < estagio.data_fim:
+        relatorios.append({
+            "tipo": "Relatório Semestral",
+            "data_prevista": data
+        })
+        data += relativedelta(months=6)
+
+    # Relatórios finais
+    if hoje >= estagio.data_fim:
+        for tipo in ["Relatório de Avaliação", "Relatório de Conclusão"]:
+            relatorios.append({
+                "tipo": tipo,
+                "data_prevista": estagio.data_fim
+            })
+
+    return relatorios
+
+
+def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
+    if request.method == "POST":
+        form = EstagioCadastroForm(request.POST, instance=estagio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Estágio salvo com sucesso!")
+            return redirect("dashboard_instituicao")
+        else:
+            messages.error(request, "Erro ao salvar estágio.")
+    else:
+        form = EstagioCadastroForm(instance=estagio)
+
+    return render(request, template, {"form": form, "estagio": estagio})
 
 
 @login_required
 def add_estagios(request):
-    if request.method == "POST":
-        form = EstagioCadastroForm(request.POST)
-
-        if form.is_valid():
-            print(form.cleaned_data)
-            form.save()  
-            messages.success(request, "Estágio cadastrado com sucesso!")
-            return redirect(
-                "dashboard_instituicao"
-            ) 
-        else:
-            print("Formulário inválido")
-            print(
-                form.errors
-            )
-    else:
-        form = EstagioCadastroForm()  
-
-    return render(request, "add_estagios.html", {"form": form})
+    return processar_form_estagio(request)
 
 
+@login_required
 def editar_estagio(request, estagio_id):
-    estagio = get_object_or_404(Estagio, id=estagio_id) 
+    estagio = get_object_or_404(Estagio, id=estagio_id)
+    return processar_form_estagio(request, estagio)
 
-    if request.method == "POST":
-        print("Dados do formulário:", request.POST)
-        form = EstagioCadastroForm(request.POST, instance=estagio) 
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Estágio atualizado com sucesso!")
-            return redirect("dashboard_instituicao")
-        else:
-            messages.error(request, "Erro ao atualizar o estágio. Verifique os dados.")
-    else:
-        form = EstagioCadastroForm(instance=estagio)
 
-    return render(request, "add_estagios.html", {"form": form, "estagio": estagio})
+@login_required
+def complementar_estagio(request, estagio_id):
+    estagio = get_object_or_404(Estagio, id=estagio_id)
+    return processar_form_estagio(request, estagio, template="complementar_estagio.html")
 
 
 def detalhes_estagio(request):
@@ -54,62 +99,23 @@ def detalhes_estagio(request):
         return JsonResponse({"error": 'Parâmetro "selected" ausente.'}, status=400)
 
     estagio = get_object_or_404(Estagio, id=selected)
-    duracao = estagio_duracao(request, selected)
-    tempo_falta = estagio_falta_dias(request, selected)
+    duracao = estagio_duracao(estagio)
+    tempo_falta = estagio_falta_dias(estagio)
+    relatorios_pendentes = verificar_relatorios_pendentes(estagio)
 
     return render(request, 'details.html', {
-        'estagio': estagio, 
-        'duracao': duracao, 
-        'tempo_falta': tempo_falta
+        'estagio': estagio,
+        'duracao': duracao,
+        'tempo_falta': tempo_falta,
+        'relatorios_pendentes': relatorios_pendentes
     })
-@login_required
-def complementar_estagio(request, estagio_id):
-    estagio = get_object_or_404(Estagio, id=estagio_id)
-
-    if request.method == "POST":
-        form = EstagioCadastroForm(request.POST, instance=estagio)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Estágio cadastrado com sucesso!")
-            return redirect("dashboard_instituicao")
-    else:
-        form = EstagioCadastroForm(instance=estagio)
-
-    return render(request, 'complementar_estagio.html', {'form': form, 'estagio': estagio})
-
-
-def formatar_duracao(diferenca):
-    partes = []
-    
-    if diferenca.years > 0:
-        partes.append(f"{diferenca.years} ano(s)")
-    if diferenca.months > 0:
-        partes.append(f"{diferenca.months} mes(es)")
-    if diferenca.days > 0 or not partes:  # Se não houver anos/meses, mostrar dias
-        partes.append(f"{diferenca.days} dia(s)")
-
-    return ", ".join(partes)  # Retorna apenas os valores não nulos
-
-def estagio_duracao(request, estagio_id):
-    estagio = get_object_or_404(Estagio, id=estagio_id)
-    diferenca = relativedelta(estagio.data_fim, estagio.data_inicio)
-    return formatar_duracao(diferenca)
-
-def estagio_falta_dias(request, estagio_id):
-    estagio = get_object_or_404(Estagio, id=estagio_id)
-    
-    if estagio.data_fim < datetime.date.today():
-        messages.error(request, "Prazo de estágio expirado")
-        return "faltam 0 dias"  # Estágio já finalizado
-        
-
-    diferenca = relativedelta(estagio.data_fim, datetime.date.today())
-    return formatar_duracao(diferenca)
 
 
 def get_supervisores(request):
     empresa_id = request.GET.get("empresa_id")
     if empresa_id:
-        supervisores = Supervisor.objects.filter(empresa_id=empresa_id).values("id", "primeiro_nome","sobrenome")
+        supervisores = Supervisor.objects.filter(
+            empresa_id=empresa_id
+        ).values("id", "primeiro_nome", "sobrenome")
         return JsonResponse(list(supervisores), safe=False)
     return JsonResponse([], safe=False)

@@ -1,90 +1,110 @@
 {% extends "dashboard/base.html" %}
-
 {% load static %}
 
 {% block content %}
 
-        <ul class="breadcrumb">
-            <li><a href="{% url 'dashboard_instituicao' %}">Dashboard</a> /  Detalhes</li>
-        </ul>
-        {% if messages %}
+<ul class="breadcrumb">
+    <li><a href="{% url 'dashboard_instituicao' %}">Dashboard</a> / Detalhes</li>
+</ul>
+
+{% if messages %}
     {% for message in messages %}
         <div class="alert-danger alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            <strong >{{ message }}</strong>
+            <strong>{{ message }}</strong>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endfor %}
 {% endif %}
-        
 
-    <div class="header">
-        <h1>{{ estagio.estagiario }}</h1>
+<div class="header">
+    <h1>{{ estagio.estagiario }}</h1>
 
-            <div class="info-right">
-                <span class="date">faltam {{ tempo_falta }} </span>
+    <div class="info-right">
+        <span class="date">Faltam {{ tempo_falta }}</span>
 
-            {% if estagio.status == 'True' %}
-                <span class="status concluido">{{ estagio.status }}</span>
-            {% else %}
-                <span class="status">{{ estagio.status }}</span>
-            {% endif %}
-        </div>
-
-        <!-- Botões lado a lado no canto superior direito -->
-        <div class="d-flex justify-content-end gap-3">
-            <a href="{% url 'editar_estagio' estagio.id %}" class="btn btn-primary">Editar</a>
-            <a href="{% url 'dashboard_instituicao' %}" class="btn btn-danger">Voltar</a>
-        </div>
+        {% if estagio.status == 'True' %}
+            <span class="status concluido">{{ estagio.status }}</span>
+        {% else %}
+            <span class="status">{{ estagio.status }}</span>
+        {% endif %}
     </div>
 
-    <hr>
-
-    <div class="info">
-        <div class="info-left">
-            <strong>Nome do Aluno</strong>
-            <span>{{ estagio.estagiario }}</span>
-        </div>
-
-        <div class="info-right">
-            <strong>Empresa Concedente</strong>
-            <span>{{ estagio.empresa }}</span>
-        </div>
+    <div class="d-flex justify-content-end gap-3">
+        <a href="{% url 'editar_estagio' estagio.id %}" class="btn btn-primary">Editar</a>
+        <a href="{% url 'dashboard_instituicao' %}" class="btn btn-danger">Voltar</a>
     </div>
-    <hr>
+</div>
 
-    <div class="info">
-        <div class="info-left">
-            <strong>Supervisor de Estágio</strong>
-            <span>{{ estagio.supervisor }}</span>
-        </div>
+<hr>
 
-                <div class="info-right">
-                    <strong>Duração do Estágio</strong>
-                    <span>{{ duracao }}</span>
-                </div>
+<div class="info">
+    <div class="info-left">
+        <strong>Nome do Aluno</strong>
+        <span>{{ estagio.estagiario }}</span>
+    </div>
+
+    <div class="info-right">
+        <strong>Empresa Concedente</strong>
+        <span>{{ estagio.empresa }}</span>
+    </div>
+</div>
+
+<hr>
+
+<div class="info">
+    <div class="info-left">
+        <strong>Supervisor de Estágio</strong>
+        <span>{{ estagio.supervisor }}</span>
+    </div>
+
+    <div class="info-right">
+        <strong>Duração do Estágio</strong>
+        <span>{{ duracao }}</span>
+    </div>
+</div>
+
+<hr>
+
+<div class="info">
+    <div class="describle">
+        <strong><p>Atividades a serem desenvolvidas</p></strong>
+        <p>{{ estagio.descricao }}</p>
+    </div>
+</div>
+
+<hr>
+
+<div class="info">
+    <div class="info-left">
+        <strong>Valor da bolsa-estágio</strong>
+        <span>R$ {{ estagio.bolsa_estagio }}</span>
+    </div>
+
+    <div class="info-right">
+        <strong>Valor do Auxilio-Transporte</strong>
+        <span>R$ {{ estagio.auxilio_transporte }}</span>
+    </div>
+</div>
+<hr>
+{% if relatorios_pendentes %}
+<div class="info mt-4 p-3" style="border-radius: 8px; flex-direction: column; align-items: start;">
+    <h6><strong>Relatórios Vencidos ou Pendentes</strong></h6>
+    <div class="mt-2">
+        {% for relatorio in relatorios_pendentes %}
+        <div>
+            <div class="d-flex justify-content-between align-items-center" style="background-color:rgb(216, 217, 219); border-radius: 8px; padding:5px 10px;margin:5px;">
+                {{ relatorio.tipo }}
+                <span class="badge bg-warning text-dark mt-1" style="align=end;">
+                    Previsto para {{ relatorio.data_prevista|date:"d/m/Y" }}
+                </span>
             </div>
-            <hr>
-
-    <div class="info">
-        <div class="describle">
-            <strong><p>Atividades a serem desenvolvidas</p></strong>
-            <p>{{ estagio.descricao }}</p>
         </div>
+        {% endfor %}
     </div>
-    <hr>
+</div>
+<hr>
+{% endif %}
 
-    <div class="info">
-        <div class="info-left">
-            <strong>Valor da bolsa-estágio</strong>
-            <span>R$ {{ estagio.bolsa_estagio }}</span>
-        </div>
-
-        <div class="info-right">
-            <strong>Valor do Auxilio-Transporte</strong>
-            <span>R$ {{ estagio.auxilio_transporte }}</span>
-        </div>
-    </div>
-    <hr>
 
 
 {% endblock %}

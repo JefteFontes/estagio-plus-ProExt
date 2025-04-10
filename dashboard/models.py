@@ -138,7 +138,7 @@ class TurnoChoices(models.TextChoices):
 
 class StatusChoices(models.TextChoices):
     em_andamento = "Em andamento"
-    concluido = "Concluido"
+    concluido = "Concluído"
 
 
 class TipoChoices(models.TextChoices):
@@ -167,26 +167,19 @@ class Estagio(models.Model):
         return f"{self.area} - {self.status}"
 
 
-class DocumentoEstagio(models.Model):
-    estagio = models.ForeignKey('Estagio', on_delete=models.CASCADE, related_name='documentos')
-    arquivo = models.FileField(upload_to='documentos_estagio/')
-    nome = models.CharField(max_length=255)
-    data_envio = models.DateTimeField(auto_now_add=True)
+TIPOS_RELATORIO = [
+    ("termo", "Termo de Compromisso"),
+    ("relatorio_semestral", "Relatório Semestral de Atividades"),
+    ("avaliacao", "Relatório de Avaliação"),
+    ("conclusao", "Termo de Conclusão/Rescisão"),
+]
+
+class RelatorioEstagio(models.Model):
+    estagio = models.ForeignKey("Estagio", on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=30, choices=TIPOS_RELATORIO)
+    data_prevista = models.DateField()
+    arquivo = models.FileField(upload_to="relatorios/", null=True, blank=True)
+    preenchido = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.nome
-
-
-class RelatorioSemestral(models.Model):
-    STATUS_OPCOES = [
-        ('solicitado', 'Solicitado'),
-        ('completo', 'Completo'),
-    ]
-
-    estagio = models.ForeignKey('Estagio', on_delete=models.CASCADE, related_name='relatorios')
-    arquivo = models.FileField(upload_to='relatorios/')
-    status = models.CharField(max_length=15, choices=STATUS_OPCOES, default='solicitado')
-    data_envio = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'Relatório - {self.estagio.estagiario}'
+        return f"{self.get_tipo_display()} - {self.estagio.estagiario}"

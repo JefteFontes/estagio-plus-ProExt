@@ -1,0 +1,35 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2>Relatórios Pendentes</h2>
+    <hr>
+
+    {% if estagios %}
+        <table class="table table-bordered">
+            <thead class="table-danger">
+                <tr>
+                    <th>Estagiário</th>
+                    <th>Curso</th>
+                    <th>Empresa</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estagio in estagios %}
+                    <tr>
+                        <td>{{ estagio.estagiario.nome }}</td>
+                        <td>{{ estagio.curso.nome_curso }}</td>
+                        <td>{{ estagio.empresa.nome_fantasia }}</td>
+                        <td><span class="badge bg-warning text-dark">Relatório Pendente</span></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-success" role="alert">
+            Nenhum relatório pendente!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

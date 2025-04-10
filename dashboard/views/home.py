@@ -15,11 +15,10 @@ from dashboard.models import (
     TipoChoices,
     TurnoChoices,
     CoordenadorExtensao,
-    DocumentoEstagio,
-    RelatorioSemestral,
+    
 )
 from dashboard.views.utils import parse_sections
-from dashboard.forms import CursosCadastroForm, CoordenadorEditForm, DocumentoEstagioForm, RelatorioSemestralForm
+from dashboard.forms import CursosCadastroForm, CoordenadorEditForm
 from django.db.models import Q
 
 
@@ -298,48 +297,21 @@ def deletar_curso(request, curso_id):
 
 def detalhes_estagio(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)
-    documentos = DocumentoEstagio.objects.filter(estagio=estagio)
-    relatorios = RelatorioSemestral.objects.filter(estagio=estagio)
-
+   
     if request.method == 'POST':
         if 'anexar_documento' in request.POST:
-            form = DocumentoEstagioForm(request.POST, request.FILES)
+           
             print(form)
             if form.is_valid():
-                documento = form.save(commit=False)
-                documento.estagio = estagio
-                documento.save()
+                
                 messages.success(request, "Documento anexado com sucesso!")
             return redirect('detalhes_estagio', estagio_id=estagio.id)
 
-        elif 'excluir_documento' in request.POST:
-            documento_id = request.POST.get('documento_id')
-            documento = get_object_or_404(DocumentoEstagio, id=documento_id)
-            documento.delete()
-            messages.success(request, "Documento excluído com sucesso!")
-            return redirect('detalhes_estagio', estagio_id=estagio.id)
-
-        elif 'solicitar_relatorio' in request.POST:
-            relatorio = RelatorioSemestral(estagio=estagio, status='solicitado')
-            relatorio.save()
-            messages.success(request, "Relatório semestral solicitado!")
-            return redirect('detalhes_estagio', estagio_id=estagio.id)
-
-        elif 'anexar_relatorio' in request.POST:
-            form = RelatorioSemestralForm(request.POST, request.FILES)
-            if form.is_valid():
-                relatorio = form.save(commit=False)
-                relatorio.estagio = estagio
-                relatorio.status = 'completo'
-                relatorio.save()
-                messages.success(request, "Relatório enviado com sucesso!")
-            return redirect('detalhes_estagio', estagio_id=estagio.id)
+        
 
     return render(request, 'details.html', {
         'estagio': estagio,
-        'documentos': documentos,
-        'relatorios': relatorios,
-        'form_documento': DocumentoEstagioForm(),
-        'form_relatorio': RelatorioSemestralForm()
     })
 
+def relatorios(request):
+    return render(request, 'dashboard_relatorios.html')

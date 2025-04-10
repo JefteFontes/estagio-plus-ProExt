@@ -80,6 +80,17 @@
                                 </li>
                             </a>
                         {% endif %}
+
+                        {% url 'dashboard_relatorios' as dashboard_relatorios_url %}
+{% if dashboard_relatorios_url %}
+    <a class="btn-sidebar" href="{{ dashboard_relatorios_url }}">
+        <li class="{% if request.path == dashboard_relatorios_url %}actived{% endif %}">
+            <span class="icon"><i class="fa-solid fa-file-alt"></i></span>
+            <span class="text">Relatórios</span>
+        </li>
+    </a>
+{% endif %}
+                        
                     </ul>
                 </div>
                 <div class="sidebar-bottom">

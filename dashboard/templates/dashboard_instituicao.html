@@ -92,8 +92,8 @@
                     <td>{{ estagio.data_inicio|date:"d/m/Y" }}</td>
                     <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
                     <td>
-                        {% if estagio.status == 'Concluido' %}
-                            <span class="badge bg-success">Concluido</span>
+                        {% if estagio.status == 'Concluído' || estagio.status == "Concluido" %}
+                            <span class="badge bg-success">Concluído</span>
                         {% else %}
                             <span class="badge bg-danger">Em andamento</span>
                         {% endif %}
