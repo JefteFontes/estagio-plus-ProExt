@@ -218,8 +218,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
     class Meta:
         model = Estagiario
         fields = [
-            "primeiro_nome",
-            "sobrenome",
+            "nome_completo",
             "cpf",
             "matricula",
             "telefone",
@@ -228,14 +227,11 @@ class EstagiarioCadastroForm(forms.ModelForm):
             "email",
         ]
         widgets = {
-            "primeiro_nome": forms.TextInput(
+            "nome_completo": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Primeiro Nome (ex: João)",
+                    "placeholder": "Nome Completo (ex: João da Silva)",
                 }
-            ),
-            "sobrenome": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Sobrenome (ex: Silva)"}
             ),
             "cpf": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "CPF (ex: 12345678900)"}
@@ -339,16 +335,13 @@ class EmpresaCadastroForm(forms.ModelForm):
 
     class Meta: 
         model = Supervisor
-        fields = ["primeiro_nome", "sobrenome", "cpf", "cargo", "telefone"]
+        fields = ["nome_completo", "cpf", "cargo", "telefone"]
         widgets = {
-            "primeiro_nome": forms.TextInput(
+            "nome_completo": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Primeiro Nome (ex: João)",
+                    "placeholder": "Nome Completo (ex: João da Silva)",
                 }
-            ),
-            "sobrenome": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Sobrenome (ex: Silva)"}
             ),
             "cpf": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "CPF (ex: 12345678900)"}
@@ -423,10 +416,9 @@ class EmpresaCadastroForm(forms.ModelForm):
 class CoordenadorEditForm(forms.ModelForm):
     # Fields for user data
     email = forms.EmailField(widget=forms.EmailInput(attrs={"class": "form-control"}))
-    primeiro_nome = forms.CharField(
+    nome_completo = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control"})
     )
-    sobrenome = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     cpf = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     # Fields for institution data
     instituicao_nome = forms.CharField(
@@ -442,7 +434,7 @@ class CoordenadorEditForm(forms.ModelForm):
 
     class Meta:
         model = CoordenadorExtensao
-        fields = ["primeiro_nome", "sobrenome", "cpf", "email"]
+        fields = ["nome_completo", "cpf", "email"]
 
     def __init__(self, *args, **kwargs):
         # Extract the 'coordenador' argument if provided
@@ -458,7 +450,7 @@ class CoordenadorEditForm(forms.ModelForm):
         coordenador = super().save(commit=False)
         user = coordenador.user  # Access the related User model
         # Update user fields
-        user.username = f"{self.cleaned_data['primeiro_nome']} {self.cleaned_data['sobrenome']}"
+        user.username = f"{self.cleaned_data['nome_completo']}"
         user.email = self.cleaned_data["email"]
         user.save()
         # Update institution fields

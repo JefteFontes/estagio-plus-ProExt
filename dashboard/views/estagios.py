@@ -116,6 +116,6 @@ def get_supervisores(request):
     if empresa_id:
         supervisores = Supervisor.objects.filter(
             empresa_id=empresa_id
-        ).values("id", "primeiro_nome", "sobrenome")
+        ).values("id", "nome_completo")
         return JsonResponse(list(supervisores), safe=False)
     return JsonResponse([], safe=False)

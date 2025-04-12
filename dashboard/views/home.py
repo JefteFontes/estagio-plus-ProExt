@@ -91,7 +91,7 @@ def dashboard_estagiario(request):
     estagiarios = Estagiario.objects.filter(instituicao=instituicao)
     if search:
         estagiarios = estagiarios.filter(
-            Q(primeiro_nome__icontains=search) | Q(sobrenome__icontains=search)
+            Q(nome_completo__icontains=search) | Q(matricula__icontains=search)
         )
     if curso:
         estagiarios = estagiarios.filter(curso__nome_curso__icontains=curso)
@@ -174,8 +174,7 @@ def dashboard_instituicao(request):
             )
 
             estagiario = Estagiario.objects.create(
-                primeiro_nome=estagiario_data.get("primeiro_nome", ""),
-                sobrenome=estagiario_data.get("sobrenome", ""),
+                nome_completo=estagiario_data.get("nome_completo", ""),
                 cpf=estagiario_data.get("cpf", ""),
                 matricula=estagiario_data.get("matricula", ""),
                 curso=estagiario_data.get("curso", ""),
@@ -298,17 +297,6 @@ def deletar_curso(request, curso_id):
 def detalhes_estagio(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)
    
-    if request.method == 'POST':
-        if 'anexar_documento' in request.POST:
-           
-            print(form)
-            if form.is_valid():
-                
-                messages.success(request, "Documento anexado com sucesso!")
-            return redirect('detalhes_estagio', estagio_id=estagio.id)
-
-        
-
     return render(request, 'details.html', {
         'estagio': estagio,
     })

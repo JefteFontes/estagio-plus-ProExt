@@ -78,8 +78,7 @@ class Cursos(models.Model):
 
 
 class Estagiario(models.Model):
-    primeiro_nome = models.CharField(max_length=50)
-    sobrenome = models.CharField(max_length=50)
+    nome_completo = models.CharField(max_length=150)
     cpf = models.CharField(
         max_length=14,
         unique=True,
@@ -96,19 +95,18 @@ class Estagiario(models.Model):
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.primeiro_nome} {self.sobrenome}"
+        return f"{self.nome_completo}"
 
 
 class CoordenadorExtensao(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT, )
     cpf = models.CharField(max_length=15, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
     email = models.EmailField(unique=True)
-    primeiro_nome = models.CharField(max_length=50)
-    sobrenome = models.CharField(max_length=50)
+    nome_completo = models.CharField(max_length=150)
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.primeiro_nome} {self.sobrenome}"
+        return f"{self.nome_completo}"
 
 
 class Supervisor(models.Model):
@@ -119,15 +117,14 @@ class Supervisor(models.Model):
     )
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20)
-    primeiro_nome = models.CharField(max_length=50)
-    sobrenome = models.CharField(max_length=50)
+    nome_completo = models.CharField(max_length=150)
     cargo = models.CharField(max_length=254)
     empresa = models.ForeignKey(
         Empresa, on_delete=models.CASCADE, null=True, blank=True
     )
 
     def __str__(self):
-        return f"{self.primeiro_nome} {self.sobrenome}"
+        return f"{self.nome_completo}"
 
 
 class TurnoChoices(models.TextChoices):

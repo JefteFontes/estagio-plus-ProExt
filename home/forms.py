@@ -19,10 +19,9 @@ class CoordenadorCadastroForm(forms.ModelForm):
 
     class Meta: 
         model = CoordenadorExtensao
-        fields = ['primeiro_nome', 'sobrenome', 'cpf']
+        fields = ['nome_completo', 'cpf']
         widgets = {
-            'primeiro_nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Primeiro Nome (ex: João)'}),
-            'sobrenome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Sobrenome (ex: Silva)'}),
+            'nome_completo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome Completo (ex: João da Silva)'}),
             'cpf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CPF (ex: 12345678900)'}),
         }
 
@@ -37,7 +36,7 @@ class CoordenadorCadastroForm(forms.ModelForm):
 
     def save(self, commit=True):
         user_data = {
-            'username': f"{self.cleaned_data['primeiro_nome']} {self.cleaned_data['sobrenome']}",
+            'username': f"{self.cleaned_data['nome_completo']}",
             'email': self.cleaned_data['email'],
         }
 
