@@ -1,35 +1,28 @@
 {% extends "dashboard/base.html" %}
 
 {% block content %}
-<div class="container-fluid">
-    <h2>Relatórios Pendentes</h2>
-    <hr>
+<h2>Estágios com Relatórios Pendentes</h2>
 
-    {% if estagios %}
-        <table class="table table-bordered">
-            <thead class="table-danger">
-                <tr>
-                    <th>Estagiário</th>
-                    <th>Curso</th>
-                    <th>Empresa</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for estagio in estagios %}
-                    <tr>
-                        <td>{{ estagio.estagiario.nome }}</td>
-                        <td>{{ estagio.curso.nome_curso }}</td>
-                        <td>{{ estagio.empresa.nome_fantasia }}</td>
-                        <td><span class="badge bg-warning text-dark">Relatório Pendente</span></td>
-                    </tr>
+{% if relatorios_por_estagio %}
+    {% for grupo in relatorios_por_estagio.values %}
+        <div class="card mb-3">
+            <div class="card-header">
+                Estagiário:<strong>{{ grupo.estagio.estagiario }}</strong>  |
+                Empresa:<strong>{{ grupo.estagio.empresa }}</strong> 
+            </div>
+            <hr>
+            <ul class="list-group list-group-flush">
+                {% for relatorio in grupo.relatorios %}
+                <li class="list-group-item">
+                    {{ relatorio.data_prevista }} - <strong>{{ relatorio.tipo }}</strong> <br> 
+                    <small class="text-muted">{{ relatorio.dias_atraso }}</small>
+                </li>
+                
                 {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div class="alert alert-success" role="alert">
-            Nenhum relatório pendente!
+            </ul>
         </div>
-    {% endif %}
-</div>
+    {% endfor %}
+{% else %}
+    <p>Nenhum relatório pendente encontrado.</p>
+{% endif %}
 {% endblock %}
