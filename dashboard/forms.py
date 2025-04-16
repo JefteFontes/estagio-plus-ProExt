@@ -26,7 +26,7 @@ class CursosCadastroForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Nome do Curso"}
             ),
             "descricao": forms.Textarea(
-                attrs={"class": "form-control", "placeholder": "Descrição"}
+                attrs={"rows": 4,"class": "form-control", "placeholder": "Descrição"}
             ),
             "area": forms.Select(attrs={"class": "form-control"}),
             "coordenador": forms.TextInput(

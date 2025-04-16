@@ -7,18 +7,6 @@ body {
     z-index: 10; /* Garante que a navbar e a sidebar fiquem acima do conteúdo */
 }
 
-.navbar-dashboard {
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #E3FFE3;
-    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.1);
-}
-
 .logo {
     display: flex;
     align-items: center;
@@ -75,23 +63,6 @@ body {
     background-color: #000000;
 }
 
-.notif-btn {
-    background-color: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    font-size: 20px;
-    color: #000000;
-    border-radius: 20%;
-    transition: background-color 0.3s ease;
-}
-
-.notif-btn:hover{
-    text-decoration: underline;
-    background-color: #ade9ad;
-    transition: background-color 0.3s ease;
-}
-
 .navbar-user {
     display: flex;
     align-items: center;
@@ -132,8 +103,8 @@ body {
     justify-content: center;
     padding: 10px;
     margin-top: -10px;
-    background-color: #E1F3E2;
-    border: 1px solid #C1F9C1;
+    background-color: #E3F2FD;
+    border: 1px solid #b0d9f7;
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
@@ -159,7 +130,7 @@ body {
     flex-direction: row;
     font-size: 20px;
     font-weight: bold;
-    color: #11833D;
+    color: #154360;
 }
 
 .add-estagio-card:hover {
@@ -186,3 +157,155 @@ body {
         width: 90%;
     }
 }
+
+/* Password set specific styles */
+.password-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.password-container input {
+    padding-right: 40px;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+}
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: -10px;
+    margin-bottom: 15px;
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s, background 0.3s;
+}
+
+.strength-weak {
+    background: #ff4d4d;
+    width: 33%;
+}
+
+.strength-medium {
+    background: #ffcc00;
+    width: 66%;
+}
+
+.strength-strong {
+    background: #00cc66;
+    width: 100%;
+}
+
+.strength-text {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 2px;
+}
+
+/* Additional actions */
+.additional-actions {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.back-to-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #4a6bff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.back-to-login:hover {
+    color: #3a5bef;
+    text-decoration: underline;
+}
+
+.success-message {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.success-icon {
+    font-size: 60px;
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+
+.success-message h1 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.success-message p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+/* Success action buttons */
+.success-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.success-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.success-button {
+    background-color: #4a6bff;
+    color: white;
+}
+
+.success-button:hover {
+    background-color: #3a5bef;
+    transform: translateY(-2px);
+}
+
+.success-button.secondary {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.success-button.secondary:hover {
+    background-color: #e0e0e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .success-actions {
+        flex-direction: column;
+    }
+    
+    .success-button {
+        width: 100%;
+    }
+}
+

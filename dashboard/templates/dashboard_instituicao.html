@@ -12,7 +12,6 @@
 
 <div class="welcome-container">
     <div class="welcome-section">
-        <h2>Bem-vindo(a) ao +Estágio</h2>
         <p>{{ instituicao }}</p>
         <div class="add-estagio-card">
             <a href="{% url 'add_estagio' %}">
@@ -92,7 +91,7 @@
                     <td>{{ estagio.data_inicio|date:"d/m/Y" }}</td>
                     <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
                     <td>
-                        {% if estagio.status == 'Concluído' || estagio.status == "Concluido" %}
+                        {% if estagio.status == 'Concluído' %}
                             <span class="badge bg-success">Concluído</span>
                         {% else %}
                             <span class="badge bg-danger">Em andamento</span>
