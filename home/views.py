@@ -2,6 +2,8 @@ from urllib import request
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import CoordenadorCadastroForm, Instituicao
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+from allauth.account.forms import ResetPasswordForm
 
 # Create your views here.
 def home(request):
@@ -14,11 +16,20 @@ def cadastrar_instituicao(request):
     if request.method == 'POST':
         form = CoordenadorCadastroForm(request.POST)
         if form.is_valid():
-            user, coordenador = form.save()
-            messages.success(request, 'Instituição cadastrada com sucesso!')
-            return redirect('/login/')  # Redireciona para a página de login após o cadastro
+            try:
+                user, coordenador = form.save()
+                reset_form = ResetPasswordForm({'email': user.email})
+                if reset_form.is_valid():
+                    reset_form.save(request=request)
+                    messages.success(request, 'Cadastro realizado! Verifique seu email para redefinir a senha.')
+                else:
+                    messages.warning(request, 'Cadastro realizado, mas houve um erro ao enviar o email de redefinição.')
+                return redirect('/login/')
+            except Exception as e:
+                messages.error(request, f'Erro no cadastro: {str(e)}')
+                return redirect('cadastro_instituicao')
         else:
-            messages.error(request, 'Por favor, corrija os erros abaixo.')
+            messages.error(request, 'Corrija os erros abaixo.')
             messages.error(request, form.errors)
             return redirect('cadastro_instituicao')
     else:
