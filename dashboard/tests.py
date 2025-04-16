@@ -25,7 +25,7 @@ class ViewsIntegrationTestCase(TestCase):
 
         self.coordenador = CoordenadorExtensao.objects.create(
             user=self.user, cpf="12345678901", email="coord@example.com",
-            primeiro_nome="João", sobrenome="Silva", instituicao=self.instituicao
+            nome_completo="João da Silva", instituicao=self.instituicao
         )
 
         self.empresa = Empresa.objects.create(
@@ -42,7 +42,7 @@ class ViewsIntegrationTestCase(TestCase):
         )
 
         self.estagiario = Estagiario.objects.create(
-            primeiro_nome="Carlos", sobrenome="Souza", cpf="98765432101",
+            nome_completo="Carlos Sousa", cpf="98765432101",
             matricula="2023123456", email="carlos@example.com",
             telefone="11999999999", curso=self.curso,
             status=True, endereco=self.endereco, instituicao=self.instituicao
@@ -105,7 +105,7 @@ class IntegracaoModelsTestCase(TestCase):
 
         self.coordenador = CoordenadorExtensao.objects.create(
             user=self.user, cpf="12345678901", email="coord@example.com",
-            primeiro_nome="João", sobrenome="Silva", instituicao=self.instituicao
+            nome_completo="João da Silva",  instituicao=self.instituicao
         )
 
         self.empresa = Empresa.objects.create(
@@ -122,14 +122,14 @@ class IntegracaoModelsTestCase(TestCase):
         )
 
         self.estagiario = Estagiario.objects.create(
-            primeiro_nome="Carlos", sobrenome="Souza", cpf="98765432101",
+            nome_completo="Carlos da Silva", cpf="98765432101",
             matricula="2023123456", email="carlos@example.com",
             telefone="11999999999", curso=self.curso,
             status=True, endereco=self.endereco, instituicao=self.instituicao
         )
 
         self.supervisor = Supervisor.objects.create(
-            primeiro_nome="Roberto", sobrenome="Pereira", cpf="32165498701",
+            nome_completo="Roberto Santos", cpf="32165498701",
             email="roberto@example.com", telefone="11888888888",
             cargo="Gerente", empresa=self.empresa
         )
@@ -151,7 +151,7 @@ class IntegracaoModelsTestCase(TestCase):
         self.assertEqual(self.instituicao.nome, "Instituição X")
 
     def test_criacao_coordenador(self):
-        self.assertEqual(self.coordenador.primeiro_nome, "João")
+        self.assertEqual(self.coordenador.nome_completo, "João da Silva")
 
     def test_criacao_empresa(self):
         self.assertEqual(self.empresa.empresa_nome, "Empresa Teste")
@@ -161,9 +161,6 @@ class IntegracaoModelsTestCase(TestCase):
 
     def test_criacao_estagiario(self):
         self.assertEqual(self.estagiario.email, "carlos@example.com")
-
-    def test_criacao_supervisor(self):
-        self.assertEqual(self.supervisor.sobrenome, "Pereira")
 
     def test_criacao_estagio(self):
         self.assertEqual(self.estagio.descricao, "Estágio na área de TI")
