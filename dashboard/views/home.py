@@ -302,3 +302,7 @@ def detalhes_estagio(request, estagio_id):
     return render(request, 'details.html', {
         'estagio': estagio,
     })
+
+
+def relatorios(request):
+    return render(request, 'dashboard_relatorios.html')
