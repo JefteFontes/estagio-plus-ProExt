@@ -158,4 +158,11 @@ ACCOUNT_SIGNUP_REDIRECT_URL = 'account_login'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATED_REDIRECT_URL = 'accounts/profile/instituicao/'
 
-
+DEFAULT_FROM_EMAIL = "Equipe +Estágio <noreply@gmail.com>"
+SITE_NAME = "+Estágio"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST_USER='plussestagio@gmail.com'
+EMAIL_HOST_PASSWORD='nhxf qexm dcsh dmxn'  
+EMAIL_USE_TLS=True 
+EMAIL_PORT=587
+EMAIL_HOST='smtp.gmail.com'  

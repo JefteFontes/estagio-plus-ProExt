@@ -26,7 +26,7 @@ class CursosCadastroForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Nome do Curso"}
             ),
             "descricao": forms.Textarea(
-                attrs={"class": "form-control", "placeholder": "Descrição"}
+                attrs={"rows": 4,"class": "form-control", "placeholder": "Descrição"}
             ),
             "area": forms.Select(attrs={"class": "form-control"}),
             "coordenador": forms.TextInput(
@@ -302,7 +302,6 @@ class EstagiarioCadastroForm(forms.ModelForm):
         return estagiario
 
 
-
 class EmpresaCadastroForm(forms.ModelForm):
     # Campos para os dados do usuário
     email = forms.EmailField(
@@ -415,18 +414,20 @@ class EmpresaCadastroForm(forms.ModelForm):
 
 class CoordenadorEditForm(forms.ModelForm):
     # Fields for user data
-    email = forms.EmailField(widget=forms.EmailInput(attrs={"class": "form-control"}))
+    email = forms.EmailField(label="E-mail",widget=forms.EmailInput(attrs={"class": "form-control"}))
     nome_completo = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control"})
     )
-    cpf = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    cpf = forms.CharField(label="CPF",widget=forms.TextInput(attrs={"class": "form-control"}))
     # Fields for institution data
     instituicao_nome = forms.CharField(
+        label="Nome da instituição",
         max_length=250,
         widget=forms.TextInput(attrs={"class": "form-control"}),
         required=False,
     )
     instituicao_telefone = forms.CharField(
+        label="Telefone da instituição",
         max_length=20,
         widget=forms.TextInput(attrs={"class": "form-control"}),
         required=False,

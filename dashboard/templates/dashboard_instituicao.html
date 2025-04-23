@@ -12,7 +12,6 @@
 
 <div class="welcome-container">
     <div class="welcome-section">
-        <h2>Bem-vindo(a) ao +Estágio</h2>
         <p>{{ instituicao }}</p>
         <div class="add-estagio-card">
             <a href="{% url 'add_estagio' %}">
@@ -91,16 +90,13 @@
                     <td>{{ estagio.supervisor }}</td>
                     <td>{{ estagio.data_inicio|date:"d/m/Y" }}</td>
                     <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
-                    
-                        <td>
-                            {% if estagio.status|lower == 'concluido' or estagio.status|lower == 'concluído' %}
-
-                                <span class="badge bg-success">Concluído</span>
-                            {% else %}
-                                <span class="badge bg-danger">Em andamento</span>
-                            {% endif %}
-                        </td>
-                    
+                    <td>
+                        {% if estagio.status == 'Concluído' %}
+                            <span class="badge bg-success">Concluído</span>
+                        {% else %}
+                            <span class="badge bg-danger">Em andamento</span>
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{% url 'editar_estagio' estagio.id %}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i> Editar</a>
                         <a class="details-link" href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}">Ver detalhes</a>

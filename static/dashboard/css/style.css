@@ -22,7 +22,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #E3FFE3;
+    background-color: #E3F2FD;
     box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -96,7 +96,7 @@ body {
 
 .notif-btn:hover{
     text-decoration: underline;
-    background-color: #ade9ad;
+    background-color: #5DADE2;
     transition: background-color 0.3s ease;
 }
 
@@ -181,8 +181,14 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.dropdown-content button:hover {
+.btn-logout:hover {
     background-color: #dc3545;
+    color: #F5F5F5;
+    transition: background-color 0.3s ease;
+}
+
+.btn-editar:hover {
+    background-color: #4a6bff;
     color: #F5F5F5;
     transition: background-color 0.3s ease;
 }
@@ -200,7 +206,7 @@ body {
     left: 0;
     height: 100%; /* Subtrair a altura da navbar */
     width: 250px;
-    background-color: #E3FFE3;
+    background-color: #E3F2FD;
     padding: 0px 20px 20px 40px;
     box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -252,13 +258,13 @@ body {
 }
 
 .sidebar-top li:hover, .sidebar-bottom li:hover {
-    background-color: #c1f9c1;
+    background-color: #5DADE2;
     border-radius: 5px;
     transition: background-color 0.5s ease;
 }
 
 .actived{
-    background-color: #c1f9c1;
+    background-color: #5DADE2;
     border-radius: 5px;
 }
 
@@ -395,11 +401,12 @@ li.actived a {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    background-color: #a0d1a1;
-    height: 250px;
-    padding: 20px;
+    background-color: #AED6F1;
+    height: 220px;
+    padding: 10px;
     border-radius: 8px;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .welcome-section {
@@ -411,13 +418,13 @@ li.actived a {
 }
 
 .welcome-section h2 {
-    color: #2d8538;
+    color: #154360;
     font-size: 38px;
     margin-bottom: 0px;
 }
 
 .welcome-section p {
-    color: #2d8538;
+    color: #154360;
     font-size: 28px;
     margin-top: 10px;
     font-weight: bold;
@@ -441,7 +448,7 @@ li.actived a {
 
 .summary-item p {
     font-weight: bold;
-    color: #2d8538;
+    color: #154360;
 }
 
 .summary-item span {
@@ -668,4 +675,3 @@ select, #form-control{
     background-color: #FFF;
     cursor: pointer;
 }
-
