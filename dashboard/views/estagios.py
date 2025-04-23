@@ -5,28 +5,22 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EstagioCadastroForm
 from ..models import Empresa, Estagio, Supervisor
+from dateutil.relativedelta import relativedelta
+
 
 
 @login_required
 def add_estagios(request):
+    form = EstagioCadastroForm(user=request.user)
+
     if request.method == "POST":
-        form = EstagioCadastroForm(request.POST)
+        form = EstagioCadastroForm(request.POST, user=request.user)
 
         if form.is_valid():
-            print(form.cleaned_data)
             form.save()  
             messages.success(request, "Estágio cadastrado com sucesso!")
-            return redirect(
-                "dashboard_instituicao"
-            ) 
-        else:
-            print("Formulário inválido")
-            print(
-                form.errors
-            )
-    else:
-        form = EstagioCadastroForm()  
-
+            return redirect("dashboard_instituicao") 
+        
     return render(request, "add_estagios.html", {"form": form})
 
 
@@ -35,15 +29,15 @@ def editar_estagio(request, estagio_id):
 
     if request.method == "POST":
         print("Dados do formulário:", request.POST)
-        form = EstagioCadastroForm(request.POST, instance=estagio) 
+        form = EstagioCadastroForm(request.POST, instance=estagio, user=request.user) 
         if form.is_valid():
             form.save()
             messages.success(request, "Estágio atualizado com sucesso!")
             return redirect("dashboard_instituicao")
         else:
             messages.error(request, "Erro ao atualizar o estágio. Verifique os dados.")
-    else:
-        form = EstagioCadastroForm(instance=estagio)
+   
+    form = EstagioCadastroForm(instance=estagio, user=request.user)
 
     return render(request, "add_estagios.html", {"form": form, "estagio": estagio})
 

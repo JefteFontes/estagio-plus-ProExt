@@ -15,21 +15,22 @@ def cadastrar_estagiario(request):
             form.save()
             messages.success(request, "Estágiario cadastrado com sucesso!")
             return redirect("dashboard_estagiario")
-    else:
-        form = EstagiarioCadastroForm()     
+        
+    form = EstagiarioCadastroForm(coordenador=coordenador)     
 
     return render(request, 'cadastrar_estagiario.html', {'form': form})
 
 def editar_estagiario(request, estagiario_id):
     estagiario = get_object_or_404(Estagiario, id=estagiario_id)
+    coordenador = CoordenadorExtensao.objects.get(user=request.user)
     
     if request.method == 'POST':
-        form = EstagiarioCadastroForm(request.POST, instance=estagiario)
+        form = EstagiarioCadastroForm(request.POST, instance=estagiario, coordenador=coordenador)
         if form.is_valid():
             form.save()
             return redirect('dashboard_estagiario')
-    else:
-        form = EstagiarioCadastroForm(instance=estagiario)
+    
+    form = EstagiarioCadastroForm(instance=estagiario, coordenador=coordenador)
     return render(request, 'cadastrar_estagiario.html', {'form': form, 'estagiario': estagiario})
 
 
