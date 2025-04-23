@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EstagioCadastroForm
+<<<<<<< HEAD
 from ..models import Empresa, Estagio, Supervisor, RelatorioEstagio
 
 
@@ -74,11 +75,30 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
         form = EstagioCadastroForm(instance=estagio)
 
     return render(request, template, {"form": form, "estagio": estagio})
+=======
+from ..models import Empresa, Estagio, Supervisor
+from dateutil.relativedelta import relativedelta
+
+>>>>>>> thiagoc-silva
 
 
 @login_required
 def add_estagios(request):
+<<<<<<< HEAD
     return processar_form_estagio(request)
+=======
+    form = EstagioCadastroForm(user=request.user)
+
+    if request.method == "POST":
+        form = EstagioCadastroForm(request.POST, user=request.user)
+
+        if form.is_valid():
+            form.save()  
+            messages.success(request, "Estágio cadastrado com sucesso!")
+            return redirect("dashboard_instituicao") 
+        
+    return render(request, "add_estagios.html", {"form": form})
+>>>>>>> thiagoc-silva
 
 
 @login_required
@@ -86,6 +106,20 @@ def editar_estagio(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)
     return processar_form_estagio(request, estagio)
 
+<<<<<<< HEAD
+=======
+    if request.method == "POST":
+        print("Dados do formulário:", request.POST)
+        form = EstagioCadastroForm(request.POST, instance=estagio, user=request.user) 
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Estágio atualizado com sucesso!")
+            return redirect("dashboard_instituicao")
+        else:
+            messages.error(request, "Erro ao atualizar o estágio. Verifique os dados.")
+   
+    form = EstagioCadastroForm(instance=estagio, user=request.user)
+>>>>>>> thiagoc-silva
 
 @login_required
 def complementar_estagio(request, estagio_id):
