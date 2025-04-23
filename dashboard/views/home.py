@@ -1,4 +1,3 @@
-import datetime
 import os
 import tempfile
 from django.shortcuts import get_object_or_404, render, redirect
@@ -20,8 +19,9 @@ from dashboard.models import (
     
 )
 from dashboard.views.utils import parse_sections
-from dashboard.forms import CursosCadastroForm, CoordenadorEditForm
+from dashboard.forms import CursosCadastroForm, EmpresaCadastroForm
 from django.db.models import Q
+
 
 
 def home(request):

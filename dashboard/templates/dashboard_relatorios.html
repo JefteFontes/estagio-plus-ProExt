@@ -7,14 +7,13 @@
     {% for grupo in relatorios_por_estagio.values %}
         <div class="card mb-3">
             <div class="card-header">
-                Estagiário:<strong>{{ grupo.estagio.estagiario }}</strong>  |
-                Empresa:<strong>{{ grupo.estagio.empresa }}</strong> 
+                Estagiário:<h2>{{ grupo.estagio.estagiario }}</h2>
+                Empresa: <strong>{{ grupo.estagio.empresa }}</strong> 
             </div>
-            <hr>
             <ul class="list-group list-group-flush">
                 {% for relatorio in grupo.relatorios %}
                 <li class="list-group-item">
-                    {{ relatorio.data_prevista }} - <strong>{{ relatorio.tipo }}</strong> <br> 
+                    <strong>{{ relatorio.tipo }}</strong> - {{ relatorio.data_prevista }} -  
                     <small class="text-muted">{{ relatorio.dias_atraso }}</small>
                 </li>
                 

@@ -121,15 +121,11 @@
             <div class="form-step d-none" id="step3">
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="{{ form.primeiro_nome.id_for_label }}">Primeiro Nome:</label>
-                        {{ form.primeiro_nome }}
-                        <span id="primeiro-nome-error" class="error-message"></span>
+                        <label for="{{ form.nome_completo.id_for_label }}">Nome Completo:</label>
+                        {{ form.nome_completo }}
+                        <span id="nome-completo-error" class="error-message"></span>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="{{ form.sobrenome.id_for_label }}">Sobrenome:</label>
-                        {{ form.sobrenome }}
-                        <span id="sobrenome-error" class="error-message"></span>
-                    </div>
+                
                 </div>
 
                 <div class="form-group">
@@ -274,10 +270,10 @@
                 success: function(data) {
                     $('#id_rua').val(data.logradouro).prop('readonly', false);
                     $('#id_bairro').val(data.bairro).prop('readonly', false);
-                    $('#id_cidade').val(data.localidade).prop('readonly', false);
-                    $('#id_estado').val(data.uf).prop('readonly', false);
+                    $('#id_cidade').val(data.cidade).prop('readonly', false);
+                    $('#id_estado').val(data.estado).prop('readonly', false);
                     $('#id_complemento').val(data.complemento);
-                    clearError('#id_cep');
+                    clearError('#id_cep');4
                 },
                 error: function(xhr) {
                     showError('#id_cep', xhr.responseJSON.error || 'CEP não encontrado ou serviço indisponível.');

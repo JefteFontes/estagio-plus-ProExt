@@ -14,8 +14,7 @@ from .models import (
     Areachoices,
     Cursos,
     CoordenadorExtensao,
-    DocumentoEstagio,
-    RelatorioSemestral,
+    
 )
 
 
@@ -139,6 +138,7 @@ class EstagioCadastroForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         empresa_id = kwargs.pop("empresa_id", None)
         instituicao_id = kwargs.pop("instituicao_id", None)
         super().__init__(*args, **kwargs)
