@@ -14,11 +14,11 @@ from dashboard.views.home import (
     cadastrar_cursos,
     deletar_curso,
     editar_curso,
-    relatorios,
 )
 from dashboard.views.user import editar_perfil
 from django.conf import settings
 from django.conf.urls.static import static
+from dashboard.views.relatorios import  verificar_relatorios_pendentes,relatorios
 
 
 
@@ -38,6 +38,7 @@ urlpatterns = [
     path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),
 
     path('relatorios/', relatorios, name='dashboard_relatorios'),
+    path("estagio/<int:estagio_id>/relatorios/", verificar_relatorios_pendentes, name="relatorios_pendentes"),
 
 
     path('cadastrar-empresa', cadastrar_empresa, name='cadastrar_empresa'),

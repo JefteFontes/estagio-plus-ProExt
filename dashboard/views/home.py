@@ -1,3 +1,4 @@
+import datetime
 import os
 import tempfile
 from django.shortcuts import get_object_or_404, render, redirect
@@ -301,6 +302,3 @@ def detalhes_estagio(request, estagio_id):
     return render(request, 'details.html', {
         'estagio': estagio,
     })
-
-def relatorios(request):
-    return render(request, 'dashboard_relatorios.html')
