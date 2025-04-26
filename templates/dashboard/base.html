@@ -17,24 +17,9 @@
 
 </head>
 <body>
+
     <!-- Navbar horizontal com Bootstrap no topo -->
     {% include 'partials/nav-bar.html' %}
-
-    <div id="logoutModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeModal"></span>
-            <h2>Confirmar Logout</h2>
-            <p>Tem certeza de que deseja sair?</p>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelLogout">Cancelar</button>
-                <form method="post" action="{% url 'account_logout' %}" id="logout-form">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-danger">Confirmar</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Container principal com sidebar e conteúdo -->
     <div class="container-main">
         <!-- Barra lateral -->

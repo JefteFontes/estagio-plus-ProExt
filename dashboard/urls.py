@@ -18,7 +18,8 @@ from dashboard.views.home import (
 from dashboard.views.user import editar_perfil
 from django.conf import settings
 from django.conf.urls.static import static
-from dashboard.views.relatorios import  verificar_relatorios_pendentes,relatorios
+from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo
+
 
 
 
@@ -60,6 +61,8 @@ urlpatterns = [
 
 
     path('importar-pdf', importar_pdf, name='importar_pdf'),
+    path('importar_termo', importar_termo, name='importar_termo'),
+     path('importar-termo/<int:estagio_id>/', importar_termo, name='importar_termo'),
     path('parse-sections', parse_sections, name='parse_sections'),
     path('buscar-cep', buscar_cep, name='buscar_cep'),
     path('validate_cnpj', validate_cnpj, name='validate_cnpj'),

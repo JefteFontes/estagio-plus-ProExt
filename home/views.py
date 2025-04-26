@@ -1,6 +1,8 @@
-from urllib import request
 from django.shortcuts import get_object_or_404, render, redirect
-from .forms import CoordenadorCadastroForm, Instituicao
+from django.conf import settings
+from django.http import FileResponse, Http404, HttpResponse
+import os
+from .forms import CoordenadorCadastroForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from allauth.account.forms import ResetPasswordForm
@@ -37,7 +39,6 @@ def cadastrar_instituicao(request):
     
     return render(request, 'cadastro/cadastrar_instituicao.html', {'form': form})
 
-
 def editar_instituicao(request, instituicao):
     instituicao = get_object_or_404(CoordenadorCadastroForm, id=instituicao)
 
@@ -49,3 +50,22 @@ def editar_instituicao(request, instituicao):
     else:
         form = CoordenadorCadastroForm(instance=instituicao)
     return render(request, 'cadastro/cadastrar_instituicao.html', {'form': form, 'instituicao': instituicao})
+
+    
+def visualizar_termo(request, pdf_nome):
+    # Caminho completo do arquivo
+    caminho_arquivo = os.path.join(settings.MEDIA_ROOT, pdf_nome)
+
+    # Verifique se o arquivo existe
+    if os.path.exists(caminho_arquivo):
+        try:
+            # Abre o arquivo para leitura
+            arquivo = open(caminho_arquivo, 'rb')
+            # Retorna o arquivo como resposta
+            return FileResponse(arquivo, content_type='application/pdf')
+        except Exception as e:
+            # Caso ocorra um erro, ele será capturado
+            raise Http404(f"Erro ao abrir o arquivo: {str(e)}")
+    else:
+        # Caso o arquivo não exista, levanta uma exceção
+        raise Http404("Arquivo não encontrado")

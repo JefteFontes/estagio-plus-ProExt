@@ -1,27 +1,105 @@
-{% extends "dashboard/base.html" %}
+{% extends 'dashboard/base.html' %}
 
 {% block content %}
 <h2>Estágios com Relatórios Pendentes</h2>
 
-{% if relatorios_por_estagio %}
-    {% for grupo in relatorios_por_estagio.values %}
-        <div class="card mb-3">
-            <div class="card-header">
-                Estagiário:<h2>{{ grupo.estagio.estagiario }}</h2>
-                Empresa: <strong>{{ grupo.estagio.empresa }}</strong> 
-            </div>
-            <ul class="list-group list-group-flush">
-                {% for relatorio in grupo.relatorios %}
-                <li class="list-group-item">
-                    <strong>{{ relatorio.tipo }}</strong> - {{ relatorio.data_prevista }} -  
-                    <small class="text-muted">{{ relatorio.dias_atraso }}</small>
-                </li>
-                
-                {% endfor %}
-            </ul>
-        </div>
-    {% endfor %}
-{% else %}
-    <p>Nenhum relatório pendente encontrado.</p>
-{% endif %}
+{% for grupo in relatorios_por_estagio.values %}
+  <div class="card mb-3">
+    <div class="card-header">
+      Estagiário: <h1>{{ grupo.estagio.estagiario }}</h1><br>
+      Empresa: <strong>{{ grupo.estagio.empresa }}</strong>
+    </div>
+    <ul class="list-group list-group-flush">
+      {% for relatorio in grupo.relatorios %}
+        {% if relatorio.tipo == 'Termo de Compromisso' %}
+          <li class="list-group-item">
+            <strong>{{ relatorio.tipo }}</strong> - {{ relatorio.data_prevista }} -
+            <small class="text-muted">{{ relatorio.dias_atraso }}</small>
+
+            {% if grupo.estagio.pdf_termo %}
+            <a href="{% url 'visualizar_termo' pdf_nome=grupo.estagio.pdf_termo %}" target="_blank" class="btn btn-success mt-2">Visualizar TCE</a>
+
+            {% else %}
+
+            <button type="button" class="btn btn-primary mt-2" onclick="selecionarArquivo({{ forloop.counter0 }})">
+              <span id="texto-botao-{{ forloop.counter0 }}">Importar TCE</span>
+              <span id="spinner-botao-{{ forloop.counter0 }}" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+            </button>
+
+            <form id="form-importar-{{ forloop.counter0 }}" action="{% url 'importar_termo' grupo.estagio.id %}" method="post" enctype="multipart/form-data" style="display: none;">
+              {% csrf_token %}
+              <input type="file" name="termo" id="input-arquivo-{{ forloop.counter0 }}" accept=".pdf">
+              <input type="hidden" name="estagio_id" value="{{ grupo.estagio.id }}">
+            </form>
+
+            <div id="mensagem-importar-{{ forloop.counter0 }}"></div>
+
+            
+            {% endif %}
+            
+          </li>
+          {% else %}
+          <li class="list-group-item">
+            <strong>{{ relatorio.tipo }}</strong> - {{ relatorio.data_prevista }} -
+            <small class="text-muted">{{ relatorio.dias_atraso }}</small>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endfor %}
+
+<script>
+    function selecionarArquivo(index) {
+      const botaoTexto = document.getElementById(`texto-botao-${index}`);
+      const botaoSpinner = document.getElementById(`spinner-botao-${index}`);
+      const form = document.getElementById(`form-importar-${index}`);
+      const input = document.getElementById(`input-arquivo-${index}`);
+      const mensagemDiv = document.getElementById(`mensagem-importar-${index}`);
+
+      if (!input || !form) {
+        console.error('Input ou Formulário não encontrado para o index:', index);
+        return;
+      }
+
+      input.click();
+
+      input.onchange = () => {
+        const formData = new FormData(form);
+
+        botaoTexto.style.display = 'none';
+        botaoSpinner.style.display = 'inline';
+
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          botaoTexto.style.display = 'inline';
+          botaoSpinner.style.display = 'none';
+
+          if (data.success) {
+            mensagemDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+            window.open(data.url_pdf, '_blank');
+            setTimeout(() => location.reload(), 2000);
+          } else {
+            mensagemDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+          }
+        })
+        .catch(error => {
+          botaoTexto.style.display = 'inline';
+          botaoSpinner.style.display = 'none';
+          mensagemDiv.innerHTML = `<div class="alert alert-danger">Erro ao importar o termo.</div>`;
+        });
+
+        input.value = '';
+      };
+    }
+  </script>
+
 {% endblock %}

@@ -158,6 +158,7 @@ class Estagio(models.Model):
     supervisor = models.ForeignKey(Supervisor, on_delete=models.PROTECT, null=True, blank=True)
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT, null=True, blank=True)
     orientador = models.TextField(max_length=100, null=True, blank=True)
+    pdf_termo = models.FileField(upload_to='termos/', null=True, blank=True)
     def clean(self):
         return f"{self.area} - {self.status}"
     def __str__(self):
