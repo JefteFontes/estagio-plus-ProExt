@@ -75,7 +75,6 @@ def verificar_relatorios_pendentes(estagio):
     return relatorios
 
 
-
 def importar_termo(request, estagio_id):
     if request.method != 'POST':
         return JsonResponse({'success': False, 'message': 'Método inválido.'})
@@ -111,32 +110,34 @@ def importar_termo(request, estagio_id):
     cnpj_extraido = cnpj_match.group(1).strip()
     data_inicio_extraida = datetime.datetime.strptime(data_inicio_match.group(1), "%d/%m/%Y").date()
 
-    estagio_id = Estagio.objects.get(id=estagio_id)
-    estagiario_atual = estagio_id.estagiario.cpf
-    empresa_atual = estagio_id.empresa.cnpj
-    data_inicio_atual = estagio_id.data_inicio
-        
-    # Buscar Estágio correto
-    try:
-        estagio = Estagio.objects.get (
-            estagiario__cpf=cpf_extraido,
-            empresa__cnpj=cnpj_extraido,
-            data_inicio=data_inicio_extraida
-        )
-    except Estagio.DoesNotExist:
-        return JsonResponse({
-            'success': False, 
-            'message': 
-                 
-                'Dados do arquivo não conferem com este estágio' + '<br>'+
-                'cpf: ' + cpf_extraido + ' | ' + estagiario_atual + '<br>' + 
-                'cnpj: ' + cnpj_extraido + '| ' + empresa_atual + '<br>' + 
-                'data_inicio: ' + data_inicio_extraida.strftime('%d/%m/%Y') + ' | ' + data_inicio_atual.strftime('%d/%m/%Y') + '<br>'})
+    estagio = Estagio.objects.get(id=estagio_id)
+    estagiario_atual = estagio.estagiario.cpf
+    empresa_atual = estagio.empresa.cnpj
+    data_inicio_atual = estagio.data_inicio
 
-    # Gerar nome do arquivo
-    ano = estagio_id.data_inicio.year
-    nome_estagiario = estagio_id.estagiario.nome_completo.replace(' ', '').lower()
-    nome_arquivo = f"{ano}TCE_{nome_estagiario}.pdf"   # Salvar o arquivo
+    # Validações
+    erros = []
+    if cpf_extraido != estagiario_atual:
+        erros.append(
+            f"CPF do arquivo ({cpf_extraido}) diferente do CPF do estagiário ({estagiario_atual})."
+        )
+    if cnpj_extraido != empresa_atual:
+        erros.append(
+            f"CNPJ do arquivo ({cnpj_extraido}) diferente do CNPJ da empresa ({empresa_atual})."
+        )
+    if data_inicio_extraida != data_inicio_atual:
+        erros.append(
+            f"Data de início do arquivo ({data_inicio_extraida}) diferente da data de início do estágio ({data_inicio_atual})."
+        )
+
+    if erros:
+        return JsonResponse({'success': False, 'message': '<br>'.join(erros)})
+
+    # Se passou em todas as validações, salva o arquivo
+    ano = estagio.data_inicio.year
+    nome_estagiario = estagio.estagiario.nome_completo.replace(' ', '').lower()
+    nome_arquivo = f"{ano}TCE_{nome_estagiario}.pdf"
+
     with open(temp_path, 'rb') as f:
         estagio.pdf_termo.save(nome_arquivo, File(f), save=True)
 
