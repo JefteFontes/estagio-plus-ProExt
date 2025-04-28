@@ -1,6 +1,8 @@
 from django.urls import path, re_path
 from . import views
 from dashboard.views.utils import validate_cnpj, validate_cpf, buscar_cep
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -12,4 +14,4 @@ urlpatterns = [
     path('<str:pdf_nome>/', views.visualizar_termo, name='visualizar_termo'),
     re_path(r'(?P<pdf_nome>.+)/$', views.visualizar_termo, name='visualizar_termo'),
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

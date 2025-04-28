@@ -10,14 +10,18 @@ def editar_perfil(request):
     coordenador = get_object_or_404(CoordenadorExtensao, user=request.user)
 
     if request.method == "POST":
-        form = CoordenadorEditForm(request.POST, coordenador=coordenador, instance=coordenador)
+        form = CoordenadorEditForm(
+            request.POST, request.FILES, coordenador=coordenador, instance=coordenador
+        )
         if form.is_valid():
             form.save()
             messages.success(request, "Seu perfil foi atualizado com sucesso!")
-            return redirect("dashboard_instituicao")  # Redirect to the dashboard or another page
+            return redirect(
+                "dashboard_instituicao"
+            )  # Redirect to the dashboard or another page
         else:
             messages.error(request, "Por favor, corrija os erros abaixo.")
     else:
         form = CoordenadorEditForm(coordenador=coordenador, instance=coordenador)
 
-    return render(request, 'edit_profile.html', {'form': form})
+    return render(request, "edit_profile.html", {"form": form})

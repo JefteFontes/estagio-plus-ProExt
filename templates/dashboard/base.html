@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>+Estágio</title>
+    <link rel="stylesheet" href="{% static 'dashboard/dash-indiv/style.css' %}">
     <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
     <link rel="stylesheet" href="{%static 'details/css/style.css' %}">
     <link rel="stylesheet" href="{%static 'assets/css/style.css' %}">
@@ -67,15 +68,14 @@
                         {% endif %}
 
                         {% url 'dashboard_relatorios' as dashboard_relatorios_url %}
-{% if dashboard_relatorios_url %}
-    <a class="btn-sidebar" href="{{ dashboard_relatorios_url }}">
-        <li class="{% if request.path == dashboard_relatorios_url %}actived{% endif %}">
-            <span class="icon"><i class="fa-solid fa-file-alt"></i></span>
-            <span class="text">Relatórios</span>
-        </li>
-    </a>
-{% endif %}
-                        
+                        {% if dashboard_relatorios_url %}
+                            <a class="btn-sidebar" href="{{ dashboard_relatorios_url }}">
+                                <li class="{% if request.path == dashboard_relatorios_url %}actived{% endif %}">
+                                    <span class="icon"><i class="fa-solid fa-file-alt"></i></span>
+                                    <span class="text">Relatórios</span>
+                                </li>
+                            </a>
+                        {% endif %}
                     </ul>
                 </div>
                 <div class="sidebar-bottom">

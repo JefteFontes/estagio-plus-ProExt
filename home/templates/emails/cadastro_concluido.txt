@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% blocktranslate %}Oi {{ user_name }},{% endblocktranslate %}
+
+{% blocktranslate %}Bem-vindo ao +Estágio, a plataforma completa para gerenciamento de estágios.{% endblocktranslate %}
+
+Com o +Estágio você pode:
+- Agilizar processos burocráticos
+- Realizar cadastros de forma prática com nosso sistema eficiente
+- Obter maior controle sobre relatórios e documentação
+- Centralizar todas as informações do estágio em um único lugar
+
+Aproveite para explorar todas as funcionalidades que preparamos para você!
+
+{% blocktranslate %}Atenciosamente,{% endblocktranslate %}
+Equipe {{ site_name }}
+{{ site_url }}
