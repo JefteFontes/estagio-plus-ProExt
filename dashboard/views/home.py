@@ -16,10 +16,9 @@ from dashboard.models import (
     TipoChoices,
     TurnoChoices,
     CoordenadorExtensao,
-    
 )
 from dashboard.views.utils import parse_sections
-from dashboard.forms import CursosCadastroForm, CoordenadorEditForm
+from dashboard.forms import CursosCadastroForm, EmpresaCadastroForm
 from django.db.models import Q
 
 
@@ -192,16 +191,16 @@ def dashboard_instituicao(request):
 
             supervisor = Supervisor.objects.get(nome=estagio_data.get("supervisor", ""))
             Estagio.objects.create(
-                bolsa_estagio=estagio_data.get('bolsa', ''),
-                area=estagio_data.get('area', ''),
-                tipo_estagio=estagio_data.get('tipo_estagio', ''),
-                descricao=estagio_data.get('descricao', ''),
-                data_inicio=estagio_data.get('data_inicio', None),
-                data_fim=estagio_data.get('data_fim', None),
-                turno=estagio_data.get('turno', ''),
+                bolsa_estagio=estagio_data.get("bolsa", ""),
+                area=estagio_data.get("area", ""),
+                tipo_estagio=estagio_data.get("tipo_estagio", ""),
+                descricao=estagio_data.get("descricao", ""),
+                data_inicio=estagio_data.get("data_inicio", None),
+                data_fim=estagio_data.get("data_fim", None),
+                turno=estagio_data.get("turno", ""),
                 estagiario=estagiario,
                 empresa=empresa,
-                orientador=estagio_data.get('orientador', ''),
+                orientador=estagio_data.get("orientador", ""),
                 supervisor=supervisor,
             )
 
@@ -212,10 +211,10 @@ def dashboard_instituicao(request):
         finally:
             os.remove(file_path)
 
-    area = request.GET.get('area', '')
-    status = request.GET.get('status', '')
-    turno = request.GET.get('turno', '')
-    tipo = request.GET.get('tipo_estagio', '')
+    area = request.GET.get("area", "")
+    status = request.GET.get("status", "")
+    turno = request.GET.get("turno", "")
+    tipo = request.GET.get("tipo_estagio", "")
 
     estagios = Estagio.objects.filter(instituicao=instituicao)
     if area:
@@ -233,14 +232,14 @@ def dashboard_instituicao(request):
     tipos = [choice[0] for choice in TipoChoices.choices]
 
     context = {
-        'areas': areas,
-        'tipos': tipos,
-        'status_choices': status_choices,
-        'turnos': turnos,
-        'estagios': estagios,
-        'estagios_ativos': len(estagios),
-        'instituicao': instituicao,
-        'errors': errors,
+        "areas": areas,
+        "tipos": tipos,
+        "status_choices": status_choices,
+        "turnos": turnos,
+        "estagios": estagios,
+        "estagios_ativos": len(estagios),
+        "instituicao": instituicao,
+        "errors": errors,
     }
     return render(request, "dashboard_instituicao.html", context)
 
@@ -276,15 +275,17 @@ def editar_curso(request, curso_id):
             return redirect("dashboard_cursos")
     else:
         form = CursosCadastroForm(instance=curso)
-    return render(request, 'cadastrar_cursos.html', {'form': form, 'curso': curso})
+    return render(request, "cadastrar_cursos.html", {"form": form, "curso": curso})
 
 
 def deletar_curso(request, curso_id):
     curso = get_object_or_404(Cursos, id=curso_id)
-    #mensagem de erro se tiver estagiario vinculado ao curso
+    # mensagem de erro se tiver estagiario vinculado ao curso
     if Estagiario.objects.filter(curso=curso).exists():
-        messages.error(request, 'O curso possui estagiarios vinculados e nao pode ser deletado.')
-        return redirect('dashboard_cursos')
+        messages.error(
+            request, "O curso possui estagiarios vinculados e nao pode ser deletado."
+        )
+        return redirect("dashboard_cursos")
     else:
         curso.delete()
         messages.success(request, "Curso deletado com sucesso!")
@@ -297,10 +298,15 @@ def deletar_curso(request, curso_id):
 
 def detalhes_estagio(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)
-   
-    return render(request, 'details.html', {
-        'estagio': estagio,
-    })
+
+    return render(
+        request,
+        "details.html",
+        {
+            "estagio": estagio,
+        },
+    )
+
 
 def relatorios(request):
-    return render(request, 'dashboard_relatorios.html')
+    return render(request, "dashboard_relatorios.html")

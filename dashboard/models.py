@@ -35,6 +35,7 @@ class Instituicao(models.Model):
     endereco = models.ForeignKey(
         Endereco, on_delete=models.PROTECT, null=True, blank=True
     )
+    logo = models.ImageField(upload_to="instituicao_logos/", null=True, blank=True)
 
     def __str__(self):
         return self.nome
@@ -47,7 +48,9 @@ class Empresa(models.Model):
     razao_social = models.CharField(max_length=250)
     email = models.EmailField(unique=True)
     atividades = models.TextField(max_length=500, null=True)
-    endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, null=True, blank=True)
+    endereco = models.ForeignKey(
+        Endereco, on_delete=models.PROTECT, null=True, blank=True
+    )
 
     def __str__(self):
         return self.empresa_nome
@@ -82,28 +85,39 @@ class Estagiario(models.Model):
     cpf = models.CharField(
         max_length=14,
         unique=True,
-        validators=[
-            RegexValidator(regex="^[0-9]+$", message="Use apenas números.")
-        ],
+        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
     )
     matricula = models.CharField(max_length=55)
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20)
     curso = models.ForeignKey(Cursos, on_delete=models.PROTECT, null=True, blank=True)
     status = models.BooleanField(default=False)
-    endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, null=True, blank=True)
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT, null=True, blank=True)
+    endereco = models.ForeignKey(
+        Endereco, on_delete=models.PROTECT, null=True, blank=True
+    )
+    instituicao = models.ForeignKey(
+        Instituicao, on_delete=models.PROTECT, null=True, blank=True
+    )
 
     def __str__(self):
         return f"{self.nome_completo}"
 
 
 class CoordenadorExtensao(models.Model):
-    user = models.OneToOneField(User, on_delete=models.PROTECT, )
-    cpf = models.CharField(max_length=15, unique=True, validators=[RegexValidator(regex='^[0-9]+$', message='Use apenas números.')])
+    user = models.OneToOneField(
+        User,
+        on_delete=models.PROTECT,
+    )
+    cpf = models.CharField(
+        max_length=15,
+        unique=True,
+        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
+    )
     email = models.EmailField(unique=True)
     nome_completo = models.CharField(max_length=150)
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT, null=True, blank=True)
+    instituicao = models.ForeignKey(
+        Instituicao, on_delete=models.PROTECT, null=True, blank=True
+    )
 
     def __str__(self):
         return f"{self.nome_completo}"
@@ -139,27 +153,41 @@ class StatusChoices(models.TextChoices):
 
 
 class TipoChoices(models.TextChoices):
-    nao_obrigatorio = 'Não obrigatório'
-    obrigatorio = 'Obrigatório'
+    nao_obrigatorio = "Não obrigatório"
+    obrigatorio = "Obrigatório"
 
 
 class Estagio(models.Model):
     bolsa_estagio = models.FloatField(blank=True, null=True, default=0)
     area = models.CharField(max_length=250)
-    tipo_estagio = models.TextField(choices=TipoChoices.choices, default=TipoChoices.nao_obrigatorio)
-    status = models.TextField(choices=StatusChoices.choices, default=StatusChoices.em_andamento)
+    tipo_estagio = models.TextField(
+        choices=TipoChoices.choices, default=TipoChoices.nao_obrigatorio
+    )
+    status = models.TextField(
+        choices=StatusChoices.choices, default=StatusChoices.em_andamento
+    )
     descricao = models.TextField(max_length=1000)
     data_inicio = models.DateField()
     data_fim = models.DateField()
     turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
-    auxilio_transporte = models.FloatField(blank=True, null=True,default=0)
-    estagiario = models.ForeignKey(Estagiario, on_delete=models.PROTECT, null=True, blank=True)
-    empresa = models.ForeignKey(Empresa, on_delete=models.PROTECT, null=True, blank=True)
-    supervisor = models.ForeignKey(Supervisor, on_delete=models.PROTECT, null=True, blank=True)
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT, null=True, blank=True)
+    auxilio_transporte = models.FloatField(blank=True, null=True, default=0)
+    estagiario = models.ForeignKey(
+        Estagiario, on_delete=models.PROTECT, null=True, blank=True
+    )
+    empresa = models.ForeignKey(
+        Empresa, on_delete=models.PROTECT, null=True, blank=True
+    )
+    supervisor = models.ForeignKey(
+        Supervisor, on_delete=models.PROTECT, null=True, blank=True
+    )
+    instituicao = models.ForeignKey(
+        Instituicao, on_delete=models.PROTECT, null=True, blank=True
+    )
     orientador = models.TextField(max_length=100, null=True, blank=True)
+
     def clean(self):
         return f"{self.area} - {self.status}"
+
     def __str__(self):
         return f"{self.area} - {self.status}"
 
@@ -170,6 +198,7 @@ TIPOS_RELATORIO = [
     ("avaliacao", "Relatório de Avaliação"),
     ("conclusao", "Termo de Conclusão/Rescisão"),
 ]
+
 
 class RelatorioEstagio(models.Model):
     estagio = models.ForeignKey("Estagio", on_delete=models.CASCADE)

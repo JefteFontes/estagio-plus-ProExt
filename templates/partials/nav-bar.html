@@ -1,7 +1,11 @@
 {% load static %}
 <header class="navbar-dashboard">
     <div class="logo">
-        <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
+        {% if request.user.is_authenticated and request.user.coordenadorextensao.instituicao.logo %}
+            <img src="{{ request.user.coordenadorextensao.instituicao.logo.url }}" alt="Logo da Instituição">
+        {% else %}
+            <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
+        {% endif %}
     </div>
     <nav class="navbar-nav">
         {% url 'account_login' as login_url_ %}

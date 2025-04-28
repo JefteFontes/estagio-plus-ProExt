@@ -36,7 +36,7 @@
             </button>
         </div>
 
-        <form method="post" id="cadastroForm" novalidate>
+        <form method="post" enctype="multipart/form-data" id="cadastroForm" novalidate>
             {% csrf_token %}
             {{ redirect_field }}
 
@@ -58,6 +58,11 @@
                     <label for="{{ form.instituicao_telefone.id_for_label }}">Telefone:</label>
                     {{ form.instituicao_telefone }}
                     <span id="telefone-error" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.instituicao_logo.id_for_label }}">Logo da Instituição:</label>
+                    {{ form.instituicao_logo }}
                 </div>
 
                 <div class="form-navigation">
@@ -267,10 +272,10 @@
                 success: function(data) {
                     $('#id_rua').val(data.logradouro).prop('readonly', false);
                     $('#id_bairro').val(data.bairro).prop('readonly', false);
-                    $('#id_cidade').val(data.localidade).prop('readonly', false);
-                    $('#id_estado').val(data.uf).prop('readonly', false);
+                    $('#id_cidade').val(data.cidade).prop('readonly', false);
+                    $('#id_estado').val(data.estado).prop('readonly', false);
                     $('#id_complemento').val(data.complemento);
-                    clearError('#id_cep');
+                    clearError('#id_cep');4
                 },
                 error: function(xhr) {
                     showError('#id_cep', xhr.responseJSON.error || 'CEP não encontrado ou serviço indisponível.');
