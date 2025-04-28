@@ -14,7 +14,7 @@
     <div class="dashboard-header">
         <h1 class="dashboard-title">Dashboard</h1>
         <div class="search-container">
-            <input type="text" placeholder="Buscar por empresa, estagiário ou curso..." class="search-input">
+            <input type="text" placeholder="Buscar por empresa..." class="search-input">
             <button class="search-button">
                 <i class="fas fa-search"></i>
             </button>
@@ -40,7 +40,7 @@
                 <div class="filter-group">
                     <label for="search">Nome/CNPJ</label>
                     <input type="text" name="search" id="search" class="form-control" 
-                           placeholder="Buscar por nome ou CNPJ" value="{{ request.GET.search }}">
+                        placeholder="Buscar por nome ou CNPJ" value="{{ request.GET.search }}">
                 </div>
                 
                 <div class="filter-group">

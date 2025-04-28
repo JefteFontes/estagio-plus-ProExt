@@ -13,12 +13,14 @@
 <div class="dashboard-container">
     <div class="dashboard-header">
         <h1 class="dashboard-title">Dashboard</h1>
-        <div class="search-container">
-            <input type="text" placeholder="Buscar por empresa, estagiário ou curso..." class="search-input">
-            <button class="search-button">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
+        <form action="GET">
+            <div class="search-container">
+                <input type="text" name="search" placeholder="Buscar por curso..." class="search-input" value="{{ request.GET.search }}">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
     </div>
 
     <div class="controls-container">
@@ -32,8 +34,6 @@
             </a>
         </div>
     </div>
-
-    <!-- Filtros (inicialmente escondidos) -->
     <div id="filters-container" class="filters-container" style="display: none;">
         <form method="GET" class="filters-form">
             <div class="filter-row">
@@ -52,7 +52,7 @@
                 <div class="filter-group">
                     <label for="coordenador">Coordenador</label>
                     <input type="text" name="coordenador" id="coordenador" class="form-control" 
-                           placeholder="Filtrar por coordenador" value="{{ request.GET.coordenador }}">
+                        placeholder="Filtrar por coordenador" value="{{ request.GET.coordenador }}">
                 </div>
             </div>
             
