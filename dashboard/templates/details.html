@@ -86,18 +86,37 @@
     </div>
 </div>
 <hr>
+<h6>Relatórios</h6>
+{% if estagio.pdf_termo %}
+            <a href="{% url 'visualizar_termo' pdf_nome=estagio.pdf_termo %}" target="_blank" class="btn btn-primary">
+            Visualizar TCE
+        </a>
+    {% endif %}
+
 {% if relatorios_pendentes %}
 <div class="info mt-4 p-3" style="border-radius: 8px; flex-direction: column; align-items: start;">
     <h6><strong>Relatórios Vencidos ou Pendentes</strong></h6>
     <div class="mt-2">
         {% for relatorio in relatorios_pendentes %}
         <div>
+            {%if relatorio.tipo == 'Termo de Compromisso'%}
+                {%if estagio.pdf_termo %}
+                {%else%}
             <div class="d-flex justify-content-between align-items-center" style="background-color:rgb(216, 217, 219); border-radius: 8px; padding:5px 10px;margin:5px;">
                 {{ relatorio.tipo }}
                 <span class="badge bg-warning text-dark mt-1" style="align=end;">
                     Previsto para {{ relatorio.data_prevista|date:"d/m/Y" }}
                 </span>
             </div>
+                {%endif%}
+            {%else%}
+            <div class="d-flex justify-content-between align-items-center" style="background-color:rgb(216, 217, 219); border-radius: 8px; padding:5px 10px;margin:5px;">
+                {{ relatorio.tipo }}
+                <span class="badge bg-warning text-dark mt-1" style="align=end;">
+                    Previsto para {{ relatorio.data_prevista|date:"d/m/Y" }}
+                </span>
+            </div>
+            {%endif%}
         </div>
         {% endfor %}
     </div>
