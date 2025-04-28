@@ -64,28 +64,34 @@ def verificar_relatorios_pendentes(estagio):
 
 def enviar_notificacao_relatorio_atrasado(estagio, request):
     hoje = datetime.date.today()
-    relatorios_atrasados = [
-        relatorio
-        for relatorio in verificar_relatorios_pendentes(estagio)
-        if relatorio["data_prevista"] < hoje
-    ]
-
-    if not relatorios_atrasados:
-        return False
+    relatorios_pendentes = verificar_relatorios_pendentes(estagio)
+    relatorios_proximos_vencimento = []
+    
+    for relatorio in relatorios_pendentes:
+        data_prevista = relatorio['data_prevista']
+        if (data_prevista - hoje).days <= 7 and data_prevista >= hoje:
+            relatorios_proximos_vencimento.append(relatorio)
+        elif data_prevista < hoje:
+            relatorios_proximos_vencimento.append(relatorio)
+    
+    if not relatorios_proximos_vencimento:
+        return False      
+    
     coordenador_email = request.user.email
 
     context = {
-        "empresa_name": estagio.empresa.empresa_nome,
-        "estagiario_name": estagio.estagiario.nome_completo,
-        "relatorios_pendentes": relatorios_atrasados,
-        "site_name": settings.SITE_NAME,
-        "site_url": request.build_absolute_uri("/"),
+        'empresa_name': estagio.empresa.empresa_nome,
+        'estagiario_name': estagio.estagiario.nome_completo,
+        'relatorios_pendentes': relatorios_proximos_vencimento,
+        'site_name': settings.SITE_NAME,
+        'site_url': request.build_absolute_uri('/'),
+        'hoje': hoje,
     }
 
     email_content = render_to_string("emails/relatorio_notificacao.txt", context)
 
     send_mail(
-        subject=_("Relatório pendente"),
+        subject=_('Relatório pendente ou próximo do vencimento'),  
         message=email_content,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[coordenador_email],
@@ -97,7 +103,7 @@ def enviar_notificacao_relatorio_atrasado(estagio, request):
 
 def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
     if request.method == "POST":
-        form = EstagioCadastroForm(request.POST, instance=estagio)
+        form = EstagioCadastroForm(request.POST, instance=estagio, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Estágio salvo com sucesso!")
@@ -105,48 +111,19 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
         else:
             messages.error(request, "Erro ao salvar estágio.")
     else:
-        form = EstagioCadastroForm(instance=estagio)
+        form = EstagioCadastroForm(instance=estagio, user=request.user)
 
     return render(request, template, {"form": form, "estagio": estagio})
-
-
-from ..models import Empresa, Estagio, Supervisor
-from dateutil.relativedelta import relativedelta
-from dashboard.views.relatorios import verificar_relatorios_pendentes
 
 
 @login_required
 def add_estagios(request):
     return processar_form_estagio(request)
-    form = EstagioCadastroForm(user=request.user)
-
-    if request.method == "POST":
-        form = EstagioCadastroForm(request.POST, user=request.user)
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Estágio cadastrado com sucesso!")
-            return redirect("dashboard_instituicao")
-
-    return render(request, "add_estagios.html", {"form": form})
 
 
 @login_required
 def editar_estagio(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)
-
-    if request.method == "POST":
-        print("Dados do formulário:", request.POST)
-        form = EstagioCadastroForm(request.POST, instance=estagio, user=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Estágio atualizado com sucesso!")
-            return redirect("dashboard_instituicao")
-        else:
-            messages.error(request, "Erro ao atualizar o estágio. Verifique os dados.")
-
-    form = EstagioCadastroForm(instance=estagio, user=request.user)
-
     return processar_form_estagio(request, estagio)
 
 
@@ -189,31 +166,3 @@ def get_supervisores(request):
         )
         return JsonResponse(list(supervisores), safe=False)
     return JsonResponse([], safe=False)
-
-
-def processar_form_estagio(request, estagio, template="add_estagios.html"):
-    if request.method == "POST":
-        form = EstagioCadastroForm(request.POST, instance=estagio, user=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Estágio atualizado com sucesso!")
-            return redirect("dashboard_instituicao")
-        else:
-            messages.error(request, "Erro ao atualizar o estágio. Verifique os dados.")
-    else:
-        form = EstagioCadastroForm(instance=estagio, user=request.user)
-
-    return render(request, template, {"form": form, "estagio": estagio})
-
-
-def estagio_duracao(estagio):
-    if estagio.data_inicio and estagio.data_fim:
-        return (estagio.data_fim - estagio.data_inicio).days
-    return None
-
-
-def estagio_falta_dias(estagio):
-    if estagio.data_fim:
-        dias_faltando = (estagio.data_fim - datetime.date.today()).days
-        return max(dias_faltando, 0)
-    return None
