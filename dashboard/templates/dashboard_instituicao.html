@@ -10,66 +10,70 @@
     {% endfor %}
 {% endif %}
 
-<div class="welcome-container">
-    <div class="welcome-section">
-        <p>{{ instituicao }}</p>
-        <div class="add-estagio-card">
-            <a href="{% url 'add_estagio' %}">
-                <div class="card-content">
-                    <p> Cadastrar Estágio</p>
+<div class="dashboard-container">
+    <!-- Cabeçalho -->
+    <div class="dashboard-header">
+        <h1 class="institution-title">{{ instituicao }}</h1>
+        
+        <div class="header-actions">
+            <div class="stats-card">
+                <div class="stats-content">
+                    <span class="stats-label">Estágios ativos</span>
+                    <span class="stats-value">{{ estagios_ativos }}</span>
                 </div>
+            </div>
+            
+            <a href="{% url 'add_estagio' %}" class="button-add">
+                <i class="fas fa-plus"></i> Cadastrar Estágio
             </a>
         </div>
     </div>
-    <div class="summary">
-        <div class="summary-item">
-            <p>Estágios ativos</p>
-            <span>{{ estagios_ativos }}</span>
-        </div>
+
+    <!-- Filtros -->
+    <div class="filters-container">
+        <form method="get">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <select name="area" class="form-select">
+                        <option value="">Todas as áreas</option>
+                        {% for area in areas %}
+                            <option value="{{ area }}" {% if area == request.GET.area %}selected{% endif %}>{{ area }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <select name="status" class="form-select">
+                        <option value="">Todos os status</option>
+                        {% for status in status_choices %}
+                            <option value="{{ status }}" {% if status == request.GET.status %}selected{% endif %}>{{ status }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <select name="turno" class="form-select">
+                        <option value="">Todos os turnos</option>
+                        {% for turno in turnos %}
+                            <option value="{{ turno }}" {% if turno == request.GET.turno %}selected{% endif %}>{{ turno }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button class="button-filter" type="submit">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
-</div>
 
-<!--FILTRO DE ESTAGIOS-->
-<form method="get">
-    <div class="row">
-        <div class="col-md-3">
-            <select name="area" class="form-select">
-                <option value="">Todas as áreas</option>
-                {% for area in areas %}
-                    <option value="{{ area }}">{{ area }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <select name="status" class="form-select">
-                <option value="">Todos os status</option>
-                {% for status in status_choices %}
-                    <option value="{{ status }}">{{ status }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <select name="turno" class="form-select">
-                <option value="">Todos os turnos</option>
-                {% for turno in turnos %}
-                    <option value="{{ turno }}">{{ turno }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="col-md-3 d-flex">
-            <button class="btn btn-primary w-100" type="submit"><i class="fa-solid fa-filter"></i> Filtrar</button>
-        </div>
-    </div>
-</form>
-<hr>
+    <!-- Listagem de estágios -->
     {% if estagios %}
-    <!--LISTAGEM DE ESTAGIOS CADASTRADOS-->
-    <div class="table-responsive">
-        <table class="table table-hover table-striped">
-            <thead class="table-success">
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
                 <tr>
                     <th>#</th>
                     <th>Estagiário</th>
@@ -91,15 +95,17 @@
                     <td>{{ estagio.data_inicio|date:"d/m/Y" }}</td>
                     <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
                     <td>
-                        {% if estagio.status == 'Concluído' %}
-                            <span class="badge bg-success">Concluído</span>
-                        {% else %}
-                            <span class="badge bg-danger">Em andamento</span>
-                        {% endif %}
+                        <span class="status-badge {% if estagio.status == 'Concluído' %}completed{% else %}in-progress{% endif %}">
+                            {{ estagio.status }}
+                        </span>
                     </td>
-                    <td>
-                        <a href="{% url 'editar_estagio' estagio.id %}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen"></i> Editar</a>
-                        <a class="details-link" href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}">Ver detalhes</a>
+                    <td class="actions-cell">
+                        <a href="{% url 'editar_estagio' estagio.id %}" class="btn-edit">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}" class="btn-details">
+                            <i class="fas fa-eye"></i> Detalhes
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -107,8 +113,10 @@
         </table>
     </div>
     {% else %}
+    <div class="empty-state">
+        <i class="fas fa-briefcase empty-icon"></i>
         <p>Nenhum estágio cadastrado.</p>
+    </div>
     {% endif %}
-    {% endblock %}
-
-    
+</div>
+{% endblock %}

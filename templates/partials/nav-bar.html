@@ -4,7 +4,6 @@
         <img src="{% static 'img/logo.png' %}" alt="Logo +Estágio">
     </div>
     <nav class="navbar-nav">
-        
         {% url 'account_login' as login_url_ %}
         {% if user.is_authenticated %}
             <div class="navbar-user">
