@@ -2,8 +2,7 @@ import os
 import tempfile
 from django.urls import reverse
 import pdfplumber
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import  render, redirect
 from .utils import parse_sections
 from ..models import Estagio, Empresa, Estagiario, Supervisor, Endereco
 
