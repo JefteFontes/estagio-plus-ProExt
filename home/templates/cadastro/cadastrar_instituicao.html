@@ -36,7 +36,7 @@
             </button>
         </div>
 
-        <form method="post" id="cadastroForm" novalidate>
+        <form method="post" enctype="multipart/form-data" id="cadastroForm" novalidate>
             {% csrf_token %}
             {{ redirect_field }}
 
@@ -58,6 +58,11 @@
                     <label for="{{ form.instituicao_telefone.id_for_label }}">Telefone:</label>
                     {{ form.instituicao_telefone }}
                     <span id="telefone-error" class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.instituicao_logo.id_for_label }}">Logo da Instituição:</label>
+                    {{ form.instituicao_logo }}
                 </div>
 
                 <div class="form-navigation">

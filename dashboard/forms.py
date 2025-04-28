@@ -14,7 +14,6 @@ from .models import (
     Areachoices,
     Cursos,
     CoordenadorExtensao,
-    
 )
 
 
@@ -27,7 +26,7 @@ class CursosCadastroForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "Nome do Curso"}
             ),
             "descricao": forms.Textarea(
-                attrs={"rows": 4,"class": "form-control", "placeholder": "Descrição"}
+                attrs={"rows": 4, "class": "form-control", "placeholder": "Descrição"}
             ),
             "area": forms.Select(attrs={"class": "form-control"}),
             "coordenador": forms.TextInput(
@@ -56,21 +55,23 @@ class CursosCadastroForm(forms.ModelForm):
         return cursos
 
 
-
 class EstagioCadastroForm(forms.ModelForm):
     bolsa_estagio = forms.FloatField(
-        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Bolsa de Estágio"})
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "placeholder": "Bolsa de Estágio"}
+        )
     )
     auxilio_transporte = forms.FloatField(
-        widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Auxílio de Transporte"})
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "placeholder": "Auxílio de Transporte"}
+        )
     )
     area = forms.ChoiceField(
-        choices=Areachoices.choices,
-        widget=forms.Select(attrs={"class": "form-select"})
+        choices=Areachoices.choices, widget=forms.Select(attrs={"class": "form-select"})
     )
     status = forms.ChoiceField(
         choices=StatusChoices.choices,
-        widget=forms.Select(attrs={"class": "form-select"})
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
     descricao = forms.CharField(
         max_length=255,
@@ -84,57 +85,77 @@ class EstagioCadastroForm(forms.ModelForm):
         ),
     )
     data_inicio = forms.DateField(
-    widget=forms.DateInput(
-        attrs={"class": "form-control", "type": "date", "placeholder": "Data de Início"},
-        format="%Y-%m-%d"
-    ),
-    input_formats=["%Y-%m-%d", "%d/%m/%Y"]
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control",
+                "type": "date",
+                "placeholder": "Data de Início",
+            },
+            format="%Y-%m-%d",
+        ),
+        input_formats=["%Y-%m-%d", "%d/%m/%Y"],
     )
 
     data_fim = forms.DateField(
-    widget=forms.DateInput(
-        attrs={"class": "form-control", "type": "date", "placeholder": "Data de término"},
-        format="%Y-%m-%d"
-    ),
-    input_formats=["%Y-%m-%d", "%d/%m/%Y"]
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control",
+                "type": "date",
+                "placeholder": "Data de término",
+            },
+            format="%Y-%m-%d",
+        ),
+        input_formats=["%Y-%m-%d", "%d/%m/%Y"],
     )
 
     turno = forms.ChoiceField(
         choices=TurnoChoices.choices,
-        widget=forms.Select(attrs={"class": "form-select"})
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
     estagiario = forms.ModelChoiceField(
         queryset=Estagiario.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"})
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
     empresa = forms.ModelChoiceField(
         queryset=Empresa.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select", "id": "empresa-select"})
+        widget=forms.Select(attrs={"class": "form-select", "id": "empresa-select"}),
     )
     supervisor = forms.ModelChoiceField(
         queryset=Supervisor.objects.all(),
         required=False,
-        widget=forms.Select(attrs={"class": "form-select", "id": "supervisor-select"})
+        widget=forms.Select(attrs={"class": "form-select", "id": "supervisor-select"}),
     )
     instituicao = forms.ModelChoiceField(
         queryset=Instituicao.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"})
+        widget=forms.Select(attrs={"class": "form-select"}),
     )
     orientador = forms.CharField(
         max_length=255,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Orientador"})
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Orientador"}
+        ),
     )
     tipo_estagio = forms.ChoiceField(
-        choices=TipoChoices.choices,
-        widget=forms.Select(attrs={"class": "form-select"})
+        choices=TipoChoices.choices, widget=forms.Select(attrs={"class": "form-select"})
     )
 
     class Meta:
         model = Estagio
         fields = [
-            "bolsa_estagio", "auxilio_transporte", "area", "status", "descricao",
-            "data_inicio", "data_fim", "turno", "estagiario", "empresa",
-            "supervisor", "instituicao", "orientador", "tipo_estagio"
+            "bolsa_estagio",
+            "auxilio_transporte",
+            "area",
+            "status",
+            "descricao",
+            "data_inicio",
+            "data_fim",
+            "turno",
+            "estagiario",
+            "empresa",
+            "supervisor",
+            "instituicao",
+            "orientador",
+            "tipo_estagio",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -147,11 +168,17 @@ class EstagioCadastroForm(forms.ModelForm):
         self.fields["empresa"].queryset = Empresa.objects.all()
 
         if instituicao_id:
-            self.fields["instituicao"].queryset = Instituicao.objects.filter(id=instituicao_id)
+            self.fields["instituicao"].queryset = Instituicao.objects.filter(
+                id=instituicao_id
+            )
 
-        empresa_id = self.data.get("empresa") or (self.instance.empresa.id if self.instance.pk else None)
+        empresa_id = self.data.get("empresa") or (
+            self.instance.empresa.id if self.instance.pk else None
+        )
         if empresa_id:
-            self.fields["supervisor"].queryset = Supervisor.objects.filter(empresa_id=empresa_id)
+            self.fields["supervisor"].queryset = Supervisor.objects.filter(
+                empresa_id=empresa_id
+            )
         else:
             self.fields["supervisor"].queryset = Supervisor.objects.all()
 
@@ -169,7 +196,6 @@ class EstagioCadastroForm(forms.ModelForm):
         if commit:
             estagio.save()
         return estagio
-
 
 
 class EstagiarioCadastroForm(forms.ModelForm):
@@ -280,7 +306,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
             self.fields["complemento"].initial = endereco.complemento
 
         self.fields["curso"].queryset = Cursos.objects.filter(
-            instituicao = self.coordenador.instituicao
+            instituicao=self.coordenador.instituicao
         )
 
     def save(self, commit=True):
@@ -499,11 +525,15 @@ class EmpresaCadastroForm(forms.ModelForm):
 
 class CoordenadorEditForm(forms.ModelForm):
     # Fields for user data
-    email = forms.EmailField(label="E-mail",widget=forms.EmailInput(attrs={"class": "form-control"}))
+    email = forms.EmailField(
+        label="E-mail", widget=forms.EmailInput(attrs={"class": "form-control"})
+    )
     nome_completo = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control"})
     )
-    cpf = forms.CharField(label="CPF",widget=forms.TextInput(attrs={"class": "form-control"}))
+    cpf = forms.CharField(
+        label="CPF", widget=forms.TextInput(attrs={"class": "form-control"})
+    )
     # Fields for institution data
     instituicao_nome = forms.CharField(
         label="Nome da instituição",
@@ -515,6 +545,11 @@ class CoordenadorEditForm(forms.ModelForm):
         label="Telefone da instituição",
         max_length=20,
         widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    instituicao_logo = forms.ImageField(
+        label="Logo da instituição",
+        widget=forms.ClearableFileInput(attrs={"class": "form-control"}),
         required=False,
     )
 
@@ -532,6 +567,7 @@ class CoordenadorEditForm(forms.ModelForm):
             self.fields["instituicao_telefone"].initial = (
                 coordenador.instituicao.telefone
             )
+            self.fields["instituicao_logo"].initial = coordenador.instituicao.logo
 
     def save(self, commit=True):
         # Update the related User model
@@ -545,6 +581,11 @@ class CoordenadorEditForm(forms.ModelForm):
         if coordenador.instituicao:
             coordenador.instituicao.nome = self.cleaned_data["instituicao_nome"]
             coordenador.instituicao.telefone = self.cleaned_data["instituicao_telefone"]
+
+            new_logo = self.cleaned_data.get("instituicao_logo")
+            if new_logo:
+                coordenador.instituicao.logo = new_logo
+
             coordenador.instituicao.save()
         if commit:
             coordenador.save()

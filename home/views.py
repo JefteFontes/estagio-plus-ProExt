@@ -9,66 +9,79 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from allauth.account.forms import ResetPasswordForm
 
+
 # Create your views here.
 def home(request):
     if request.user.is_authenticated:
-        return redirect('/accounts/profile/')
-    return render(request, 'home/home.html')
+        return redirect("/accounts/profile/")
+    return render(request, "home/home.html")
 
 
 def cadastrar_instituicao(request):
-    if request.method == 'POST':
-        form = CoordenadorCadastroForm(request.POST)
+    if request.method == "POST":
+        form = CoordenadorCadastroForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 user, coordenador = form.save()
 
-                reset_form = ResetPasswordForm({'email': user.email})
+                reset_form = ResetPasswordForm({"email": user.email})
                 if reset_form.is_valid():
                     reset_form.save(request=request)
-                    messages.success(request, 'Cadastro realizado! Verifique seu email para redefinir a senha.')
+                    messages.success(
+                        request,
+                        "Cadastro realizado! Verifique seu email para redefinir a senha.",
+                    )
                 else:
-                    messages.warning(request, 'Cadastro realizado, mas houve um erro ao enviar o email de redefinição.')
+                    messages.warning(
+                        request,
+                        "Cadastro realizado, mas houve um erro ao enviar o email de redefinição.",
+                    )
 
                 context = {
-                    'user_name': user.get_full_name() or user.username,
-                    'site_name': settings.SITE_NAME,
-                    'site_url': request.build_absolute_uri('/')
+                    "user_name": user.get_full_name() or user.username,
+                    "site_name": settings.SITE_NAME,
+                    "site_url": request.build_absolute_uri("/"),
                 }
-                
-                email_content = render_to_string('emails/cadastro_concluido.txt', context)
+
+                email_content = render_to_string(
+                    "emails/cadastro_concluido.txt", context
+                )
                 send_mail(
-                    subject=_('Bem-vindo ao ') + settings.SITE_NAME,
+                    subject=_("Bem-vindo ao ") + settings.SITE_NAME,
                     message=email_content,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[user.email],
                     fail_silently=False,
                 )
 
-                messages.success(request, 'Instituição cadastrada com sucesso!')
-                return redirect('/login/')  
+                messages.success(request, "Instituição cadastrada com sucesso!")
+                return redirect("/login/")
 
             except Exception as e:
-                messages.error(request, f'Erro no cadastro: {str(e)}')
-                return redirect('cadastro_instituicao')
+                messages.error(request, f"Erro no cadastro: {str(e)}")
+                return redirect("cadastro_instituicao")
         else:
-            messages.error(request, 'Corrija os erros abaixo.')
+            messages.error(request, "Corrija os erros abaixo.")
             messages.error(request, form.errors)
-            return redirect('cadastro_instituicao')
+            return redirect("cadastro_instituicao")
     else:
         form = CoordenadorCadastroForm()
-    
-    return render(request, 'cadastro/cadastrar_instituicao.html', {'form': form})
+
+    return render(request, "cadastro/cadastrar_instituicao.html", {"form": form})
 
 
 def editar_instituicao(request, instituicao):
     instituicao = get_object_or_404(CoordenadorCadastroForm, id=instituicao)
 
-    if request.method == 'POST':
-        form = CoordenadorCadastroForm(request.POST, instance=instituicao)
+    if request.method == "POST":
+        form = CoordenadorCadastroForm(request.POST, request.FILES, instance=instituicao)
         if form.is_valid():
             form.save()
-            return redirect('dashboard_instituicao')
+            return redirect("dashboard_instituicao")
     else:
         form = CoordenadorCadastroForm(instance=instituicao)
-    return render(request, 'cadastro/cadastrar_instituicao.html', {'form': form, 'instituicao': instituicao})
+    return render(
+        request,
+        "cadastro/cadastrar_instituicao.html",
+        {"form": form, "instituicao": instituicao},
+    )

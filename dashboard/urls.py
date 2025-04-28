@@ -1,8 +1,23 @@
 from django.urls import include, path
-from dashboard.views.empresa import cadastrar_empresa, editar_empresa, deletar_empresa, get_supervisores
-from dashboard.views.estagiarios import cadastrar_estagiario, editar_estagiario, deletar_estagiario
+from dashboard.views.empresa import (
+    cadastrar_empresa,
+    editar_empresa,
+    deletar_empresa,
+    get_supervisores,
+)
+from dashboard.views.estagiarios import (
+    cadastrar_estagiario,
+    editar_estagiario,
+    deletar_estagiario,
+)
 from dashboard.views.pdfimport import importar_pdf
-from dashboard.views.estagios import detalhes_estagio, get_supervisores, editar_estagio, add_estagios, complementar_estagio
+from dashboard.views.estagios import (
+    detalhes_estagio,
+    get_supervisores,
+    editar_estagio,
+    add_estagios,
+    complementar_estagio,
+)
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
 from dashboard.views.home import (
     home,
@@ -18,56 +33,50 @@ from dashboard.views.home import (
 from dashboard.views.user import editar_perfil
 from django.conf import settings
 from django.conf.urls.static import static
-from dashboard.views.relatorios import  verificar_relatorios_pendentes,relatorios
-
+from dashboard.views.relatorios import verificar_relatorios_pendentes, relatorios
 
 
 urlpatterns = [
-    path('', dashboard_instituicao, name='dashboard_instituicao'),
-    path('dashboard', dashboard_instituicao, name='dashboard_instituicao'),
-    path('home', home, name='home'),
-    path('details', details, name='details'),
-
-    path('dashboard_estagiario', dashboard_estagiario, name='dashboard_estagiario'),
-    path('dashboard_cursos', dashboard_cursos, name='dashboard_cursos'),
-    path('cadastrar_cursos', cadastrar_cursos, name='cadastrar_cursos'),
-    path('editar_cursos/<int:curso_id>', editar_curso, name='editar_curso'),
-    path('deletar_curso/<int:curso_id>', deletar_curso, name='deletar_curso'),
-
-
-    path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),
-
-    path('relatorios/', relatorios, name='dashboard_relatorios'),
-    path("estagio/<int:estagio_id>/relatorios/", verificar_relatorios_pendentes, name="relatorios_pendentes"),
-
-
-    path('cadastrar-empresa', cadastrar_empresa, name='cadastrar_empresa'),
-    path('dashboard_empresa', dashboard_empresa, name='dashboard_empresa'),
-    path('editar_empresa/<int:empresa_id>', editar_empresa, name='editar_empresa'),
-    path('deletar_empresa/<int:empresa_id>', deletar_empresa, name='deletar_empresa'),
+    path("", dashboard_instituicao, name="dashboard_instituicao"),
+    path("dashboard", dashboard_instituicao, name="dashboard_instituicao"),
+    path("home", home, name="home"),
+    path("details", details, name="details"),
+    path("dashboard_estagiario", dashboard_estagiario, name="dashboard_estagiario"),
+    path("dashboard_cursos", dashboard_cursos, name="dashboard_cursos"),
+    path("cadastrar_cursos", cadastrar_cursos, name="cadastrar_cursos"),
+    path("editar_cursos/<int:curso_id>", editar_curso, name="editar_curso"),
+    path("deletar_curso/<int:curso_id>", deletar_curso, name="deletar_curso"),
+    path("detalhes-estagio", detalhes_estagio, name="detalhes_estagio"),
+    path("relatorios/", relatorios, name="dashboard_relatorios"),
+    path(
+        "estagio/<int:estagio_id>/relatorios/",
+        verificar_relatorios_pendentes,
+        name="relatorios_pendentes",
+    ),
+    path("cadastrar-empresa", cadastrar_empresa, name="cadastrar_empresa"),
+    path("dashboard_empresa", dashboard_empresa, name="dashboard_empresa"),
+    path("editar_empresa/<int:empresa_id>", editar_empresa, name="editar_empresa"),
+    path("deletar_empresa/<int:empresa_id>", deletar_empresa, name="deletar_empresa"),
     path("get_supervisores/", get_supervisores, name="get_supervisores"),
-
-
-    path('cadastrar_estagiario', cadastrar_estagiario, name='cadastrar_estagiario'),
-    path('editar_estagiario/<int:estagiario_id>', editar_estagiario, name='editar_estagiario'),
-    path('deletar_estagiario/<int:estagiario_id>', deletar_estagiario, name='deletar_estagiario'),
-
-
-    path('add-estagio', add_estagios, name='add_estagio'),
-    path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),
-    path('complementar-estagio', complementar_estagio, name='complementar_estagio'), 
-    path('editar_estagio/<int:estagio_id>', editar_estagio, name='editar_estagio'),   
-
-
-    path('importar-pdf', importar_pdf, name='importar_pdf'),
-    path('parse-sections', parse_sections, name='parse_sections'),
-    path('buscar-cep', buscar_cep, name='buscar_cep'),
-    path('validate_cnpj', validate_cnpj, name='validate_cnpj'),
-
-
-    path('get-supervisores/', get_supervisores, name='get_supervisores'),
-
-
-    path('editar-perfil/', editar_perfil, name='editar_perfil'),
-
+    path("cadastrar_estagiario", cadastrar_estagiario, name="cadastrar_estagiario"),
+    path(
+        "editar_estagiario/<int:estagiario_id>",
+        editar_estagiario,
+        name="editar_estagiario",
+    ),
+    path(
+        "deletar_estagiario/<int:estagiario_id>",
+        deletar_estagiario,
+        name="deletar_estagiario",
+    ),
+    path("add-estagio", add_estagios, name="add_estagio"),
+    path("detalhes-estagio", detalhes_estagio, name="detalhes_estagio"),
+    path("complementar-estagio", complementar_estagio, name="complementar_estagio"),
+    path("editar_estagio/<int:estagio_id>", editar_estagio, name="editar_estagio"),
+    path("importar-pdf", importar_pdf, name="importar_pdf"),
+    path("parse-sections", parse_sections, name="parse_sections"),
+    path("buscar-cep", buscar_cep, name="buscar_cep"),
+    path("validate_cnpj", validate_cnpj, name="validate_cnpj"),
+    path("get-supervisores/", get_supervisores, name="get_supervisores"),
+    path("editar-perfil/", editar_perfil, name="editar_perfil"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

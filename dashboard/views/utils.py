@@ -62,14 +62,17 @@ def validate_cnpj(request):
         if "error" in data:
             return JsonResponse({"error": "CNPJ não encontrado"}, status=404)
 
-        return JsonResponse({
-            'name': data.get('alias', '') or data.get('company', {}).get('name', ''),
-            'razao_social': data.get('company', {}).get('name', ''),
-            'cep': data.get('address', {}).get('zip', ''),
-            'numero': data.get('address', {}).get('number', ''),
-            'atividades': data.get('mainActivity', {}).get('text', ''),
-            'complemento': data.get('address', {}).get('details', ''),
-        })
+        return JsonResponse(
+            {
+                "name": data.get("alias", "")
+                or data.get("company", {}).get("name", ""),
+                "razao_social": data.get("company", {}).get("name", ""),
+                "cep": data.get("address", {}).get("zip", ""),
+                "numero": data.get("address", {}).get("number", ""),
+                "atividades": data.get("mainActivity", {}).get("text", ""),
+                "complemento": data.get("address", {}).get("details", ""),
+            }
+        )
 
     return JsonResponse({"error": "Erro ao buscar CNPJ"}, status=500)
 
@@ -104,5 +107,3 @@ def validate_cpf(cpf: str) -> bool:
 #     print("CPF is valid")
 # else:
 #     print("CPF is invalid")
-
-
