@@ -37,6 +37,7 @@ body {
     width: 150px;
     height: 63px;
     margin-right: 10px;
+    object-fit: contain;
 }
 
 .navbar-nav {

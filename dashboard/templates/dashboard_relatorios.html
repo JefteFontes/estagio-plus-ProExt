@@ -22,6 +22,9 @@
         </div>
     {% endfor %}
 {% else %}
-    <p>Nenhum relatório pendente encontrado.</p>
+    <div class="empty-state">
+        <i class="fas fa-briefcase empty-icon"></i>
+        <p>Nenhum estágio cadastrado.</p>
+    </div>
 {% endif %}
 {% endblock %}

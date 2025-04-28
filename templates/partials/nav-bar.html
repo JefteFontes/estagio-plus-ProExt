@@ -13,7 +13,7 @@
             <div class="navbar-user">
                 <a title="Notificação" href="#" class="notif-btn"><i class="fa-regular fa-bell"></i></a>
                 <div class="user-info">
-                    <img src="{% static 'img/default.png' %}" alt="Foto de perfil">
+                    <span class="initials-user">{{ request.user.username|slice:":2"|upper }}</span>
                     <span class="user-name">{{ request.user.username }}</span>
                     <div class="user-dropdown">
                         <button title="User logout-edit" class="user-button" onclick="toggleDropdown()" id="userDropdownButton">
