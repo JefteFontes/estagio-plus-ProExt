@@ -57,12 +57,12 @@ class Empresa(models.Model):
 
 
 class Areachoices(models.TextChoices):
-    saude = "Saude"
+    saude = "Saúde"
     tecnologia = "Tecnologia"
-    gestao_e_negocios = "Gestão e Negocios"
+    gestao_e_negocios = "Gestão e Negócios"
     engenharia_e_construcao = "Engenharia e Construção"
-    eletronica_e_automacao = "Eletronica e Automacao"
-    educacao = "Educacao"
+    eletronica_e_automacao = "Eletrônica e Automação"
+    educacao = "Educação"
     outros = "Outros"
 
 
@@ -142,7 +142,7 @@ class Supervisor(models.Model):
 
 
 class TurnoChoices(models.TextChoices):
-    MANHA = "Manha"
+    MANHA = "Manhã"
     TARDE = "Tarde"
     NOITE = "Noite"
 
