@@ -1,14 +1,16 @@
 import os
+from pyexpat.errors import messages
 import re
 from django.conf import settings
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 import datetime
 from dateutil.relativedelta import relativedelta
 import fitz
 from dashboard.models import Estagio
 from django.core.files.base import File
 import datetime
+from django.contrib import messages
+from django.shortcuts import redirect
 
 def relatorios(request):
     estagios = Estagio.objects.all()
@@ -75,13 +77,17 @@ def verificar_relatorios_pendentes(estagio):
     return relatorios
 
 
+
+
 def importar_termo(request, estagio_id):
     if request.method != 'POST':
-        return JsonResponse({'success': False, 'message': 'Método inválido.'})
+        messages.error(request, 'Método inválido.')
+        return redirect('dashboard_relatorios')
 
     arquivo = request.FILES.get('termo')
     if not arquivo:
-        return JsonResponse({'success': False, 'message': 'Nenhum arquivo enviado.'})
+        messages.error(request, 'Nenhum arquivo enviado.')
+        return redirect('dashboard_relatorios')
 
     # Pasta temporária
     temp_dir = os.path.join(settings.MEDIA_ROOT, 'temporarios')
@@ -104,7 +110,8 @@ def importar_termo(request, estagio_id):
     data_inicio_match = re.search(r'in[ií]cio.*?(\d{2}/\d{2}/\d{4})', texto, re.IGNORECASE)
 
     if not (cpf_match and cnpj_match and data_inicio_match):
-        return JsonResponse({'success': False, 'message': 'Informações (CPF, CNPJ ou Data de Início) não encontradas no PDF.'})
+        messages.error(request, 'Informações sobre estágio não encontradas no PDF selecionado.')
+        return redirect('dashboard_relatorios')
 
     cpf_extraido = cpf_match.group(1).replace('-', '').strip()
     cnpj_extraido = cnpj_match.group(1).strip()
@@ -114,24 +121,22 @@ def importar_termo(request, estagio_id):
     estagiario_atual = estagio.estagiario.cpf
     empresa_atual = estagio.empresa.cnpj
     data_inicio_atual = estagio.data_inicio
+    # Formatando as datas para o formato "dia/mês/ano"
+    data_inicio_extraida_formatada = data_inicio_extraida.strftime("%d/%m/%Y")
+    data_inicio_atual_formatada = data_inicio_atual.strftime("%d/%m/%Y")
 
     # Validações
     erros = []
     if cpf_extraido != estagiario_atual:
-        erros.append(
-            f"CPF do arquivo ({cpf_extraido}) diferente do CPF do estagiário ({estagiario_atual})."
-        )
+        erros.append(f"CPF do arquivo ({cpf_extraido}) diferente do CPF do estagiário ({estagiario_atual}).")
     if cnpj_extraido != empresa_atual:
-        erros.append(
-            f"CNPJ do arquivo ({cnpj_extraido}) diferente do CNPJ da empresa ({empresa_atual})."
-        )
+        erros.append(f"CNPJ do arquivo ({cnpj_extraido}) diferente do CNPJ da empresa ({empresa_atual}).")
     if data_inicio_extraida != data_inicio_atual:
-        erros.append(
-            f"Data de início do arquivo ({data_inicio_extraida}) diferente da data de início do estágio ({data_inicio_atual})."
-        )
+        erros.append(f"Data de início do arquivo ({data_inicio_extraida_formatada}) diferente da data de início do estágio ({data_inicio_atual_formatada}).")
 
     if erros:
-        return JsonResponse({'success': False, 'message': '<br>'.join(erros)})
+        messages.error(request,  "<br>" .join(erros))
+        return redirect('dashboard_relatorios')
 
     # Se passou em todas as validações, salva o arquivo
     ano = estagio.data_inicio.year
@@ -141,4 +146,5 @@ def importar_termo(request, estagio_id):
     with open(temp_path, 'rb') as f:
         estagio.pdf_termo.save(nome_arquivo, File(f), save=True)
 
-    return JsonResponse({'success': True, 'message': 'Termo importado com sucesso!', 'url_pdf': estagio.pdf_termo.url})
+    messages.success(request, 'Termo importado com sucesso!')
+    return redirect('dashboard_relatorios')
