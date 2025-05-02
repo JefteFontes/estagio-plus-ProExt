@@ -18,6 +18,7 @@ from dashboard.views.estagios import (
     add_estagios,
     complementar_estagio,
 )
+
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
 from dashboard.views.home import (
     home,
@@ -34,6 +35,7 @@ from dashboard.views.user import editar_perfil
 from django.conf import settings
 from django.conf.urls.static import static
 from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo
+from dashboard.views.personalizados import dashboard_personalizados, relatorio_personalidizado
 
 
 
@@ -55,6 +57,9 @@ urlpatterns = [
         verificar_relatorios_pendentes,
         name="relatorios_pendentes",
     ),
+    path("dashboard_personalizados/", dashboard_personalizados, name="dashboard_personalizados"),
+    path("relatorio_personalizado/", relatorio_personalidizado, name="relatorio_personalizado"),
+    
     path("cadastrar-empresa", cadastrar_empresa, name="cadastrar_empresa"),
     path("dashboard_empresa", dashboard_empresa, name="dashboard_empresa"),
     path("editar_empresa/<int:empresa_id>", editar_empresa, name="editar_empresa"),

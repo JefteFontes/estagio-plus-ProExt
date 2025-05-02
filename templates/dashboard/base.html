@@ -51,6 +51,7 @@
                                 </li>
                             </a>
                         {% endif %}
+
                         {% url 'dashboard_cursos' as dashboard_cursos_url %}
                         {% if dashboard_cursos_url %}
                             <a class="btn-sidebar" href="{{ dashboard_cursos_url }}">
@@ -60,7 +61,6 @@
                                 </li>
                             </a>
                         {% endif %}
-                        <!-- Cadastro de Estagiário -->
                         {% url 'dashboard_estagiario' as dashboard_estagiario_url %}
                         {% if dashboard_estagiario_url %}
                             <a class="btn-sidebar" href="{{ dashboard_estagiario_url }}">
@@ -74,19 +74,28 @@
                         {% url 'dashboard_empresa' as dashboard_empresa %}
                         {% if dashboard_empresa %}
                             <a class="btn-sidebar" href="{{ dashboard_empresa }}">
-                                <li class="{% if request.path == dashboard_empresa %}actived{% endif %}">
+                                <li  class="{% if request.path == dashboard_empresa %}actived{% endif %}">
                                     <span class="icon"><i class="fa-solid fa-city"></i></span>
                                     <span class="text">Empresa</span>
                                 </li>
                             </a>
                         {% endif %}
-
+                        
                         {% url 'dashboard_relatorios' as dashboard_relatorios_url %}
                         {% if dashboard_relatorios_url %}
                             <a class="btn-sidebar" href="{{ dashboard_relatorios_url }}">
                                 <li class="{% if request.path == dashboard_relatorios_url %}actived{% endif %}">
-                                    <span class="icon"><i class="fa-solid fa-file-alt"></i></span>
-                                    <span class="text">Relatórios</span>
+                                    <span class="icon"><i class="fa-solid fa-clock"></i></span>
+                                    <span class="text">Relatórios Pendentes</span>
+                                </li>
+                            </a>
+                        {% endif %}
+                        {% url 'dashboard_personalizados' as dashboard_personalizados_url %}
+                        {% if dashboard_personalizados_url %}
+                            <a class="btn-sidebar" href="{{ dashboard_personalizados_url }}">
+                                <li  class="{% if request.path == dashboard_personalizados_url %}actived{% endif %}">
+                                    <span class="icon"><i class="fa-solid fa-chart-line"></i></span>
+                                    <span class="text">Relatórios Personalizados</span>
                                 </li>
                             </a>
                         {% endif %}
