@@ -4,10 +4,15 @@
 <div class="dashboard-container">
 
     <!-- Cabeçalho da Instituição -->
-    <div class="dashboard-header">
-        <h1 class="institution-title">{{ request.user.instituicao.nome }}</h1> <!-- ou passe 'instituicao' no contexto -->
-        <p>Resultados dos estágios com base nos filtros selecionados</p>
-    </div>
+    {% if instituicao %}
+        <div class="dashboard-header">
+            <img src = "{{instituicao.logo.url}}" alt="Logo da Instituição" class="institution-logo" style="width: 200px;"/>
+            <h1 class="institution-title">{{ instituicao.nome }}</h1>
+            <p>CNPJ:{{ instituicao.cnpj}}<br/>
+            Endereço: {{ instituicao.endereco }} - {{ instituicao.endereco.cidade }} - {{ instituicao.endereco.estado }}<br/>
+            Telefone: {{ instituicao.telefone }} - email:{{ instituicao.email }}</p>   
+            </div>
+    {% endif %}
 
     <!-- Resumo dos Filtros Selecionados -->
     <div class="selected-filters mb-4">
