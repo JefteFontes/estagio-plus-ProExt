@@ -13,12 +13,14 @@
 <div class="dashboard-container">
     <div class="dashboard-header">
         <h1 class="dashboard-title">Empresas</h1>
-        <div class="search-container">
-            <input type="text" placeholder="Buscar por empresa..." class="search-input">
-            <button class="search-button">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
+        <form method="GET">
+            <div class="search-container">
+                <input type="text" name="search" placeholder="Buscar por empresa..." class="search-input" value="{{ request.GET.search }}">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
     </div>
 
     <div class="controls-container">

@@ -42,17 +42,21 @@ def dashboard_cursos(request):
 
     search = request.GET.get("search", "")
     area = request.GET.get("area", "")
+    coordenador = request.GET.get("coordenador", "")
     cursos = Cursos.objects.filter(instituicao=instituicao)
 
     if search:
         cursos = cursos.filter(nome_curso__icontains=search)
     if area:
         cursos = cursos.filter(area=area)
+    if coordenador:
+        cursos = cursos.filter(coordenador__icontains=coordenador) 
 
     areas = Cursos.objects.values_list("area", flat=True).distinct()
     context = {
         "cursos": cursos,
         "areas": areas,
+        "coordenador": coordenador,
     }
     return render(request, "dashboard_cursos.html", context)
 
@@ -291,8 +295,7 @@ def deletar_curso(request, curso_id):
         messages.success(request, "Curso deletado com sucesso!")
         return redirect(
             "dashboard_cursos"
-        )  # Certifique-se que 'dashboard_cursos' seja a URL correta
-    # Renderizar uma página de confirmação (opcional)
+        )  
     return render(request, "dashboard_cursos.html", {"cursos": cursos})
 
 

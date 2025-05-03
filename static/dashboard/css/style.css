@@ -1,4 +1,4 @@
-body {	
+body {    
     margin: 0;
     padding: 0;
     font-family: 'Inter', sans-serif;   
@@ -11,7 +11,7 @@ body {
 
 .navbar-dashboard, .sidebar {
     position: fixed;
-    z-index: 10; /* Garante que a navbar e a sidebar fiquem acima do conteúdo */
+    z-index: 10;
 }
 
 .navbar-dashboard {
@@ -202,106 +202,208 @@ body {
 }
 
 /* Sidebar fixa na tela */
+/* Sidebar Styles */
 .sidebar {
     top: 78px;
     left: 0;
-    height: 100%; /* Subtrair a altura da navbar */
+    height: 100%;
     width: 250px;
     background-color: #E3F2FD;
-    padding: 0px 20px 20px 40px;
+    padding: 20px 0;
     box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    transform: translateX(0);
+    transition: width 0.3s ease;
 }
 
 .side-elements {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     height: 100%;
-}
-.sidebar-top, .sidebar-bottom {
-    flex-grow: 1; /* Faz com que ambos os conteúdos ocupem o espaço disponível */
+    padding: 0 20px;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
-.sidebar-top {
-    margin: 20px 0px ;
+.sidebar.collapsed .side-elements{
+    width: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.sidebar-top, .sidebar-bottom {
+    flex: 1;
 }
 
 .sidebar-bottom {
-    position: relative;
-    padding-top: 390px;
-}
-/* Estilos para o conteúdo da sidebar */
-.sidebar-top ul, .sidebar-bottom ul {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 90%;
-    list-style-type: none;
-    padding: 0;
+    justify-content: space-between;
+    position: relative;
 }
 
-.sidebar-top li, .sidebar-bottom li {
+/* Main sidebar items */
+.sidebar-top ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+/* Dashboard link */
+.btn-sidebar {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    gap: 20px;
-    padding: 10px 20px;
-    margin: 5px 0;
+    padding: 12px 15px;
+    color: #000;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-sidebar:hover, .btn-sidebar.actived {
+    background-color: #5DADE2;
+    color: #fff;
+}
+
+.btn-sidebar .icon {
+    margin-right: 15px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Toggle styles */
+.sidebar-toggle {
+    margin: 10px 0;
+}
+
+.toggle-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
     cursor: pointer;
-}
-
-.sidebar-top li:hover, .sidebar-bottom li:hover {
-    background-color: #5DADE2;
     border-radius: 5px;
-    transition: background-color 0.5s ease;
+    transition: all 0.3s ease;
+    width: 100%;
 }
 
-.actived{
-    background-color: #5DADE2;
+.toggle-header:hover {
+    background-color: rgba(93, 173, 226, 0.3);
+}
+
+.toggle-header .icon {
+    margin-right: 15px;
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+.toggle-header .text {
+    flex: 1;
+}
+
+.toggle-header .toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.toggle-content {
+    padding-left: 35px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.sidebar-toggle.active .toggle-content {
+    max-height: 500px; /* Adjust based on content */
+}
+
+.sidebar-toggle.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Submenu items */
+.submenu-item {
+    margin: 5px 0;
+}
+
+.submenu-item a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #000;
+    text-decoration: none;
     border-radius: 5px;
+    transition: all 0.3s ease;
 }
 
-.sidebar-top .icon, .sidebar-bottom .icon {
+.submenu-item a:hover, .submenu-item a.actived {
+    background-color: #5DADE2;
+    color: #fff;
+}
+
+.submenu-item .icon {
+    margin-right: 10px;
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Collapsed sidebar */
+.sidebar.collapsed {
+    width: 70px;
+    padding: 20px 5px;
+}
+
+.sidebar.collapsed .text, 
+.sidebar.collapsed .toggle-icon {
+    display: none;
+}
+
+.sidebar.collapsed .btn-sidebar,
+.sidebar.collapsed .toggle-header {
+    justify-content: center;
+    padding: 15px 0;
+}
+
+.sidebar.collapsed .icon {
+    margin: 0;
+    font-size: 20px;
+}
+
+.sidebar.collapsed .toggle-content {
+    padding-left: 0;
+}
+
+.sidebar.collapsed .submenu-item a {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.sidebar.collapsed .submenu-item .icon {
+    margin: 0;
     font-size: 18px;
 }
 
-.icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-}
-
-.sidebar-top .text a{
-    text-decoration: none;
-    color: #000000;
-    font-size: 16px;
-    transition: color 0.3s ease;
-}
-
-/* Ajuste da seta para fechar a sidebar */
+/* Toggle button */
 .toggle {
     height: calc(100vh - 83px);
     display: flex;
     justify-content: center;
+    position: absolute;
+    right: -30px; /* Move a seta para fora da sidebar */
+    top: 10px;
 }
-
 
 .toggle-btn {
     background: none;
     border: none;
     margin: auto;
-    font-size: 18px;
+    font-size: 14px;
     cursor: pointer;
     color: #000;
     display: block;
@@ -309,70 +411,37 @@ body {
     transform: rotate(0deg);
 }
 
-a.btn-sidebar {
-    text-decoration: none;
-    color: #000000;
-    width: 100%;
-    font-size: 16px;
-    transition: color 0.3s ease;
-    display: block; /* Para garantir que o link ocupe toda a largura do item */
-}
-
-li {
-    width: 100%; /* Garante que todos os itens tenham a mesma largura */
-}
-
-li span.icon {
-    margin-right: 10px; /* Espaçamento entre o ícone e o texto */
-}
-
-li.actived a {
-    font-weight: bold; /* Opcional: Destacar o item ativo */
-}
-.toggle-btn i {
-    transition: transform 0.3s ease;
-    font-size: 14px;
-}
-
-/* Para esconder a sidebar */
-.sidebar.collapsed {
-    width: 80px;
-    padding: 0px 10px;
-    transition: width 0.9s ease;
-}
-
 .sidebar.collapsed .toggle-btn {
     transform: rotate(180deg);
-    transition: transform 0.9s ease;
 }
 
-.sidebar.collapsed .text {
+.sidebar-toggle .toggle-content {
     display: none;
+    padding-left: 15px;
 }
 
-.sidebar.collapsed .toggle {
-    justify-content: center;
+.sidebar-toggle.active .toggle-content {
+    display: block;
 }
 
-.sidebar.collapsed ul{
-    width: 0;
+.sidebar-toggle.active .toggle-icon {
+    transform: rotate(180deg);
 }
 
-.sidebar.collapsed li {
-    justify-content: center;
-    padding: 20px 30px;
+.sidebar-toggle .toggle-icon {
+    transition: transform 0.3s ease;
 }
 
-.sidebar.collapsed .icon {
-    margin: 0;
-    font-size: 22px;
-    transition: font-size 0.9s ease;
+/* Main content adjustment */
+.container-main {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+    flex: 1;
+    padding-top: 78px;
 }
 
-.toggle {
-    position: absolute;
-    right: -25px; /* Move a seta para fora da sidebar */
-    top: 10px;
+.container-main.sidebar-collapsed {
+    margin-left: 70px;
 }
 
 /* Ajuste do conteúdo principal quando a sidebar se esconde */
@@ -393,7 +462,6 @@ li.actived a {
 .main-content {
     flex-grow: 1;
     padding: 20px;
-    margin-top: 70px;
     transition: margin-left 0.9s ease;
 }
 

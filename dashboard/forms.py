@@ -159,28 +159,29 @@ class EstagioCadastroForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
+        current_user = kwargs.pop("user", None)
         empresa_id = kwargs.pop("empresa_id", None)
         instituicao_id = kwargs.pop("instituicao_id", None)
         super().__init__(*args, **kwargs)
 
-        self.fields["estagiario"].queryset = Estagiario.objects.all()
-        self.fields["empresa"].queryset = Empresa.objects.all()
+        coordenador_extensao = CoordenadorExtensao.objects.filter(
+            user = current_user
+        ).first()
+        instituicao_logada = coordenador_extensao.instituicao
 
-        if instituicao_id:
-            self.fields["instituicao"].queryset = Instituicao.objects.filter(
-                id=instituicao_id
-            )
-
-        empresa_id = self.data.get("empresa") or (
-            self.instance.empresa.id if self.instance.pk else None
+        # Filtrar os campos de acordo com a instituição
+        self.fields["estagiario"].queryset = Estagiario.objects.filter(
+            instituicao=instituicao_logada
         )
-        if empresa_id:
-            self.fields["supervisor"].queryset = Supervisor.objects.filter(
-                empresa_id=empresa_id
-            )
-        else:
-            self.fields["supervisor"].queryset = Supervisor.objects.all()
+        self.fields["empresa"].queryset = Empresa.objects.filter(
+            instituicao=instituicao_logada
+        )
+        self.fields["instituicao"].queryset = Instituicao.objects.filter(
+            id=instituicao_logada.id
+        )
+        self.fields["supervisor"].queryset = Supervisor.objects.filter(
+            empresa__instituicao=instituicao_logada
+        )
 
     def clean(self):
         cleaned_data = super().clean()
