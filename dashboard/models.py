@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from datetime import timedelta, date
 
 
+
 class Endereco(models.Model):
     rua = models.CharField(max_length=255)
     numero = models.CharField(max_length=10)
@@ -209,3 +210,4 @@ class RelatorioEstagio(models.Model):
 
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.estagio.estagiario}"
+

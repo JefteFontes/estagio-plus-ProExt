@@ -84,22 +84,6 @@ body {
     background-color: #000000;
 }
 
-.notif-btn {
-    background-color: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    font-size: 20px;
-    color: #000000;
-    border-radius: 20%;
-    transition: background-color 0.3s ease;
-}
-
-.notif-btn:hover{
-    text-decoration: underline;
-    background-color: #5DADE2;
-    transition: background-color 0.3s ease;
-}
 
 .navbar-user {
     display: flex;
@@ -1001,3 +985,27 @@ select, #form-control{
         gap: 5px;
     }
 }
+
+.notification-message pre {
+    margin: 0;
+    font-family: inherit;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 13px;
+    line-height: 1.4;
+    max-width: 300px;
+}
+
+.notification-message {
+    background: white;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-top: 5px;
+}
+
+
+
+
+
+
