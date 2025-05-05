@@ -50,15 +50,13 @@ function toggleDropdown() {
     }
 }
 
-// Fecha o dropdown ao clicar fora
 window.addEventListener('click', function(event) {
     const dropdown = document.getElementById("myDropdown");
     const userButton = document.getElementById("userDropdownButton");
+ 
     if (!event.target.matches('.user-button') && !event.target.closest('.user-dropdown')) {
-        // Se o clique não for no botão ou dentro do dropdown, feche o dropdown
         userButton.classList.remove("active");
         dropdown.classList.remove("show");
-        setTimeout(() => dropdown.style.display = "none", 300); // Atraso para permitir a transição
+        setTimeout(() => dropdown.style.display = "none", 300);
     }
 });
-

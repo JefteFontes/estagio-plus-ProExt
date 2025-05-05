@@ -62,43 +62,101 @@ def verificar_relatorios_pendentes(estagio):
     return relatorios
 
 
-def enviar_notificacao_relatorio_atrasado(estagio, request):
+def verificar_relatorios_atrasados(request):
     hoje = datetime.date.today()
-    relatorios_pendentes = verificar_relatorios_pendentes(estagio)
-    relatorios_proximos_vencimento = []
+    relatorios_por_estagiario = {}  
     
-    for relatorio in relatorios_pendentes:
-        data_prevista = relatorio['data_prevista']
-        if (data_prevista - hoje).days <= 7 and data_prevista >= hoje:
-            relatorios_proximos_vencimento.append(relatorio)
-        elif data_prevista < hoje:
-            relatorios_proximos_vencimento.append(relatorio)
+    coordenador = request.user.coordenadorextensao
+    instituicao = coordenador.instituicao
+    estagios = Estagio.objects.filter(instituicao=instituicao)
     
-    if not relatorios_proximos_vencimento:
-        return False      
+    for estagio in estagios:
+        relatorios_pendentes = verificar_relatorios_pendentes(estagio)
+        relatorios_proximos_vencimento = []
+        
+        for relatorio in relatorios_pendentes:
+            data_prevista = relatorio['data_prevista']
+            dias_para_vencer = (data_prevista - hoje).days
+            
+            if dias_para_vencer <= 30: 
+                relatorios_proximos_vencimento.append({
+                    'tipo': relatorio['tipo'],
+                    'data_prevista': data_prevista
+                })
+        
+        if relatorios_proximos_vencimento:
+            relatorios_por_estagiario[estagio] = relatorios_proximos_vencimento
     
-    coordenador_email = request.user.email
-
+    if not relatorios_por_estagiario:
+        return False
+    
     context = {
-        'empresa_name': estagio.empresa.empresa_nome,
-        'estagiario_name': estagio.estagiario.nome_completo,
-        'relatorios_pendentes': relatorios_proximos_vencimento,
+        'user_name': request.user.get_full_name() or request.user.username,
+        'relatorios_por_estagiario': relatorios_por_estagiario,
         'site_name': settings.SITE_NAME,
         'site_url': request.build_absolute_uri('/'),
-        'hoje': hoje,
+        'hoje': hoje.strftime("%d/%m/%Y"),
     }
 
-    email_content = render_to_string("emails/relatorio_notificacao.txt", context)
+    email_content = render_to_string("emails/relatorio_notificacao_coordenador.txt", context)
 
     send_mail(
-        subject=_('Relatório pendente ou próximo do vencimento'),  
+        subject=_('Relatórios de estágio pendentes - {}').format(hoje.strftime("%d/%m/%Y")),
         message=email_content,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[coordenador_email],
+        recipient_list=[request.user.email],
         fail_silently=False,
     )
 
     return True
+
+
+def notificar_estagiarios_relatorios_pendentes(request):
+    hoje = datetime.date.today()
+    estagios_com_pendencias = []
+    
+    coordenador = request.user.coordenadorextensao
+    instituicao = coordenador.instituicao
+    estagios = Estagio.objects.filter(instituicao=instituicao)
+    
+    for estagio in estagios:
+        relatorios_pendentes = verificar_relatorios_pendentes(estagio)
+        relatorios_proximos_vencimento = []
+        
+        for relatorio in relatorios_pendentes:
+            data_prevista = relatorio['data_prevista']
+            dias_para_vencer = (data_prevista - hoje).days
+            
+            if dias_para_vencer <= 30:  
+                relatorios_proximos_vencimento.append({
+                    'tipo': relatorio['tipo'],
+                    'data_prevista': data_prevista,
+                    'dias_atraso': max(0, (hoje - data_prevista).days) if hoje > data_prevista else 0
+                })
+        
+        if relatorios_proximos_vencimento:
+            context = {
+                'estagiario_nome': estagio.estagiario.nome_completo,
+                'relatorios_pendentes': relatorios_proximos_vencimento,
+                'site_name': settings.SITE_NAME,
+                'site_url': request.build_absolute_uri('/'),
+                'hoje': hoje.strftime("%d/%m/%Y"),
+                'curso': estagio.estagiario.curso.nome_curso if estagio.estagiario.curso else '',
+            }
+
+            email_content = render_to_string("emails/relatorio_notificacao_estagiario.txt", context)
+
+            send_mail(
+                subject=f'Relatórios de estágio pendentes - {hoje.strftime("%d/%m/%Y")}',
+                message=email_content,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[estagio.estagiario.email],
+                fail_silently=False,
+            )
+            
+            estagios_com_pendencias.append(estagio)
+    
+    return len(estagios_com_pendencias) > 0
 
 
 def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
@@ -134,6 +192,18 @@ def complementar_estagio(request, estagio_id):
         request, estagio, template="complementar_estagio.html"
     )
 
+@login_required
+def verificar_pendencias(request):
+    notificou_coordenador = verificar_relatorios_atrasados(request)
+    notificou_estagiarios = notificar_estagiarios_relatorios_pendentes(request)
+    
+    if notificou_coordenador or notificou_estagiarios:
+        messages.success(request, "Notificações enviadas com sucesso!")
+    else:
+        messages.info(request, "Nenhum relatório pendente encontrado.")
+    
+    return redirect('dashboard_instituicao')
+
 
 def detalhes_estagio(request):
     selected = request.GET.get("selected")
@@ -144,7 +214,6 @@ def detalhes_estagio(request):
     duracao = estagio_duracao(estagio)
     tempo_falta = estagio_falta_dias(estagio)
     relatorios_pendentes = verificar_relatorios_pendentes(estagio)
-    enviar_notificacao_relatorio_atrasado(estagio, request)
 
     return render(
         request,

@@ -18,6 +18,7 @@ from dashboard.models import (
     CoordenadorExtensao,
 )
 from dashboard.views.utils import parse_sections
+from dashboard.views.estagios import verificar_pendencias
 from dashboard.forms import CursosCadastroForm, EmpresaCadastroForm
 from django.db.models import Q
 
@@ -112,6 +113,8 @@ def dashboard_instituicao(request):
     errors = []
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     instituicao = coordenador.instituicao
+    # verificar_pendencias(request)
+
 
     if request.method == "POST" and request.FILES.get("pdf_file"):
         pdf_file = request.FILES["pdf_file"]
@@ -310,3 +313,4 @@ def detalhes_estagio(request, estagio_id):
 
 def relatorios(request):
     return render(request, "dashboard_relatorios.html")
+    
