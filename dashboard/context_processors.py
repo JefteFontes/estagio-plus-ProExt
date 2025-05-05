@@ -11,7 +11,7 @@ def relatorios_pendentes(request):
     try:
         coordenador = CoordenadorExtensao.objects.get(user=request.user)
         instituicao = coordenador.instituicao
-        estagios = Estagio.objects.filter(instituicao=instituicao)
+        estagios = Estagio.objects.filter(instituicao=instituicao).select_related('estagiario__curso')
         
         count = 0
         hoje = datetime.date.today()
@@ -21,16 +21,15 @@ def relatorios_pendentes(request):
             relatorios = verificar_relatorios_pendentes(estagio)
             if relatorios:
                 count += len(relatorios)
-                relatorios_estagiario = []
+                curso = estagio.estagiario.curso.nome_curso if estagio.estagiario.curso else 'Curso não informado'
+                resumo.append(f"{estagio.estagiario.nome_completo} ({curso}):")
+                
                 for relatorio in relatorios:
                     dias_atraso = (hoje - relatorio['data_prevista']).days
                     status = f"(Atrasado há {dias_atraso} dias)" if dias_atraso > 0 else "(A vencer)"
-                    relatorios_estagiario.append(
-                        f"{relatorio['tipo']}: {relatorio['data_prevista'].strftime('%d/%m/%Y')} {status}"
+                    resumo.append(
+                        f"  {relatorio['tipo']}: {relatorio['data_prevista'].strftime('%d/%m/%Y')} {status}"
                     )
-                
-                resumo.append(f"{estagio.estagiario.nome_completo}:")
-                resumo.extend(relatorios_estagiario)
         
         return {
             'relatorios_pendentes_count': count,
