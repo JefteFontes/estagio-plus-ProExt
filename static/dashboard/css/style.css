@@ -458,6 +458,15 @@ body {
     transition: margin-left 0.9s ease;
 }
 
+.toggle-content {
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
+
+.sidebar-toggle .toggle-icon {
+    transition: transform 0.3s ease;
+}
+
 /* Estilos do conteúdo */
 .main-content {
     flex-grow: 1;
