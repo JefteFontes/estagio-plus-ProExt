@@ -11,23 +11,7 @@
         {% url 'account_login' as login_url_ %}
         {% if user.is_authenticated %}
         <div class="navbar-user">
-            <div class="notif">
-                <div class="notif-item">
-                    <button title="Notificação" class="notif-btn">
-                        <i class="fa-regular fa-bell"></i>
-                        {% if relatorios_pendentes_count > 0 %}
-                            <span class="notification-badge">{{ relatorios_pendentes_count }}</span>
-                        {% endif %}
-                    </button>
-                    <div class="notification-message">
-                        {% if relatorios_pendentes_count > 0 %}
-                            <pre>{{ relatorios_resumo }}</pre>
-                        {% else %}
-                            Nenhum relatório pendente
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+            <a title="Notificação" href="#" class="notif-btn"><i class="fa-regular fa-bell"></i></a>
             <div class="user-info">
                 <span class="initials-user">{{ request.user.username|slice:":2"|upper }}</span>
                 <span class="user-name">{{ request.user.username }}</span>

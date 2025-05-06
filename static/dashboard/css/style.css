@@ -1008,8 +1008,9 @@ select, #form-control{
 
 .notif-btn:hover{
     text-decoration: underline;
-    background-color: #ade9ad;
+    background-color: #5DADE2;
     transition: background-color 0.3s ease;
+    color: #F5F5F5 !important;
 }
 
 
