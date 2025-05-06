@@ -190,14 +190,11 @@ function toggleDropdown() {
     }
 }
 
-// Fechar dropdown ao clicar fora
-document.addEventListener('click', function(event) {
+window.addEventListener('click', function(event) {
     const dropdown = document.getElementById("myDropdown");
     const userButton = document.getElementById("userDropdownButton");
-    
-    if (!dropdown || !userButton) return;
-
-    if (!event.target.closest('.user-dropdown') && !event.target.matches('.user-button')) {
+    if (!event.target.matches('.user-button') && !event.target.closest('.user-dropdown')) {
+        // Se o clique não for no botão ou dentro do dropdown, feche o dropdown
         userButton.classList.remove("active");
         dropdown.classList.remove("show");
         
@@ -209,4 +206,3 @@ document.addEventListener('click', function(event) {
         }, { once: true });
     }
 });
-

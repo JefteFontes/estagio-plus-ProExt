@@ -84,22 +84,6 @@ body {
     background-color: #000000;
 }
 
-.notif-btn {
-    background-color: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    font-size: 20px;
-    color: #000000;
-    border-radius: 20%;
-    transition: background-color 0.3s ease;
-}
-
-.notif-btn:hover{
-    text-decoration: underline;
-    background-color: #5DADE2;
-    transition: background-color 0.3s ease;
-}
 
 .navbar-user {
     display: flex;
@@ -1010,3 +994,26 @@ select, #form-control{
         gap: 5px;
     }
 }
+
+.notif-btn {
+    background-color: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 20px;
+    color: #000000;
+    border-radius: 20%;
+    transition: background-color 0.3s ease;
+}
+
+.notif-btn:hover{
+    text-decoration: underline;
+    background-color: #ade9ad;
+    transition: background-color 0.3s ease;
+}
+
+
+
+
+
+

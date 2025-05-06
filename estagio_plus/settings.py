@@ -73,6 +73,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'dashboard.context_processors.relatorios_pendentes',
             ],
         },
     },
@@ -164,3 +165,10 @@ EMAIL_HOST_PASSWORD = "nhxf qexm dcsh dmxn"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST = "smtp.gmail.com"
+
+# python manage.py shell 
+# from django.contrib.sites.models import Site
+# site = Site.objects.get(id=1) 
+# site.name = "+Estagio"
+# site.domain = "+Estagio.com" 
+# site.save()
