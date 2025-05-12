@@ -293,6 +293,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.coordenador = kwargs.pop("coordenador", None)
+        self.instituicao = kwargs.pop("instituicao", None)
         super().__init__(*args, **kwargs)
 
         # Preenche os campos de endereço, caso o estagiário já tenha um endereço associado
@@ -306,9 +307,19 @@ class EstagiarioCadastroForm(forms.ModelForm):
             self.fields["cep"].initial = endereco.cep
             self.fields["complemento"].initial = endereco.complemento
 
-        self.fields["curso"].queryset = Cursos.objects.filter(
-            instituicao=self.coordenador.instituicao
-        )
+        # Use coordenador.instituicao or fallback to self.instituicao
+        instituicao = None
+        if self.coordenador and self.coordenador.instituicao:
+            instituicao = self.coordenador.instituicao
+        elif self.instituicao:
+            instituicao = self.instituicao
+
+        if instituicao:
+            self.fields["curso"].queryset = Cursos.objects.filter(
+                instituicao=instituicao
+            )
+        else:
+            self.fields["curso"].queryset = Cursos.objects.none()
 
     def save(self, commit=True):
         # Salva ou atualiza o endereço

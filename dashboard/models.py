@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.forms import ValidationError
 from django.contrib.auth.models import User
 from datetime import timedelta, date
+import uuid
 
 from base.models import InstituicaoLegal
 
@@ -202,3 +203,11 @@ class RelatorioEstagio(models.Model):
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.estagio.estagiario}"
 
+
+class EstagiarioInvite(models.Model):
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    instituicao = models.ForeignKey('Instituicao', on_delete=models.CASCADE)
+    coordenador = models.ForeignKey('CoordenadorExtensao', on_delete=models.CASCADE)
+    email = models.EmailField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    used = models.BooleanField(default=False)
