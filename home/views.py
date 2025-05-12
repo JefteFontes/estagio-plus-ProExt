@@ -1,3 +1,4 @@
+import traceback
 from django.shortcuts import get_object_or_404, render, redirect
 from django.conf import settings
 from django.http import FileResponse, Http404, HttpResponse
@@ -21,11 +22,24 @@ def home(request):
 
 def cadastrar_instituicao(request):
     if request.method == "POST":
-        form = CoordenadorCadastroForm(request.POST, request.FILES)
+        try:
+            form = CoordenadorCadastroForm(request.POST, request.FILES)
+        except Exception as e:
+            print("Erro ao instanciar o formulário:")
+            traceback.print_exc()
+            messages.error(request, f"Erro ao processar o formulário: {str(e)}")
+            return render(request, "cadastro/cadastrar_instituicao.html", {"form": None})
+
         if form.is_valid():
             try:
                 user, coordenador = form.save()
+            except Exception as e:
+                print("Erro ao salvar o formulário:")
+                traceback.print_exc()
+                messages.error(request, f"Erro ao salvar o cadastro: {str(e)}")
+                return render(request, "cadastro/cadastrar_instituicao.html", {"form": form})
 
+            try:
                 reset_form = ResetPasswordForm({"email": user.email})
                 if reset_form.is_valid():
                     reset_form.save(request=request)
@@ -38,7 +52,15 @@ def cadastrar_instituicao(request):
                         request,
                         "Cadastro realizado, mas houve um erro ao enviar o email de redefinição.",
                     )
+            except Exception as e:
+                print("Erro ao enviar email de redefinição de senha:")
+                traceback.print_exc()
+                messages.warning(
+                    request,
+                    "Cadastro realizado, mas falha ao preparar redefinição de senha.",
+                )
 
+            try:
                 context = {
                     "user_name": user.get_full_name() or user.username,
                     "site_name": settings.SITE_NAME,
@@ -55,35 +77,52 @@ def cadastrar_instituicao(request):
                     recipient_list=[user.email],
                     fail_silently=False,
                 )
-
-                messages.success(request, "Instituição cadastrada com sucesso!")
-                return redirect("/login/")
-
             except Exception as e:
-                messages.error(request, f"Erro no cadastro: {str(e)}")
-                return redirect("cadastro_instituicao")
+                print("Erro ao enviar email de boas-vindas:")
+                traceback.print_exc()
+                messages.warning(
+                    request,
+                    "Cadastro feito, mas erro ao enviar o email de boas-vindas.",
+                )
+
+            messages.success(request, "Instituição cadastrada com sucesso!")
+            return redirect("/login/")
         else:
+            print("Formulário inválido:")
+            print(form.errors)
             messages.error(request, "Corrija os erros abaixo.")
-            messages.error(request, form.errors)
-            return redirect("cadastro_instituicao")
+            return render(request, "cadastro/cadastrar_instituicao.html", {"form": form})
     else:
-        form = CoordenadorCadastroForm()
+        try:
+            form = CoordenadorCadastroForm()
+        except Exception as e:
+            print("Erro ao instanciar o formulário GET:")
+            traceback.print_exc()
+            form = None
+            messages.error(request, f"Erro ao carregar o formulário: {str(e)}")
 
     return render(request, "cadastro/cadastrar_instituicao.html", {"form": form})
+
 
 def editar_instituicao(request, instituicao):
     instituicao = get_object_or_404(CoordenadorCadastroForm, id=instituicao)
 
     if request.method == "POST":
-        form = CoordenadorCadastroForm(request.POST, request.FILES, instance=instituicao)
+        form = CoordenadorCadastroForm(
+            request.POST, request.FILES, instance=instituicao
+        )
         if form.is_valid():
             form.save()
             return redirect("dashboard_instituicao")
     else:
         form = CoordenadorCadastroForm(instance=instituicao)
-    return render(request, 'cadastro/cadastrar_instituicao.html', {'form': form, 'instituicao': instituicao})
+    return render(
+        request,
+        "cadastro/cadastrar_instituicao.html",
+        {"form": form, "instituicao": instituicao},
+    )
 
-    
+
 def visualizar_termo(request, pdf_nome):
     # Caminho completo do arquivo
     caminho_arquivo = os.path.join(settings.MEDIA_ROOT, pdf_nome)
@@ -92,9 +131,9 @@ def visualizar_termo(request, pdf_nome):
     if os.path.exists(caminho_arquivo):
         try:
             # Abre o arquivo para leitura
-            arquivo = open(caminho_arquivo, 'rb')
+            arquivo = open(caminho_arquivo, "rb")
             # Retorna o arquivo como resposta
-            return FileResponse(arquivo, content_type='application/pdf')
+            return FileResponse(arquivo, content_type="application/pdf")
         except Exception as e:
             # Caso ocorra um erro, ele será capturado
             raise Http404(f"Erro ao abrir o arquivo: {str(e)}")

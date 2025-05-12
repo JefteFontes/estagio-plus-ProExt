@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "dashboard",
     "home",
+    "base",
 ]
 
 SITE_ID = 1

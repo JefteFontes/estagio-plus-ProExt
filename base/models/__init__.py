@@ -1,0 +1,1 @@
+from base.models.intituicao_legal import InstituicaoLegal

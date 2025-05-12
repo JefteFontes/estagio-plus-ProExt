@@ -4,6 +4,7 @@ from django.forms import ValidationError
 from django.contrib.auth.models import User
 from datetime import timedelta, date
 
+from base.models import InstituicaoLegal
 
 
 class Endereco(models.Model):
@@ -22,17 +23,7 @@ class Endereco(models.Model):
         return f"{self.rua}, {self.numero} - {self.bairro}"
 
 
-class Instituicao(models.Model):
-    cnpj = models.CharField(
-        max_length=14,
-        unique=True,
-        validators=[RegexValidator(regex="^[0-9]{14}$", message="Use apenas números.")],
-    )
-    nome = models.CharField(max_length=250)
-    email = models.EmailField(unique=True)
-    telefone = models.CharField(
-        max_length=20,
-    )
+class Instituicao(InstituicaoLegal):
     endereco = models.ForeignKey(
         Endereco, on_delete=models.PROTECT, null=True, blank=True
     )
