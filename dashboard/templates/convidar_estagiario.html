@@ -1,0 +1,19 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<form method="post">
+        {% csrf_token %}
+        <h3 class="section-title">Convidar Estagiário</h3>
+        <div class="form-section">
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="email">Email do Estagiário</label>
+                    <input type="email" name="email" id="email" class="form-control" required>
+                </div>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn-user-signup">Salvar</button>
+            <a href="{% url 'dashboard_estagiario' %}" class="btn-cancel">Cancelar</a>
+        </div>
+</form>
+{% endblock %}
