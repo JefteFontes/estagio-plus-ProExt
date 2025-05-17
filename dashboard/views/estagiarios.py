@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.core.mail import send_mail
 
-from dashboard.models import CoordenadorExtensao, Estagio, EstagiarioInvite
+from dashboard.models import CoordenadorExtensao, Estagio
 from ..forms import EstagiarioCadastroForm, Estagiario
 
 
@@ -53,31 +53,6 @@ def deletar_estagiario(request, estagiario_id):
     else:
         estagiario.delete()
         return redirect("dashboard_estagiario")
-
-
-@login_required
-def convidar_estagiario(request):
-    if request.method == "POST":
-        email = request.POST['email']
-        coordenador = CoordenadorExtensao.objects.get(user=request.user)
-        invite = EstagiarioInvite.objects.create(
-            instituicao=coordenador.instituicao,
-            coordenador=coordenador,
-            email=email
-        )
-        link = request.build_absolute_uri(
-            reverse('estagiario_auto_cadastro', args=[str(invite.token)])
-        )
-        # Optionally send email
-        send_mail(
-            'Convite para cadastro de estagiário',
-            f'Cadastre-se usando este link: {link}',
-            'no-reply@instituicao.edu',
-            [email]
-        )
-        messages.success(request, "Convite enviado!")
-        return redirect('dashboard_estagiario')
-    return render(request, "convidar_estagiario.html")
 
 
 def estagiario_auto_cadastro(request, token):

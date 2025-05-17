@@ -9,7 +9,6 @@ from dashboard.views.estagiarios import (
     cadastrar_estagiario,
     editar_estagiario,
     deletar_estagiario,
-    convidar_estagiario,
     estagiario_auto_cadastro,
 )
 from dashboard.views.pdfimport import importar_pdf
@@ -72,7 +71,6 @@ urlpatterns = [
     path('cadastrar_estagiario', cadastrar_estagiario, name='cadastrar_estagiario'),
     path('editar_estagiario/<int:estagiario_id>', editar_estagiario, name='editar_estagiario'),
     path('deletar_estagiario/<int:estagiario_id>', deletar_estagiario, name='deletar_estagiario'),
-    path('convidar-estagiario/', convidar_estagiario, name='convidar_estagiario'),
     path('estagiario/cadastro/<uuid:token>/', estagiario_auto_cadastro, name='estagiario_auto_cadastro'),
 
     path('add-estagio', add_estagios, name='add_estagio'),

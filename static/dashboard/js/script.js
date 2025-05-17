@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', function() {
     
     initializeSidebarToggles();
@@ -206,3 +204,39 @@ window.addEventListener('click', function(event) {
         }, { once: true });
     }
 });
+
+let notificationOverlay = null;
+function toggleNotifSidebar() {
+    const sidebar = document.getElementById('notificationSidebar');
+    
+    if (sidebar.classList.contains('active')) {
+        // Fechando o sidebar
+        sidebar.classList.remove('active');
+        if (notificationOverlay) {
+            notificationOverlay.classList.remove('active');
+            // Espera a animação terminar antes de remover
+            setTimeout(() => {
+                if (notificationOverlay && notificationOverlay.parentNode) {
+                    document.body.removeChild(notificationOverlay);
+                    notificationOverlay = null;
+                }
+            }, 300); // Mesmo tempo da transição do sidebar
+        }
+    } else {
+        // Abrindo o sidebar
+        sidebar.classList.add('active');
+        
+        // Cria o overlay se não existir
+        if (!notificationOverlay) {
+            notificationOverlay = document.createElement('div');
+            notificationOverlay.className = 'notification-overlay';
+            notificationOverlay.onclick = toggleNotifSidebar;
+            document.body.appendChild(notificationOverlay);
+        }
+        
+        // Força reflow para a animação funcionar
+        void notificationOverlay.offsetWidth;
+        notificationOverlay.classList.add('active');
+    }
+}
+
