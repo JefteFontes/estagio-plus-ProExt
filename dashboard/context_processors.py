@@ -63,8 +63,8 @@ def relatorios_pendentes(request):
             'relatorios_pendentes_count': count,
             'relatorios_list': relatorios_list,
             'relatorios_resumo': '\n'.join(resumo_lines) if resumo_lines else 'Nenhum relatório pendente',
-            'urgent_total': urgent_total
-        }
+            'urgent_total': None,
+            }
     
     except CoordenadorExtensao.DoesNotExist:
         return {

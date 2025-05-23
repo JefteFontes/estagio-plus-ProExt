@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 import requests
-import re
 
 
 def parse_sections(text):
@@ -12,7 +11,6 @@ def parse_sections(text):
         if not line:
             continue
 
-        # Identifica uma nova seção
         if line.startswith("#"):
             current_section = line.strip("# ").lower()
             sections[current_section] = {}
@@ -71,39 +69,31 @@ def validate_cnpj(request):
                 "numero": data.get("address", {}).get("number", ""),
                 "atividades": data.get("mainActivity", {}).get("text", ""),
                 "complemento": data.get("address", {}).get("details", ""),
-            }
-        )
+                "bairro": data.get("address", {}).get("district", ""),
+                "cidade": data.get("address", {}).get("city", ""),
+                "estado": data.get("address", {}).get("state", ""),
+                "rua": data.get("address", {}).get("street", ""),
+               
+        }
+)
 
     return JsonResponse({"error": "Erro ao buscar CNPJ"}, status=500)
 
 
 def validate_cpf(cpf: str) -> bool:
-    # Remove any non-numeric characters
     cpf = "".join(filter(str.isdigit, cpf))
 
-    # Check if the CPF has 11 digits
     if len(cpf) != 11:
         return False
 
-    # Check for invalid CPFs (e.g., all digits are the same)
     if cpf == cpf[0] * 11:
         return False
 
-    # Calculate the first check digit
     sum1 = sum(int(cpf[i]) * (10 - i) for i in range(9))
     check_digit1 = (sum1 * 10 % 11) % 10
 
-    # Calculate the second check digit
     sum2 = sum(int(cpf[i]) * (11 - i) for i in range(10))
     check_digit2 = (sum2 * 10 % 11) % 10
 
-    # Check if the calculated check digits match the provided ones
     return check_digit1 == int(cpf[9]) and check_digit2 == int(cpf[10])
 
-
-# Example usage
-# cpf = "4351236320"
-# if validate_cpf(cpf):
-#     print("CPF is valid")
-# else:
-#     print("CPF is invalid")

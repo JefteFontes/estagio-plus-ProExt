@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 from django.forms import ValidationError
 from django.contrib.auth.models import User
 from datetime import timedelta, date
@@ -7,6 +7,11 @@ import uuid
 
 from base.models import InstituicaoLegal
 
+
+class TurnoChoices(models.TextChoices):
+    MANHA = "Manhã"
+    TARDE = "Tarde"
+    NOITE = "Noite"
 
 class Endereco(models.Model):
     rua = models.CharField(max_length=255)
@@ -84,6 +89,12 @@ class Estagiario(models.Model):
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20)
     curso = models.ForeignKey(Cursos, on_delete=models.PROTECT, null=True, blank=True)
+    periodo = models.IntegerField(null=True, blank=True, default=4, validators=[
+            RegexValidator(regex="^[0-9]+$", message="Use apenas números."),
+            MaxValueValidator(8, message="O valor não pode ser maior que 8"),
+            MinValueValidator(1, message="O valor não pode ser menor que 1"),
+        ])
+    turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
     status = models.BooleanField(default=False)
     endereco = models.ForeignKey(
         Endereco, on_delete=models.PROTECT, null=True, blank=True
@@ -133,11 +144,6 @@ class Supervisor(models.Model):
     def __str__(self):
         return f"{self.nome_completo}"
 
-
-class TurnoChoices(models.TextChoices):
-    MANHA = "Manhã"
-    TARDE = "Tarde"
-    NOITE = "Noite"
 
 
 class StatusChoices(models.TextChoices):

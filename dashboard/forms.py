@@ -185,11 +185,31 @@ class EstagioCadastroForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        estagio = Estagio(
+        estagiario = Estagio(
             data_inicio=cleaned_data.get("data_inicio"),
             data_fim=cleaned_data.get("data_fim"),
+            turno = cleaned_data.get("turno"),
+            estagiario = cleaned_data.get("estagiario"),
         )
-        estagio.clean()  # validações do model
+        if estagiario.turno == estagiario.estagiario.turno:
+            self.add_error("turno", "O turno do estagiário e o turno do estágio devem ser diferentes.")
+        if estagiario.data_fim < estagiario.data_inicio:
+            self.add_error("data_fim", "A data de término deve ser posterior à data de início.")
+        if estagiario.estagiario.periodo < 4:
+            self.add_error("estagiario", "O estudante precisa estar cursando e concluído no mínimo 03 (três) períodos letivos do curso")
+        if not self.errors:
+            try:
+                estagio = Estagio(
+                data_inicio=cleaned_data.get("data_inicio"),
+                data_fim=cleaned_data.get("data_fim"),
+                turno = cleaned_data.get("turno"),
+                estagiario = cleaned_data.get("estagiario"),
+            )
+                
+                estagio.clean()  # validações do model
+            except Exception as e:
+                self.add_error(None, e.messages)
+        
         return cleaned_data
 
     def save(self, commit=True):
@@ -200,6 +220,7 @@ class EstagioCadastroForm(forms.ModelForm):
 
 
 class EstagiarioCadastroForm(forms.ModelForm):
+    
     rua = forms.CharField(
         max_length=255,
         widget=forms.TextInput(
@@ -261,6 +282,8 @@ class EstagiarioCadastroForm(forms.ModelForm):
             "curso",
             "status",
             "email",
+            "periodo",
+            "turno",
         ]
         widgets = {
             "nome_completo": forms.TextInput(
@@ -278,10 +301,12 @@ class EstagiarioCadastroForm(forms.ModelForm):
                     "placeholder": "Matrícula (ex: 202312345)",
                 }
             ),
+            "turno": forms.Select(attrs={"class": "form-control"}),
+            "periodo": forms.NumberInput(attrs={"class": "form-control","placeholder": "Período (ex:1)","min":"1","max":"8" }),
             "telefone": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Telefone (ex: 11 91234-5678)",
+                    "placeholder": "Telefone (ex: 86 91234-5678)",
                 }
             ),
             "curso": forms.Select(attrs={"class": "form-control"}),
