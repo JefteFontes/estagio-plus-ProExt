@@ -185,10 +185,31 @@ class Estagio(models.Model):
     orientador = models.TextField(max_length=100, null=True, blank=True)
     pdf_termo = models.FileField(upload_to='termos/', null=True, blank=True)
     def clean(self):
-        return f"{self.area} - {self.status}"
+        super().clean()
+        if self.data_inicio and self.data_fim:
+            if self.data_fim < self.data_inicio:
+                raise ValidationError({
+                    'data_fim': 'A data de término não pode ser anterior à data de início (validação do modelo).'
+                })
+        if self.estagiario.periodo < 4:
+            raise ValidationError({
+                'estagiario': 'O estudante precisa estar cursando e concluído no mínimo 03 (três) período letivos do curso'
+            })
+        if self.estagiario.turno == self.turno:
+            raise ValidationError({
+                'turno': 'O turno do estagiário e o turno do estágio devem ser diferentes.'
+            })
+
+        if self.supervisor.empresa != self.empresa:
+            raise ValidationError({
+                'empresa': 'O supervisor precisa estar vinculado ao mesmo empresa do estagiário.'
+            })
+            
+       
 
     def __str__(self):
-        return f"{self.area} - {self.status}"
+       return f"Estágio: {self.estagiario.nome_completo} em {self.empresa.empresa_nome} ({self.get_status_display()})"
+
 
 
 TIPOS_RELATORIO = [
