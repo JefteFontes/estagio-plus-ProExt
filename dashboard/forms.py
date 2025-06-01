@@ -4,6 +4,7 @@ from .views.utils import validate_cpf
 from django.core.exceptions import ValidationError
 from django.db.models import Min
 from dateutil.relativedelta import relativedelta
+from django.core.validators import MinValueValidator, MaxValueValidator
 from .models import (
     Estagiario,
     Endereco,
@@ -168,7 +169,6 @@ class EstagioCadastroForm(forms.ModelForm):
         if instituicao_logada:
             self.fields["estagiario"].queryset = Estagiario.objects.filter(instituicao=instituicao_logada).order_by('nome_completo')
             self.fields["empresa"].queryset = Empresa.objects.filter(instituicao=instituicao_logada).order_by('empresa_nome')
-
             self.fields["instituicao"].queryset = Instituicao.objects.filter(id=instituicao_logada.id)
             self.fields["instituicao"].initial = instituicao_logada
             self.fields["instituicao"].disabled = True 
@@ -188,6 +188,7 @@ class EstagioCadastroForm(forms.ModelForm):
         data_inicio_proposta = cleaned_data.get("data_inicio")
         data_fim_proposta = cleaned_data.get("data_fim")
         status_proposto = cleaned_data.get("status")
+        tipo_estagio = cleaned_data.get("tipo_estagio")
 
         if not all([estagiario_selecionado, empresa_selecionada, turno_estagio_proposto,
                     data_inicio_proposta, data_fim_proposta, status_proposto]):
@@ -197,20 +198,19 @@ class EstagioCadastroForm(forms.ModelForm):
         if estagiario_selecionado.turno == turno_estagio_proposto:
             self.add_error("turno", "O turno do estágio não pode ser o mesmo do curso regular do estagiário.")
 
-        # 2. Data de inicio do estágio proposto deve ser posterior a data de inicio do estagiário
-        if data_inicio_proposta < estagiario_selecionado.data_inicio:
-            self.add_error("data_inicio", "A data de início do estágio deve ser posterior ou igual a data de início do estudante.")
+        # # 2. Data de inicio do estágio proposto deve ser posterior a data de inicio do estagiário
+        # if data_inicio_proposta < estagiario_selecionado.data_inicio:
+        #     self.add_error("data_inicio", "A data de início do estágio deve ser posterior ou igual a data de início do estudante.")
 
         # 3. Data de fim do estágio proposto deve ser posterior a data de inicio do estágio
         if data_fim_proposta < data_inicio_proposta:
             self.add_error("data_fim", "A data de término do estágio deve ser posterior à data de início.")
 
-        # 3. Período mínimo do estagiário para iniciar um estágio
+        # 4. Período mínimo do estagiário para iniciar um estágio
         if estagiario_selecionado.periodo < 4: # Exemplo: Mínimo 3 períodos concluídos (estar no 4º)
             self.add_error("estagiario", "O estudante precisa ter concluído no mínimo 03 (três) períodos letivos do curso para iniciar um estágio.")
 
-        # 4. Conflito de turno/data com outro estágio ATIVO do mesmo estagiário
-        #    Um estagiário não pode ter dois estágios "Em andamento" no mesmo turno com datas sobrepostas.
+        # 5. Conflito de turno/data com outro estágio ATIVO do mesmo estagiário
         query_conflito_turno = Estagio.objects.filter(
             estagiario=estagiario_selecionado,
             turno=turno_estagio_proposto,
@@ -233,7 +233,14 @@ class EstagioCadastroForm(forms.ModelForm):
                 f"que conflita com o turno e as datas propostas.", code="conflito_estagio_ativo"
             ))
 
-        # 5. Limite cumulativo de 2 anos de estágio na mesma empresa
+        # 6. Verificar se o estagiário tem IRA >= 6.0
+        if estagiario_selecionado and (estagiario_selecionado.ira is None or estagiario_selecionado.ira < 6.0):
+            self.add_error(
+                "estagiario",
+                "O estagiário precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0."
+            )
+
+        # 7. Limite cumulativo de 2 anos de estágio na mesma empresa
         db_earliest_start_agg = Estagio.objects.filter(
             estagiario=estagiario_selecionado,
             empresa=empresa_selecionada
@@ -260,7 +267,7 @@ class EstagioCadastroForm(forms.ModelForm):
                 )
             )
 
-        # 6. Validações específicas para edição de um estágio existente (prorrogação/alteração)
+        # 8. Validações específicas para edição de um estágio existente (prorrogação/alteração)
         if self.instance and self.instance.pk:
             try:
                 estagio_original_db = Estagio.objects.get(pk=self.instance.pk)
@@ -269,8 +276,37 @@ class EstagioCadastroForm(forms.ModelForm):
                                    f"Ao alterar este estágio, a nova data de início ({data_inicio_proposta.strftime('%d/%m/%Y')}) "
                                    f"não pode ser anterior à data de início original deste contrato ({estagio_original_db.data_inicio.strftime('%d/%m/%Y')}).")
             except Estagio.DoesNotExist:
-               
                 pass 
+
+        # 9. Validações específicas para o curso de Medicina (Art. 9º)
+        if estagiario_selecionado and estagiario_selecionado.curso:
+            curso_nome = estagiario_selecionado.curso.nome_curso.lower()
+            if 'medicina' in curso_nome:
+                periodo = estagiario_selecionado.periodo
+                
+                # Artigo 9º - Limite de períodos para estágio não obrigatório
+                if tipo_estagio == TipoChoices.nao_obrigatorio and periodo > 8:
+                    self.add_error(
+                        None,
+                        "Art. 9º: Estudantes de Medicina a partir do 9º período não podem "
+                        "realizar estágios não obrigatórios."
+                    )
+                
+                # Parágrafo único - Verificação de internato (estágio obrigatório)
+                if tipo_estagio == TipoChoices.obrigatorio:
+                    # Verifica se já tem estágio não obrigatório ativo
+                    estagio_nao_obrigatorio = Estagio.objects.filter(
+                        estagiario=estagiario_selecionado,
+                        tipo_estagio=TipoChoices.nao_obrigatorio,
+                        status=StatusChoices.em_andamento
+                    ).exists()
+                    
+                    if estagio_nao_obrigatorio:
+                        self.add_error(
+                            None,
+                            "Parágrafo único: Estudantes de Medicina em estágio obrigatório (internato) "
+                            "não podem ter estágios não obrigatórios ativos simultaneamente."
+                        )
 
         if not self.errors:
             try:
@@ -307,7 +343,6 @@ class EstagioCadastroForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
-        
         estagio = super().save(commit=False)
         
         if commit:
@@ -361,6 +396,24 @@ class EstagiarioCadastroForm(forms.ModelForm):
         ),
     )
 
+        
+    ira = forms.FloatField(
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "IRA (ex: 7.5)",
+                "step": "0.1",
+                "min": "0",
+                "max": "10"
+            }
+        ),
+        validators=[
+            MinValueValidator(0.0, message="O IRA não pode ser menor que 0.0"),
+            MaxValueValidator(10.0, message="O IRA não pode ser maior que 10.0")
+        ]
+    )
+
     def clean_cpf(self):
         cpf = self.cleaned_data["cpf"]
         cpf = "".join(filter(str.isdigit, cpf))
@@ -380,6 +433,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
             "email",
             "periodo",
             "turno",
+            "ira",
         ]
         widgets = {
             "nome_completo": forms.TextInput(

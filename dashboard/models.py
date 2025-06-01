@@ -103,6 +103,16 @@ class Estagiario(models.Model):
         Instituicao, on_delete=models.PROTECT, null=True, blank=True
     )
 
+    ira = models.FloatField(
+        null=True, 
+        blank=True,
+        validators=[
+            MinValueValidator(0.0, message="O IRA não pode ser menor que 0.0"),
+            MaxValueValidator(10.0, message="O IRA não pode ser maior que 10.0")
+        ],
+        verbose_name="Índice de Rendimento Acadêmico"
+    )
+
     def __str__(self):
         return f"{self.nome_completo}"
 
@@ -184,26 +194,38 @@ class Estagio(models.Model):
     )
     orientador = models.TextField(max_length=100, null=True, blank=True)
     pdf_termo = models.FileField(upload_to='termos/', null=True, blank=True)
-    def clean(self):
-        super().clean()
-        if self.data_inicio and self.data_fim:
-            if self.data_fim < self.data_inicio:
-                raise ValidationError({
-                    'data_fim': 'A data de término não pode ser anterior à data de início (validação do modelo).'
-                })
-        if self.estagiario.periodo < 4:
+def clean(self):
+    super().clean()
+    
+    if not self.estagiario:
+        raise ValidationError({'estagiario': 'Selecione um estagiário'})
+    
+    if self.data_inicio and self.data_fim:
+        if self.data_fim < self.data_inicio:
             raise ValidationError({
-                'estagiario': 'O estudante precisa estar cursando e concluído no mínimo 03 (três) período letivos do curso'
+                'data_fim': 'A data de término não pode ser anterior à data de início (validação do modelo).'
             })
-        if self.estagiario.turno == self.turno:
-            raise ValidationError({
-                'turno': 'O turno do estagiário e o turno do estágio devem ser diferentes.'
-            })
+    
+    if hasattr(self.estagiario, 'periodo') and self.estagiario.periodo < 4:
+        raise ValidationError({
+            'estagiario': 'O estudante precisa estar cursando e concluído no mínimo 03 (três) período letivos do curso'
+        })
+    
+    if hasattr(self.estagiario, 'turno') and self.estagiario.turno == self.turno:
+        raise ValidationError({
+            'turno': 'O turno do estagiário e o turno do estágio devem ser diferentes.'
+        })
 
-        if self.supervisor.empresa != self.empresa:
-            raise ValidationError({
-                'empresa': 'O supervisor precisa estar vinculado ao mesmo empresa do estagiário.'
-            })
+    if self.supervisor and self.empresa and self.supervisor.empresa != self.empresa:
+        raise ValidationError({
+            'empresa': 'O supervisor precisa estar vinculado à mesma empresa do estagiário.'
+        })
+    
+    if hasattr(self.estagiario, 'ira') and (self.estagiario.ira is None or self.estagiario.ira < 6.0):
+        raise ValidationError({
+            'estagiario': 'O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0'
+        })
+
             
        
 

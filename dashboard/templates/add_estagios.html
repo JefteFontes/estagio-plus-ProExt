@@ -80,7 +80,7 @@
             </div>
         </div>
         
-        <div class="form-section">
+        <div class="form-section" id="remuneracao-section">
             <h3 class="section-title">Remuneração</h3>
             <div class="form-row">
                 <div class="form-group compact-group">
@@ -192,6 +192,26 @@ $(document).ready(function () {
             alert("O valor deve ser positivo!");
             $(this).val("");
         }
+    });
+    
+    // Função para verificar e mostrar/esconder a seção de remuneração
+    function toggleRemuneracaoSection() {
+        var tipoEstagio = $('#id_tipo_estagio').val();
+        
+        if (tipoEstagio === 'Não obrigatório' || tipoEstagio === 'Nao obrigatorio') {
+            $('#remuneracao-section').show();
+        } else {
+            $('#remuneracao-section').hide();
+            $('#id_bolsa_estagio').val('0');
+            $('#id_auxilio_transporte').val('0');
+        }
+    }
+
+    toggleRemuneracaoSection();
+
+    // Verificar quando o campo tipo_estagio for alterado
+    $('#id_tipo_estagio').change(function() {
+        toggleRemuneracaoSection();
     });
 });
 
