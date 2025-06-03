@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.conf import settings
 from django.http import FileResponse, Http404, HttpResponse
 import os
-from .forms import CoordenadorCadastroForm
+from .forms import CoordenadorCadastroForm, AlunoCadastroForm
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -11,6 +11,8 @@ from django.utils.translation import gettext as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from allauth.account.forms import ResetPasswordForm
+from dashboard.models import Cursos
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -19,6 +21,23 @@ def home(request):
         return redirect("/accounts/profile/")
     return render(request, "home/home.html")
 
+def pre_cadastro(request):
+    return render(request, "cadastro/pre_cadastro.html")
+
+def load_cursos(self, request, *args, **kwargs):
+    instituicao_id = request.GET.get('instituicao_id')
+    cursos = Cursos.objects.filter(instituicao_id=instituicao_id).order_by('nome')
+    return JsonResponse(list(cursos.values('id', 'nome')), safe=False)
+
+def cadastro_aluno(request):
+    try:
+        form = AlunoCadastroForm()
+    except Exception as e:
+        print("Erro ao instanciar o formulário GET:")
+        traceback.print_exc()
+        form = None
+        messages.error(request, f"Erro ao carregar o formulário: {str(e)}")
+    return render(request, "cadastro/cadastro_aluno.html", {"form": form})
 
 def cadastrar_instituicao(request):
     if request.method == "POST":

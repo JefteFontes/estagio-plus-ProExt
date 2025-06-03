@@ -347,7 +347,7 @@ class EstagioCadastroForm(forms.ModelForm):
         
         if commit:
             estagio.save()
-          
+        
         return estagio
 
 class EstagiarioCadastroForm(forms.ModelForm):

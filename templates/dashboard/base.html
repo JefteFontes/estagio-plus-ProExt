@@ -46,33 +46,9 @@
                         <a class="btn-sidebar" href="{{ dashboard_instituicao_url }}">
                             <li class="{% if request.path == dashboard_instituicao_url %}actived{% endif %}">
                                 <span class="icon"><i class="fa-solid fa-house"></i></span>
-                                <span class="text">Dashboard</span>
+                                <span class="text">Estágios</span>
                             </li>
                         </a>
-        
-                        <!-- Toggle para Estagiários -->
-                        <li class="sidebar-toggle" data-toggle-id="estagiarios">
-                            <div class="toggle-header">
-                                <span class="icon"><i class="fa-solid fa-users"></i></span>
-                                <span class="text">Estagiários</span>
-                                <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                            </div>
-                            <ul class="toggle-content">
-                                <li class="submenu-item">
-                                    <a href="{% url 'dashboard_estagiario' %}" class="{% if request.path == dashboard_estagiario_url %}actived{% endif %}">
-                                        <span class="icon"><i class="fa-solid fa-list"></i></span>
-                                        <span class="text">Lista de Estagiários</span>
-                                    </a>
-                                </li>
-                                <li class="submenu-item">
-                                    <a href="{% url 'cadastrar_estagiario' %}" class="{% if request.path == cadastrar_estagiario_url %}actived{% endif %}">
-                                        <span class="icon"><i class="fa-solid fa-user-plus"></i></span>
-                                        <span class="text">Cadastrar Estagiário</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-        
                         <!-- Toggle para Cursos -->
                         <li class="sidebar-toggle" data-toggle-id="cursos">
                             <div class="toggle-header">
@@ -114,6 +90,28 @@
                                     <a href="{% url 'cadastrar_empresa' %}" class="{% if request.path == cadastro_empresa_url %}actived{% endif %}">
                                         <span class="icon"><i class="fa-solid fa-plus"></i></span>
                                         <span class="text">Cadastrar Empresa</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-toggle" data-toggle-id="estagiarios">
+                            <div class="toggle-header">
+                                <span class="icon"><i class="fa-solid fa-users"></i></span>
+                                <span class="text">Estagiários</span>
+                                <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <ul class="toggle-content">
+                                <li class="submenu-item">
+                                    <a href="{% url 'dashboard_estagiario' %}" class="{% if request.path == dashboard_estagiario_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-list"></i></span>
+                                        <span class="text">Lista de Estagiários</span>
+                                    </a>
+                                </li>
+                                <li class="submenu-item">
+                                    <a href="{% url 'cadastrar_estagiario' %}" class="{% if request.path == cadastrar_estagiario_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-user-plus"></i></span>
+                                        <span class="text">Cadastrar Estagiário</span>
                                     </a>
                                 </li>
                             </ul>
