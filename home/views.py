@@ -24,10 +24,10 @@ def home(request):
 def pre_cadastro(request):
     return render(request, "cadastro/pre_cadastro.html")
 
-def load_cursos(self, request, *args, **kwargs):
+def load_cursos(request):
     instituicao_id = request.GET.get('instituicao_id')
-    cursos = Cursos.objects.filter(instituicao_id=instituicao_id).order_by('nome')
-    return JsonResponse(list(cursos.values('id', 'nome')), safe=False)
+    cursos = Cursos.objects.filter(instituicao_id=instituicao_id).order_by('nome_curso')
+    return JsonResponse(list(cursos.values('id', 'nome_curso')), safe=False)
 
 def cadastro_aluno(request):
     try:

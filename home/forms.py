@@ -203,7 +203,7 @@ class AlunoCadastroForm(forms.ModelForm):
 
     instituicao = forms.ModelChoiceField(
         queryset=Instituicao.objects.all(),
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(attrs={"class": "form-control", "id": "id_instituicao"}),
         empty_label="Selecione a instituição"
     )
 
@@ -219,7 +219,7 @@ class AlunoCadastroForm(forms.ModelForm):
             "matricula": forms.TextInput(attrs={"class": "form-control", "placeholder": "Matrícula"}),
             "telefone": forms.TextInput(attrs={"class": "form-control", "placeholder": "Telefone"}),
             "email": forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email"}),
-            "curso": forms.Select(attrs={"class": "form-control",}),
+            "curso": forms.Select(attrs={"class": "form-control", "id": "id_curso"}),
             "periodo": forms.NumberInput(attrs={"class": "form-control", "placeholder": "Período", "min": 1, "max": 8}),
             "turno": forms.Select(attrs={"class": "form-control"}),
         }

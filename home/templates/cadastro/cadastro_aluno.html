@@ -321,7 +321,11 @@
                     'instituicao_id': instituicaoId
                 },
                 success: function(data) {
-                    $("#id_curso").html(data);
+                    var options = '<option value="">Selecione um curso</option>';
+                    $.each(data, function(index, curso) {
+                        options += '<option value="' + curso.id + '">' + curso.nome_curso + '</option>';
+                    });
+                    $("#id_curso").html(options);
                 }
             });
         } else {
