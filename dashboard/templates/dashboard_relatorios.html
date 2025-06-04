@@ -1,0 +1,147 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show d-flex justify-content-between align-items-start" role="alert">
+            <div>
+                <strong>{{ message|safe }}</strong>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Relatórios Pendentes</h1>
+    </div>
+    
+    <div class="stats-container">
+        
+        <span class="stats-badge">{{ relatorios_por_estagio.values|length }} estagiários com pendências</span>
+    </div>
+
+    {% if relatorios_por_estagio %}
+    <div class="cards-container">
+        {% for grupo in relatorios_por_estagio.values %}
+        <div class="company-card">
+            <div class="card-header text-center">
+                <div class="initials">{{ grupo.estagio.estagiario.nome_completo|slice:":1"|upper }}</div>
+                <h3 class="company-name mt-2">{{ grupo.estagio.estagiario }}</h3>
+            </div>
+
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">Empresa:</span>
+                    <span class="info-value">{{ grupo.estagio.empresa }}</span>
+                </div>
+
+                {% for relatorio in grupo.relatorios %}
+                <hr>
+                <div class="info-row">
+                    <span class="info-label">
+                            {{ relatorio.tipo }}:
+                    </span>
+
+                <div class="d-flex flex-column align-items-start gap-2 mt-2">
+                  {% if relatorio.tipo == 'Termo de Compromisso' %}
+                      {% if grupo.estagio.pdf_termo %}
+                          <a href="{% url 'visualizar_termo' pdf_nome=grupo.estagio.pdf_termo %}" target="_blank" class="btn btn-primary">
+                              Visualizar TCE
+                          </a>
+                          
+                      {% else %}
+                      <form id="form-importar-{{ forloop.parentloop.counter0 }}" action="{% url 'importar_termo' grupo.estagio.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="termo" accept=".pdf" onchange="this.form.submit()" style="display: none;" id="input-arquivo-{{ forloop.parentloop.counter0 }}">
+                    </form>
+                    
+                    <button type="button" class="btn btn-info" onclick="document.getElementById('input-arquivo-{{ forloop.parentloop.counter0 }}').click();">
+                        Importar TCE
+                    </button>
+                    <span class="text-muted mt-1">
+                            Previsão: {{ relatorio.data_prevista }} 
+                          </span>
+                          <form id="form-importar-{{ forloop.parentloop.counter0 }}" action="{% url 'importar_termo' grupo.estagio.id %}" method="post" enctype="multipart/form-data" style="display: none;">
+                              {% csrf_token %}
+                              <input type="file" name="termo" id="input-arquivo-{{ forloop.parentloop.counter0 }}" accept=".pdf">
+                              <input type="hidden" name="estagio_id" value="{{ grupo.estagio.id }}">
+                          </form>
+                      {% endif %}
+                     
+                  {% else %}
+                  <span class="text-muted mt-1">
+                    Previsão: {{ relatorio.data_prevista }} 
+                  </span>
+                  
+                  
+              {% endif %}
+              </div>
+            </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-tasks empty-icon"></i>
+        <p>Não há relatórios pendentes.</p>
+    </div>
+    {% endif %}
+</div>
+<script>
+    function selecionarArquivo(index) {
+        const botaoTexto = document.getElementById(`texto-botao-${index}`);
+        const botaoSpinner = document.getElementById(`spinner-botao-${index}`);
+        const form = document.getElementById(`form-importar-${index}`);
+        const input = document.getElementById(`input-arquivo-${index}`);
+
+        if (!input || !form) {
+            console.error('Input ou Formulário não encontrado para o index:', index);
+            exibirMensagem('danger', 'Erro interno ao localizar o formulário.');
+            return;
+        }
+
+        input.click();
+
+        input.onchange = () => {
+            const formData = new FormData(form);
+
+            botaoTexto.style.display = 'none';
+            botaoSpinner.style.display = 'inline';
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                botaoTexto.style.display = 'inline';
+                botaoSpinner.style.display = 'none';
+
+                if (data.success) {
+                    exibirMensagem('success', 'Termo importado com sucesso!');
+                    window.open(data.url_pdf, '_blank');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    exibirMensagem('danger', data.message);
+                }
+            })
+            .catch(error => {
+                botaoTexto.style.display = 'inline';
+                botaoSpinner.style.display = 'none';
+                exibirMensagem('danger', 'Erro ao importar o termo.');
+            });
+
+            input.value = '';
+        };
+    }
+</script>
+
+
+{% endblock %}

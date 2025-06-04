@@ -25,29 +25,28 @@ class InstituicaoAdmin(admin.ModelAdmin):
 @admin.register(models.Estagiario)
 class EstagiarioAdmin(admin.ModelAdmin):
     list_display = (
-        "primeiro_nome",
-        "sobrenome",
+        "nome_completo",
         "cpf",
         "matricula",
         "email",
         "status",
         "instituicao",
     )
-    search_fields = ("primeiro_nome", "sobrenome", "cpf", "matricula", "email")
+    search_fields = ("nome_completo", "cpf", "matricula", "email")
     list_filter = ("instituicao", "status", "endereco__cidade")
 
 
 @admin.register(models.CoordenadorExtensao)
 class CoordenadorExtensaoAdmin(admin.ModelAdmin):
-    list_display = ("primeiro_nome", "sobrenome", "cpf", "email", "instituicao")
-    search_fields = ("primeiro_nome", "sobrenome", "cpf", "email")
+    list_display = ("nome_completo", "cpf", "email", "instituicao")
+    search_fields = ("nome_completo", "cpf", "email")
     list_filter = ("instituicao",)
 
 
 @admin.register(models.Supervisor)
 class SupervisorAdmin(admin.ModelAdmin):
-    list_display = ("primeiro_nome", "sobrenome", "cpf", "email", "cargo", "empresa")
-    search_fields = ("primeiro_nome", "sobrenome", "cpf", "email", "cargo")
+    list_display = ("nome_completo", "cpf", "email", "cargo", "empresa")
+    search_fields = ("nome_completo", "cpf", "email", "cargo")
     list_filter = ("empresa",)
 
 
@@ -66,10 +65,36 @@ class CursosAdmin(admin.ModelAdmin):
 
 @admin.register(models.Estagio)
 class EstagioAdmin(admin.ModelAdmin):
-    list_display = ('area','tipo_estagio', 'bolsa_estagio', 'status', 'data_inicio', 'data_fim', 'turno', 'estagiario', 'supervisor', 'empresa', 'instituicao')
-    search_fields = ('area', 'estagiario__primeiro_nome', 'supervisor__primeiro_nome', 'empresa__nome', 'instituicao__nome')
-    list_filter = ('status', 'turno','tipo_estagio', 'empresa', 'instituicao', 'data_inicio', 'data_fim')
-    date_hierarchy = 'data_inicio'
+    list_display = (
+        "area",
+        "tipo_estagio",
+        "bolsa_estagio",
+        "status",
+        "data_inicio",
+        "data_fim",
+        "turno",
+        "estagiario",
+        "supervisor",
+        "empresa",
+        "instituicao",
+    )
+    search_fields = (
+        "area",
+        "estagiario__nome_completo",
+        "supervisor__nome_completo",
+        "empresa__nome",
+        "instituicao__nome",
+    )
+    list_filter = (
+        "status",
+        "turno",
+        "tipo_estagio",
+        "empresa",
+        "instituicao",
+        "data_inicio",
+        "data_fim",
+    )
+    date_hierarchy = "data_inicio"
     list_display = (
         "area",
         "bolsa_estagio",
@@ -84,8 +109,8 @@ class EstagioAdmin(admin.ModelAdmin):
     )
     search_fields = (
         "area",
-        "estagiario__primeiro_nome",
-        "supervisor__primeiro_nome",
+        "estagiario__nome_completo",
+        "supervisor__nome_completo",
         "empresa__nome",
         "instituicao__nome",
     )

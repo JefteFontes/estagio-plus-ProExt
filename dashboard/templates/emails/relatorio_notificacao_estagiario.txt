@@ -1,0 +1,20 @@
+Olá {{ estagiario_nome }},
+
+Você tem relatórios de estágio pendentes ou próximos do vencimento:
+
+{% for relatorio in relatorios_pendentes %}
+- {{ relatorio.tipo }}: 
+  Data prevista: {{ relatorio.data_prevista|date:"d/m/Y" }}
+  {% if relatorio.dias_atraso > 0 %}
+  (Atrasado há {{ relatorio.dias_atraso }} dia(s))
+  {% else %}
+  (Vence em {{ relatorio.dias_para_vencer }} dia(s))
+  {% endif %}
+{% endfor %}
+
+Por favor, regularize a situação o mais breve possível.
+
+Atenciosamente,
+{{ site_name }}
+
+{{ site_url }}

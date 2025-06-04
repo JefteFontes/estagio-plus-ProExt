@@ -3,7 +3,8 @@ import tempfile
 from django.shortcuts import get_object_or_404, render, redirect
 import pdfplumber
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponse
 from dashboard.models import (
     Empresa,
     Endereco,
@@ -17,8 +18,10 @@ from dashboard.models import (
     CoordenadorExtensao,
 )
 from dashboard.views.utils import parse_sections
-from dashboard.forms import CursosCadastroForm, CoordenadorEditForm
+from dashboard.views.estagios import verificar_pendencias
+from dashboard.forms import CursosCadastroForm, EmpresaCadastroForm
 from django.db.models import Q
+from django.http import HttpResponseForbidden
 
 
 def home(request):
@@ -41,17 +44,21 @@ def dashboard_cursos(request):
 
     search = request.GET.get("search", "")
     area = request.GET.get("area", "")
+    coordenador = request.GET.get("coordenador", "")
     cursos = Cursos.objects.filter(instituicao=instituicao)
 
     if search:
         cursos = cursos.filter(nome_curso__icontains=search)
     if area:
         cursos = cursos.filter(area=area)
+    if coordenador:
+        cursos = cursos.filter(coordenador__icontains=coordenador) 
 
     areas = Cursos.objects.values_list("area", flat=True).distinct()
     context = {
         "cursos": cursos,
         "areas": areas,
+        "coordenador": coordenador,
     }
     return render(request, "dashboard_cursos.html", context)
 
@@ -79,29 +86,51 @@ def dashboard_empresa(request):
     return render(request, "dashboard_empresa.html", context)
 
 
+@login_required
+@user_passes_test(lambda u: hasattr(u, 'coordenadorextensao') and u.coordenadorextensao)
 def dashboard_estagiario(request):
-    coordenador = CoordenadorExtensao.objects.get(user=request.user)
-    instituicao = coordenador.instituicao
+    try:
+        coordenador = CoordenadorExtensao.objects.get(user=request.user)
+        instituicao = coordenador.instituicao
+    except CoordenadorExtensao.DoesNotExist:
+        messages.error(request, "Você não está associado a nenhuma instituição como coordenador.")
+        return redirect('alguma_pagina_de_erro_ou_dashboard_padrao') 
 
-    search = request.GET.get("search", "")
-    curso = request.GET.get("curso", "")
+    search_query = request.GET.get("search", "")
     search_matricula = request.GET.get("search-matricula", "")
+    curso_filter = request.GET.get("curso", "")
 
-    estagiarios = Estagiario.objects.filter(instituicao=instituicao)
-    if search:
-        estagiarios = estagiarios.filter(
-            Q(primeiro_nome__icontains=search) | Q(sobrenome__icontains=search)
+    estagiarios_da_instituicao = Estagiario.objects.filter(instituicao=instituicao)
+
+    if search_query:
+        estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
+            Q(nome_completo__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(cpf__icontains=search_query)
         )
-    if curso:
-        estagiarios = estagiarios.filter(curso__nome_curso__icontains=curso)
+    if curso_filter:
+        estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
+            curso__nome_curso__icontains=curso_filter
+        )
     if search_matricula:
-        estagiarios = estagiarios.filter(matricula__startswith=search_matricula)
+        estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
+            matricula__startswith=search_matricula
+        )
 
-    cursos = Cursos.objects.values_list("nome_curso", flat=True).distinct()
+    alunos_cadastrados = estagiarios_da_instituicao.filter(status=True).order_by('nome_completo')
+    alunos_aguardando_confirmacao = estagiarios_da_instituicao.filter(status=False).order_by('nome_completo')
+
+    total_estagiarios = alunos_cadastrados.count() + alunos_aguardando_confirmacao.count()
+    cursos_disponiveis = Cursos.objects.filter(instituicao=instituicao).order_by('nome_curso')
 
     context = {
-        "estagiarios": estagiarios,
-        "cursos": cursos,
+        "alunos_cadastrados": alunos_cadastrados,
+        "alunos_aguardando_confirmacao": alunos_aguardando_confirmacao,
+        "cursos": cursos_disponiveis, 
+        "search_query": search_query, 
+        "search_matricula": search_matricula, 
+        "curso_filter": curso_filter, 
+        "total_estagiarios": total_estagiarios
     }
     return render(request, "dashboard_estagiario.html", context)
 
@@ -109,8 +138,17 @@ def dashboard_estagiario(request):
 @login_required
 def dashboard_instituicao(request):
     errors = []
-    coordenador = CoordenadorExtensao.objects.get(user=request.user)
-    instituicao = coordenador.instituicao
+
+    if hasattr(request.user, 'coordenadorextensao'):
+        coordenador = request.user.coordenadorextensao
+        instituicao = coordenador.instituicao
+        estagios = Estagio.objects.filter(instituicao=instituicao)
+    elif hasattr(request.user, 'estagiario'):
+        estagiario = request.user.estagiario
+        estagios = Estagio.objects.filter(estagiario=estagiario)
+        instituicao = estagiario.instituicao if hasattr(estagiario, 'instituicao') else None
+    else:
+        return HttpResponseForbidden("Acesso não autorizado")
 
     if request.method == "POST" and request.FILES.get("pdf_file"):
         pdf_file = request.FILES["pdf_file"]
@@ -173,8 +211,7 @@ def dashboard_instituicao(request):
             )
 
             estagiario = Estagiario.objects.create(
-                primeiro_nome=estagiario_data.get("primeiro_nome", ""),
-                sobrenome=estagiario_data.get("sobrenome", ""),
+                nome_completo=estagiario_data.get("nome_completo", ""),
                 cpf=estagiario_data.get("cpf", ""),
                 matricula=estagiario_data.get("matricula", ""),
                 curso=estagiario_data.get("curso", ""),
@@ -191,16 +228,16 @@ def dashboard_instituicao(request):
 
             supervisor = Supervisor.objects.get(nome=estagio_data.get("supervisor", ""))
             Estagio.objects.create(
-                bolsa_estagio=estagio_data.get('bolsa', ''),
-                area=estagio_data.get('area', ''),
-                tipo_estagio = estagio_data.get('tipo_estagio', ''),
-                descricao=estagio_data.get('descricao', ''),
-                data_inicio=estagio_data.get('data_inicio', None),
-                data_fim=estagio_data.get('data_fim', None),
-                turno=estagio_data.get('turno', ''),
+                bolsa_estagio=estagio_data.get("bolsa", ""),
+                area=estagio_data.get("area", ""),
+                tipo_estagio=estagio_data.get("tipo_estagio", ""),
+                descricao=estagio_data.get("descricao", ""),
+                data_inicio=estagio_data.get("data_inicio", None),
+                data_fim=estagio_data.get("data_fim", None),
+                turno=estagio_data.get("turno", ""),
                 estagiario=estagiario,
                 empresa=empresa,
-                orientador=estagio_data.get('orientador', ''),
+                orientador=estagio_data.get("orientador", ""),
                 supervisor=supervisor,
             )
 
@@ -211,11 +248,10 @@ def dashboard_instituicao(request):
         finally:
             os.remove(file_path)
 
-    area = request.GET.get('area', '')
-    status = request.GET.get('status', '')
-    turno = request.GET.get('turno', '')
-    tipo = request.GET.get('tipo_estagio', '')
-
+    area = request.GET.get("area", "")
+    status = request.GET.get("status", "")
+    turno = request.GET.get("turno", "")
+    tipo = request.GET.get("tipo_estagio", "")
 
     estagios = Estagio.objects.filter(instituicao=instituicao)
     if area:
@@ -233,14 +269,14 @@ def dashboard_instituicao(request):
     tipos = [choice[0] for choice in TipoChoices.choices]
 
     context = {
-        'areas': areas,
-        'tipos' : tipos,
-        'status_choices': status_choices,
-        'turnos': turnos,
-        'estagios': estagios,
-        'estagios_ativos': len(estagios),
-        'instituicao': instituicao,
-        'errors': errors,
+        "areas": areas,
+        "tipos": tipos,
+        "status_choices": status_choices,
+        "turnos": turnos,
+        "estagios": estagios,
+        "estagios_ativos": len(estagios),
+        "instituicao": instituicao,
+        "errors": errors,
     }
     return render(request, "dashboard_instituicao.html", context)
 
@@ -276,40 +312,38 @@ def editar_curso(request, curso_id):
             return redirect("dashboard_cursos")
     else:
         form = CursosCadastroForm(instance=curso)
-    return render(request, 'cadastrar_cursos.html', {'form': form, 'curso': curso})
+    return render(request, "cadastrar_cursos.html", {"form": form, "curso": curso})
 
 
 def deletar_curso(request, curso_id):
     curso = get_object_or_404(Cursos, id=curso_id)
-    #mensagem de erro se tiver estagiario vinculado ao curso
+    # mensagem de erro se tiver estagiario vinculado ao curso
     if Estagiario.objects.filter(curso=curso).exists():
-        messages.error(request, 'O curso possui estagiarios vinculados e nao pode ser deletado.')
-        return redirect('dashboard_cursos')
+        messages.error(
+            request, "O curso possui estagiarios vinculados e nao pode ser deletado."
+        )
+        return redirect("dashboard_cursos")
     else:
         curso.delete()
         messages.success(request, "Curso deletado com sucesso!")
         return redirect(
             "dashboard_cursos"
-        )  # Certifique-se que 'dashboard_cursos' seja a URL correta
-    # Renderizar uma página de confirmação (opcional)
+        )  
     return render(request, "dashboard_cursos.html", {"cursos": cursos})
 
 
-@login_required
-def editar_perfil(request):
-    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+def detalhes_estagio(request, estagio_id):
+    estagio = get_object_or_404(Estagio, id=estagio_id)
 
-    if request.method == "POST":
-        form = CoordenadorEditForm(
-            request.POST, coordenador=coordenador, instance=coordenador
-        )
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Seu perfil foi atualizado com sucesso!")
-            return redirect("dashboard")
-    else:
-        form = CoordenadorEditForm(coordenador=coordenador, instance=coordenador)
-
-    return render(request, 'dashboard/editar_perfil.html', {'form': form})
+    return render(
+        request,
+        "details.html",
+        {
+            "estagio": estagio,
+        },
+    )
 
 
+def relatorios(request):
+    return render(request, "dashboard_relatorios.html")
+    

@@ -10,67 +10,141 @@
     {% endfor %}
 {% endif %}
 
-<div class="container-fluid">
-    <h2>Cursos</h2>
-    <div class="add-button mb-4">
-        <a href="{% url 'cadastrar_cursos' %}" class="btn btn-success">Cadastrar Novo Curso</a>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Cursos</h1>
+        <form method="GET">
+            <div class="search-container">
+                <input type="text" name="search" placeholder="Buscar por curso..." class="search-input" value="{{ request.GET.search }}">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
     </div>
-    <!--filtros-->
-    <form method="GET">
-        <div class="row">
-            <div class="col-md-4">
-                <input 
-                    type="text" 
-                    name="search" 
-                    class="form-control" 
-                    placeholder="Buscar por nome do curso" 
-                    value="{{ request.GET.search }}"
-                >
+
+    <div class="controls-container">
+        <h2 class="section-title"></h2>
+        <div class="actions">
+            <button id="toggle-filters" class="btn-filter">
+                <i class="fas fa-filter"></i> Filtros
+            </button>
+            <a href="{% url 'cadastrar_cursos' %}" class="btn-add">
+                <i class="fas fa-plus"></i> Cadastrar Novo Curso
+            </a>
+        </div>
+    </div>
+    <div id="filters-container" class="filters-container" style="display: none;">
+        <form method="GET" class="filters-form">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="area">Área</label>
+                    <select name="area" id="area" class="form-select">
+                        <option value="">Todas as Áreas</option>
+                        {% for area in areas %}
+                            <option value="{{ area }}" {% if area == request.GET.area %}selected{% endif %}>
+                                {{ area }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="coordenador">Coordenador</label>
+                    <input type="text" name="coordenador" id="coordenador" class="form-control" 
+                        placeholder="Filtrar por coordenador" value="{{ request.GET.coordenador }}">
+                </div>
             </div>
-    
-            <div class="col-md-4">
-                <select name="area" class="form-select">
-                    <option value="">Todas as Áreas</option>
-                    {% for area in areas %}
-                        <option value="{{ area }}" {% if area == request.GET.area %}selected{% endif %}>
-                            {{ area }}
-                        </option>
-                    {% endfor %}
-                </select>
+            
+            <div class="filter-actions">
+                <button type="submit" class="btn-apply">
+                    <i class="fas fa-check"></i> Aplicar Filtros
+                </button>
+                <button type="button" id="reset-filters" class="btn-reset">
+                    <i class="fas fa-times"></i> Limpar Filtros
+                </button>
             </div>
-    
-            <div class="col-md-4 d-flex">
-                <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-filter"></i> Filtrar</button>
+        </form>
+    </div>
+
+    <div class="stats-container">
+        <span class="stats-badge">{{ cursos|length }} cursos cadastrados</span>
+    </div>
+
+    {% if cursos %}
+    <div class="cards-container">
+        {% for curso in cursos %}
+        <div class="course-card">
+            <div class="card-header">
+                <span class="initials">{{ curso.nome_curso|slice:":2"|upper }}</span>
+                <h3 class="course-name">{{ curso.nome_curso }}</h3>
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">Área:</span>
+                    <span class="info-value">{{ curso.area }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Coordenador:</span>
+                    <span class="info-value">{{ curso.coordenador }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ curso.email_coordenador }}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'editar_curso' curso.id %}" class="btn-action edit">
+                    <i class="fas fa-edit"></i> Editar
+                </a>
+                <a href="{% url 'deletar_curso' curso.id %}" class="btn-action delete">
+                    <i class="fas fa-trash"></i> Excluir
+                </a>
             </div>
         </div>
-    </form>
-        <hr>
-    <!--listagem de cursos-->
-    <table class="table table-bordered">
-        <thead class="table-success">
-            <tr>
-                <th>Nome</th>
-                <th>Area</th>
-                <th>Coordenador</th>
-                <th>Email</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for curso in cursos %}
-                <tr>
-                    <td>{{ curso.nome_curso }}</td>
-                    <td>{{ curso.area }}</td>
-                    <td>{{ curso.coordenador }}</td>
-                    <td>{{ curso.email_coordenador }}</td>
-                    <td>
-                        <a href="{% url 'editar_curso' curso.id %}" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Editar</a>
-                        <a href="{% url 'deletar_curso' curso.id %}" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Deletar</a>
-                        
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-book-open empty-icon"></i>
+        <p>Não há cursos cadastrados.</p>
+    </div>
+    {% endif %}
 </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleFiltersBtn = document.getElementById('toggle-filters');
+            const filtersContainer = document.getElementById('filters-container');
+            const resetFiltersBtn = document.getElementById('reset-filters');
+            
+            // Toggle dos filtros
+            toggleFiltersBtn.addEventListener('click', function() {
+                if (filtersContainer.style.display === 'none') {
+                    filtersContainer.style.display = 'block';
+                    toggleFiltersBtn.innerHTML = '<i class="fas fa-filter"></i> Ocultar Filtros';
+                } else {
+                    filtersContainer.style.display = 'none';
+                    toggleFiltersBtn.innerHTML = '<i class="fas fa-filter"></i> Filtros';
+                }
+            });
+            
+            // Reset dos filtros
+            resetFiltersBtn.addEventListener('click', function() {
+                document.querySelectorAll('.filters-form input, .filters-form select').forEach(element => {
+                    if (element.tagName === 'INPUT') {
+                        element.value = '';
+                    } else if (element.tagName === 'SELECT') {
+                        element.selectedIndex = 0;
+                    }
+                });
+            });
+            
+            // Mostrar filtros se algum estiver aplicado
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('area') || urlParams.has('coordenador')) {
+                filtersContainer.style.display = 'block';
+                toggleFiltersBtn.innerHTML = '<i class="fas fa-filter"></i> Ocultar Filtros';
+            }
+        });
+    </script>
 {% endblock %}

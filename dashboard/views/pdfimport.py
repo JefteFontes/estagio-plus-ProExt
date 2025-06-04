@@ -2,8 +2,7 @@ import os
 import tempfile
 from django.urls import reverse
 import pdfplumber
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import  render, redirect
 from .utils import parse_sections
 from ..models import Estagio, Empresa, Estagiario, Supervisor, Endereco
 
@@ -59,8 +58,7 @@ def importar_pdf(request):
                     cep=estagiario_data.get("cep", ""),
                 )
                 estagiario = Estagiario.objects.create(
-                    primeiro_nome=estagiario_data.get("primeiro_nome", ""),
-                    sobrenome=estagiario_data.get("sobrenome", ""),
+                    nome_completo=estagiario_data.get("nome_completo", ""),
                     cpf=estagiario_data.get("cpf", ""),
                     matricula=estagiario_data.get("matricula", ""),
                     curso=estagiario_data.get("curso", ""),
@@ -74,8 +72,7 @@ def importar_pdf(request):
             supervisor, created = Supervisor.objects.get_or_create(
                 cpf=supervisor_data.get("cpf", ""),
                 defaults={
-                    "primeiro_nome": supervisor_data.get("primeiro_nome", ""),
-                    "sobrenome": supervisor_data.get("sobrenome", ""),
+                    "nome_completo": supervisor_data.get("nome_completo", ""),
                     "email": supervisor_data.get("email", ""),
                     "telefone": supervisor_data.get("telefone", ""),
                     "empresa": empresa,

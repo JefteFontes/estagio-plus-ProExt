@@ -1,141 +1,335 @@
-.cadastro-container-home, .cadastro-container-dashboard {
+/* Estilos para formulário multipasso - Layout MyArts */
+.container-login {
+    display: flex;
+    height: 100vh;
+}
+
+.login-form {
+    width: 50%;
     display: flex;
     flex-direction: column;
-    background-color: #E3FFE3;
-    border-radius: 5px;
-    width: 65%;
-    min-width: 1200px;
-    padding: 20px 40px;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
-    box-sizing: border-box;
+    padding: 50px;
+    justify-content: center;
 }
 
-.cadastro-container-home {
-    margin: 110px auto;
-}
-.cadastro-container-dashboard {
-    margin: 0px auto;
+.logo {
+    width: 180px;
+    margin-bottom: 40px;
 }
 
-form h2 {
+.text-login h1 {
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.text-login p {
     margin-bottom: 20px;
-    color: #14AE5C;
+    color: #7f8c8d;
 }
 
-form label {
-    font-weight: bold;
-}
-
-form {
-    border-radius: 5px;
-    width: 100%;
-}
-
-form input, form select {
-    display: block;
-    padding: 8px;
-    width: 100%;
-    max-width: 300px; /* Limite máximo de largura */
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-top: 10px;
-}
-form p {
-    margin-bottom: 4px;
-    font-weight: bold;
-    color: #14AE5C;
-    margin-left: 10px;
-}
-
-.form-inicial {
-    margin-top: 10px;
-}
-
-.form-linha1 {
+/* Barra de Progresso */
+.progress-steps {
     display: flex;
-    flex-direction: row;
-    gap: 50px;
-    margin-top: 10px;
-    flex-wrap: wrap; /* Permite que os elementos se ajustem em linha em telas menores */
+    justify-content: space-between;
+    margin: 30px 0;
+    position: relative;
+    max-width: 550px;
 }
 
-.form-endereco,
-.form-coordenador {
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.step {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    border: 2px solid #14AE5C;
-    border-radius: 10px;
-    padding: 20px 20px;
-    margin-bottom: 30px;
+    align-items: center;
+    width: 33%;
 }
 
-.btn-user-signup {
-    background-color: #14AE5C;
-    color: #FFF;
-    padding: 10px 20px;
+.step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #7f8c8d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.step.active .step-number {
+    background: #31afb4;
+    color: white;
+}
+
+.step-label {
+    font-size: 0.75rem;
+    color: #95a5a6;
+    text-align: center;
+}
+
+.step.active .step-label {
+    color: #31afb4;
+    font-weight: 500;
+}
+
+/* Formulário */
+.form-step {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    box-shadow: inset 0 2px 5px rgba(49, 175, 180, 0.4);
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* Navegação */
+.form-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn-prev, .btn-next, .btn-submit {
+    padding: 12px 25px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: 200px;
-    height: 50px;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    z-index: 10;
+    font-size: 16px;
+    transition: all 0.3s;
 }
 
-.btn-user-signup:hover {
-    background-color: #11833D;
+.btn-prev {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-next, .btn-submit {
+    background: #31afb4;
+    color: white;
+    box-shadow: 0 4px 10px rgba(49, 175, 180, 0.4);
+}
+
+.btn-prev:hover {
+    background: #7f8c8d;
+}
+
+.btn-next:hover, .btn-submit:hover {
+    background: #197faa;
+    box-shadow: 0 4px 15px rgba(17, 85, 113, 0.6);
+}
+
+/* Mensagens de erro */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.d-none {
+    display: none;
+}
+
+.image-side {
+    width: 50%;
+    background: url('../images/estagio-background.jpg') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.image-side::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(41, 128, 185, 0.7);
+}
+
+.incentive-message {
+    position: absolute;
+    color: white;
+    text-align: center;
+    max-width: 80%;
+    z-index: 1;
+}
+
+.incentive-message h2 {
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #dc3545;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+#error-alert {
+    width: 100%;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#error-alert:before {
+    content: "⚠️";
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.field-error {
+    border: 1px solid #dc3545 !important;
+    background-color: #fff5f5 !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 
-/* Responsividade para telas pequenas */
 @media (max-width: 768px) {
-    .cadastro-container {
-        width: 90%;
-        margin: 20px auto;
+    .container-login {
+        flex-direction: column;
+    }
+    
+    .image-side {
+        display: none;
+    }
+    
+    .login-form {
+        max-width: 100%;
         padding: 20px;
     }
-
-    .form-linha1 {
+    
+    .form-row {
         flex-direction: column;
-        gap: 20px;
     }
-
-    .form-inicial {
+    
+    .form-row .form-group {
         width: 100%;
-    }
-
-    input {
-        width: 100%;
-    }
-
-    button {
-        width: 100%; /* Botão ocupa toda a largura disponível em telas pequenas */
     }
 }
 
-@media (max-width: 480px) {
-    .cadastro-container {
-        margin: 10px auto;
-        padding: 15px;
-    }
-
-    h2 {
-        font-size: 24px; /* Ajusta o tamanho da fonte do título */
-    }
-
-    input {
-        max-width: 100%; /* Permite que o input ocupe 100% da largura disponível */
-    }
-
-    .form-linha1 {
-        gap: 20px;
+/* Estilos para as opções de cadastro */
+    .registration-options {
+        display: flex;
         flex-direction: column;
+        gap: 15px;
     }
 
-    button {
-        width: 100%; /* Garante que o botão ocupe toda a largura da tela */
-        font-size: 16px;
+    .option-card {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        border-radius: 10px;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
     }
-}
+
+    .option-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        border-color: #31afb4;
+    }
+
+    .option-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        flex-shrink: 0;
+    }
+
+    .option-content {
+        flex-grow: 1;
+    }
+
+    .option-content h3 {
+        margin: 0 0 5px 0;
+        color: #2c3e50;
+        font-size: 1.1rem;
+    }
+
+    .option-content p {
+        margin: 0;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    .option-arrow {
+        color: #95a5a6;
+        margin-left: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .option-card {
+            padding: 15px;
+        }
+        
+        .option-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+    }

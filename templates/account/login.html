@@ -1,56 +1,101 @@
 {% extends "account/base_entrance.html" %}
 {% load i18n %}
 {% load allauth account %}
-{% load static %} 
+{% load static %}
 
 {% block head_title %}
-    {% trans "+Estagio" %}
+    {% trans "+Estagio - Login" %}
 {% endblock head_title %}
 
 {% block extra_head %}
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-    {{ block.super }}  {# Removida a duplicação de {{ block.super }} #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {{ block.super }}
 {% endblock extra_head %}
 
 {% block content %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                <strong>{{ message }}</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+    <div class="container-login">
+        <div class="login-form">
+            <img src="{% static 'img/logo.png' %}" alt="Logo +Estagio" class="logo">
 
-    <div class="custom-container">
-        <div class="content">
-            {% element h1 %}{% trans "Login" %}{% endelement %}
-
-            {% if not SOCIALACCOUNT_ONLY %}
-                {% url 'account_login' as login_url %}
-                {% url 'cadastro_instituicao' as signup_url %}
+            <form method="post" action="{% url 'account_login' %}">
+                <div class='text-login'>
+                    <h1>Bem-vindo ao +Estagio</h1>
+                    <p>Entre e encontre as melhores oportunidades de estágio!</p>
+                </div>
                 
-                {% element form form=form method="post" action=login_url tags="entrance,login" %}
-                    {% slot body %}
-                        {% csrf_token %}
-                        {% element fields form=form unlabeled=True %}
-                        {% endelement %}
-                        {{ redirect_field }}
-                    {% endslot %}
+                {% if form.errors %}
+                    <div class="message-container">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>{{ error }}</strong>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-                    {% slot actions %}
-                        {% element p %}
-                            {% blocktranslate %}Não tem uma conta? <a href="{{ signup_url }}">Cadastre-se</a>.{% endblocktranslate %}
-                        {% endelement %}
+                {% if messages %}
+                    <div class="message-container">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <strong>{{ message }}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                
+                <label for="id_login">E-mail:</label>
+                <input type="email" id="id_login" name="login" required placeholder="Digite seu e-mail">
 
-                        <div class="button-container">
-                            {% element button type="submit" tags="prominent,login" %}
-                                {% trans "Entrar" %}
-                            {% endelement %}
-                        </div>
-                    {% endslot %}
-                {% endelement %}
-            {% endif %}
+                <label for="id_password">Senha:</label>
+                <div class="password-container">
+                    <input type="password" id="id_password" name="password" required placeholder="Digite sua senha">
+                    <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePassword()"></i>
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="{% url 'account_reset_password' %}">{% trans "Esqueceu sua senha?" %}</a>
+                </div>
+                
+                <button type="submit">Entrar</button>
+            </form>
+            
+            <div class="register-link">
+                <p>Não tem uma conta? <a href="{% url 'pre_cadastro' %}">Cadastre-se</a></p>
+            </div>
+        </div>
+
+        <div class="image-side">
+            <div class="incentive-message">
+                <h2>Encontre o estágio perfeito para você!</h2>
+                <p>Conecte-se com as melhores instituições e dê o primeiro passo na sua carreira.</p>
+            </div>
         </div>
     </div>
+
+    <script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('id_password');
+        const icon = document.querySelector('.toggle-password');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    }
+    </script>
 {% endblock content %}

@@ -1,0 +1,100 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show d-flex justify-content-between align-items-start" role="alert">
+            <div>
+                <strong>{{ message|safe }}</strong>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Relatórios Personalizados</h1>
+    </div>
+    
+    <form method="get" action="{% url 'relatorio_personalizado' %}">
+        
+    <div class="filters-container">
+        
+    <h5>Selecione os Filtros Desejados:</h5>
+        <div class="filter-row">
+            <div class="filter-group">
+        <select name="area" class="form-select">
+            <option value="">Todas as áreas</option>
+            {% for a in areas %}
+                <option value="{{ a }}">{{ a }}</option>
+            {% endfor %}
+        </select>
+    </div>
+<div class="filter-group">
+        <select name="status" class="form-select">
+            <option value="">Todos os status</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+    <div class="filter-row">
+    <div class="filter-group">
+        <select name="tipo_estagio" class="form-select">
+            <option value="">Todos os tipos</option>
+            {% for value, label in tipo_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="filter-group">
+        <select name="turno" class="form-select">
+            <option value="">Todos os turnos</option>
+            {% for value, label in turnos %}
+                <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="filter-row">
+    <div class="filter-group">
+        <select name="empresa" class="form-select">
+            <option value="">Todas as empresas</option>
+            {% for empresa in empresas %}
+                <option value="{{ empresa.empresa_nome }}">{{ empresa.empresa_nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filter-group">
+        <select name="supervisor" class="form-select">
+            <option value="">Todos os supervisores</option>
+            {% for supervisor in supervisores %}
+                <option value="{{ supervisor.nome_completo }}">{{ supervisor.nome_completo }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="filter-row">
+    <div class="filter-group">
+        <label>Início entre:</label>
+        <input type="date" name="data_inicio_de">
+        <input type="date" name="data_inicio_ate">
+    </div>
+    <div class="filter-group">
+        <label>Conclusão entre:</label>
+        <input type="date" name="data_fim_de">
+        <input type="date" name="data_fim_ate">
+    </div>
+</div>
+        <button type="submit" class="btn btn-primary mt-2">Aplicar Filtros</button>
+    </form>
+    
+</div>
+
+{% endblock content %}
+
+    
+    
+    

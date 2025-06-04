@@ -1,0 +1,164 @@
+/* Estilos atualizados baseados na imagem */
+.cadastro-container-dashboard {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.cadastro-container-dashboard h2 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Cabeçalho descritivo */
+.form-header {
+    color: #7f8c8d;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ecf0f1;
+}
+
+/* Seções do formulário */
+.form-section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    color: #3498db;
+    margin-bottom: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.section-title:after {
+    content: "";
+    flex: 1;
+    margin-left: 15px;
+    height: 1px;
+    background-color: #ecf0f1;
+}
+
+/* Layout compacto para linhas de formulário */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Campos compactos */
+.compact-group {
+    flex: 0 0 calc(50% - 10px);
+    margin-bottom: 10px;
+}
+
+.double-field {
+    display: flex;
+    gap: 10px;
+}
+
+.double-field .form-group {
+    flex: 1;
+}
+
+/* Estilos para labels */
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+/* Inputs compactos */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+input[type="tel"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #f9f9f9;
+}
+
+/* Exemplos de placeholder (como na imagem) */
+.input-hint {
+    font-size: 0.75rem;
+    color: #95a5a6;
+    margin-top: 3px;
+    font-style: italic;
+}
+
+/* Checkboxes e radios (como na imagem) */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.checkbox-group input {
+    margin-right: 8px;
+}
+
+/* Botões atualizados */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px dashed #ecf0f1;
+}
+
+.btn-user-signup {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .compact-group {
+        flex: 0 0 100%;
+    }
+    
+    .double-field {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

@@ -1,0 +1,100 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <!-- Cabeçalho da Instituição -->
+    {% if instituicao %}
+        <div class="dashboard-header">
+            <img src = "{{instituicao.logo.url}}" alt="Logo da Instituição" class="institution-logo" style="width: 200px;"/>
+            <h1 class="institution-title">{{ instituicao.nome }}</h1>
+            <p>CNPJ:{{ instituicao.cnpj}}<br/>
+            Endereço: {{ instituicao.endereco }} - {{ instituicao.endereco.cidade }} - {{ instituicao.endereco.estado }}<br/>
+            Telefone: {{ instituicao.telefone }} - email:{{ instituicao.email }}</p>   
+            </div>
+    {% endif %}
+
+    <!-- Resumo dos Filtros Selecionados -->
+    <div class="selected-filters mb-4">
+        <h5>Filtros aplicados:</h5>
+        <ul class="list-group">
+            {% if filtros.area %}<li class="list-group-item">Área: {{ filtros.area }}</li>{% endif %}
+            {% if filtros.status %}<li class="list-group-item">Status: {{ filtros.status }}</li>{% endif %}
+            {% if filtros.tipo_estagio %}<li class="list-group-item">Tipo de Estágio: {{ filtros.tipo_estagio }}</li>{% endif %}
+            {% if filtros.turno %}<li class="list-group-item">Turno: {{ filtros.turno }}</li>{% endif %}
+            {% if filtros.empresa %}
+                <li class="list-group-item">
+                    Empresa: {{ filtros.empresa }}
+                </li>
+            {% endif %}
+            {% if filtros.supervisor %}
+                <li class="list-group-item">
+                    Supervisor: {{ filtros.supervisor }}
+                </li>
+            {% endif %}
+            {% if filtros.data_inicio_de or filtros.data_inicio_ate %}
+                <li class="list-group-item">Data de início entre:
+                    {{ filtros.data_inicio_de|default:"..." }} e {{ filtros.data_inicio_ate|default:"..." }}
+                </li>
+            {% endif %}
+            {% if filtros.data_fim_de or filtros.data_fim_ate %}
+                <li class="list-group-item">Data de término entre:
+                    {{ filtros.data_fim_de|default:"..." }} e {{ filtros.data_fim_ate|default:"..." }}
+                </li>
+            {% endif %}
+        </ul>
+        <a href="{% url 'dashboard_personalizados' %}" class="btn btn-outline-secondary mt-3">
+            <i class="fas fa-arrow-left"></i> Voltar aos Filtros
+        </a>
+    </div>
+
+    <!-- Tabela de Estágios -->
+    {% if estagios %}
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Estagiário</th>
+                    <th>Empresa</th>
+                    <th>Supervisor</th>
+                    <th>Início</th>
+                    <th>Término</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estagio in estagios %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ estagio.estagiario }}</td>
+                    <td>{{ estagio.empresa }}</td>
+                    <td>{{ estagio.supervisor }}</td>
+                    <td>{{ estagio.data_inicio|date:"d/m/Y" }}</td>
+                    <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
+                    <td>
+                        <span class="badge {% if estagio.status == 'Concluído' %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ estagio.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'detalhes_estagio' %}?selected={{ estagio.id }}" class="btn btn-sm btn-info">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{% url 'editar_estagio' estagio.id %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        Nenhum estágio encontrado com os filtros aplicados.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

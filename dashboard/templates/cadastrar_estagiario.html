@@ -1,124 +1,175 @@
 {% extends "dashboard/base.html" %}
 
 {% block content %}
-{% if form.errors %}
-<div class="alert alert-danger">
-    <ul>
-        {% for field in form %}
-            {% for error in field.errors %}
-                <li>{{ error }}</li>
+<div class="cadastro-container-dashboard">
+    <h2>Cadastro de Estagiário</h2>
+    <p class="form-header">Informe os dados do estagiário no formulário abaixo</p>
+    
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
-    </ul>
-</div>
-{% endif %}
-    <div class="cadastro-container-dashboard">
-
-        <h2>Cadastro de Estagiário</h2>
-        <form method="post">
-            {% csrf_token %}
-            <p>Dados estagiário:</p>
-            <div class="form-coordenador">
-                <div class="form-linha1">
-                    <div class="form-inicial">
-                        <label for="{{ form.primeiro_nome.id_for_label }}" class="form-label">Primeiro Nome:</label>
-                        {{ form.primeiro_nome }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.sobrenome.id_for_label }}" class="form-label">Sobrenome:</label>
-                        {{ form.sobrenome }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.cpf.id_for_label }}" class="form-label">CPF:</label>
-                        {{ form.cpf }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.cpf.id_for_label }}" class="form-label">Email:</label>
-                        {{ form.email }}
-                    </div>
-                </div>
-                <div class="form-linha1">
-                    <div class="form-inicial">
-                        <label for="{{ form.matricula.id_for_label }}" class="form-label">Matrícula:</label>
-                        {{ form.matricula }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.telefone.id_for_label }}" class="form-label">Telefone:</label>
-                        {{ form.telefone }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.curso.id_for_label }}" class="form-label">Curso:</label>
-                        {{ form.curso }}
-                    </div>
+        </ul>
+    </div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h3 class="section-title">Dados pessoais</h3>
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.nome_completo.id_for_label }}" class="form-label">Nome Completo</label>
+                    {{ form.nome_completo }}
                 </div>
             </div>
             
-            <p>Endereço:</p>
-            <div class="form-endereco">
-                <div class="form-linha1">
-                    <div class="form-inicial">
-                        <label for="{{ form.cep.id_for_label }}" class="form-label">CEP:</label>
-                        {{ form.cep }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.rua.id_for_label }}" class="form-label">Rua:</label>
-                        {{ form.rua }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.numero.id_for_label }}" class="form-label">Número:</label>
-                        {{ form.numero }}
-                    </div>
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.cpf.id_for_label }}" class="form-label">CPF</label>
+                    {{ form.cpf }}
                 </div>
-                <div class="form-linha1">
-                    <div class="form-inicial">
-                        <label for="{{ form.bairro.id_for_label }}" class="form-label">Bairro:</label>
-                        {{ form.bairro }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.cidade.id_for_label }}" class="form-label">Cidade:</label>
-                        {{ form.cidade }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.estado.id_for_label }}" class="form-label">Estado:</label>
-                        {{ form.estado }}
-                    </div>
-                    <div class="form-inicial">
-                        <label for="{{ form.complemento.id_for_label }}" class="form-label">Complemento:</label>
-                        {{ form.complemento }}
-                    </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ form.email }}
+                    <p class="input-hint">ex: nome@exemplo.com</p>
                 </div>
-            </div>  
-            <button class="btn-user-signup" type="submit">Salvar</button>
-        </form>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-    $(document).ready(function() {
-        $('#id_telefone').mask('(00) 00000-0000');
-        $('#id_cep').on('blur', function() {
-            let cep = $(this).val().replace(/\D/g, ''); // Remove caracteres não numéricos
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.matricula.id_for_label }}" class="form-label">Matrícula</label>
+                    {{ form.matricula }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.telefone.id_for_label }}" class="form-label">Telefone</label>
+                    {{ form.telefone }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.curso.id_for_label }}" class="form-label">Curso</label>
+                    {{ form.curso }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.periodo.id_for_label }}" class="form-label">Período</label>
+                    {{ form.periodo }}
+                    {% if form.periodo.errors %}
+                        {% for error in form.periodo.errors %}
+                            <span class="help-block error-text" style="color: red; font-size: 0.9em;">{{ error }}</span><br>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.turno.id_for_label }}" class="form-label">Turno</label>
+                    {{ form.turno }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.ira.id_for_label }}" class="form-label">IRA</label>
+                    {{ form.ira }}
+                    <p class="input-hint">Índice de Rendimento Acadêmico (0.0 a 10.0)</p>
+                    {% if form.ira.errors %}
+                        {% for error in form.ira.errors %}
+                            <span class="help-block error-text" style="color: red; font-size: 0.9em;">{{ error }}</span><br>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3 class="section-title">Endereço</h3>
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.cep.id_for_label }}" class="form-label">CEP</label>
+                    {{ form.cep }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group" style="flex: 2;">
+                    <label for="{{ form.rua.id_for_label }}" class="form-label">Rua</label>
+                    {{ form.rua }}
+                </div>
+                <div class="form-group compact-group" style="flex: 1;">
+                    <label for="{{ form.numero.id_for_label }}" class="form-label">Número</label>
+                    {{ form.numero }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.bairro.id_for_label }}" class="form-label">Bairro</label>
+                    {{ form.bairro }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.cidade.id_for_label }}" class="form-label">Cidade</label>
+                    {{ form.cidade }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.estado.id_for_label }}" class="form-label">Estado</label>
+                    {{ form.estado }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.complemento.id_for_label }}" class="form-label">Complemento</label>
+                    {{ form.complemento }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.status.id_for_label }}" class="form-label">Observações</label>
+                    {{ form.status }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-user-signup">Salvar</button>
+            <a href="{% url 'dashboard_estagiario' %}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#id_telefone').mask('(00) 00000-0000');
+    $('#id_cpf').mask('000.000.000-00');
+    $('#id_cep').mask('00000-000');
     
-            if (cep.length === 8) {
-                $.ajax({
-                    url: "{% url 'buscar_cep' %}", // URL da view
-                    method: "GET",
-                    data: { cep: cep }, // Dados enviados para o servidor
-                    success: function(data) {
-                        // Preenche os campos com os dados retornados
-                        $('#id_rua').val(data.logradouro);
-                        $('#id_bairro').val(data.bairro);
-                        $('#id_cidade').val(data.cidade);
-                        $('#id_estado').val(data.estado);
-                    },
-                    error: function(xhr) {
-                        alert(xhr.responseJSON.error || 'Erro ao buscar o CEP.');
-                    }
-                });
-            } else {
-                alert('CEP inválido! Digite 8 números.');
-            }
-        });
+    $('#id_cep').on('blur', function() {
+        let cep = $(this).val().replace(/\D/g, '');
+        
+        if (cep.length === 8) {
+            $.ajax({
+                url: "{% url 'buscar_cep' %}",
+                method: "GET",
+                data: { cep: cep },
+                success: function(data) {
+                    $('#id_rua').val(data.logradouro);
+                    $('#id_bairro').val(data.bairro);
+                    $('#id_cidade').val(data.cidade);
+                    $('#id_estado').val(data.estado);
+                },
+                error: function(xhr) {
+                    alert(xhr.responseJSON.error || 'Erro ao buscar o CEP.');
+                }
+            });
+        } else {
+            alert('CEP inválido! Digite 8 números.');
+        }
     });
-    </script>
-    
+});
+</script>
 {% endblock %}

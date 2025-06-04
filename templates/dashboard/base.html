@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>+Estágio</title>
+    <link rel="stylesheet" href="{% static 'dashboard/dash-indiv/style.css' %}">
     <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
-    <link rel="stylesheet" href="{%static 'cadastro/css/style.css' %}">
     <link rel="stylesheet" href="{%static 'details/css/style.css' %}">
     <link rel="stylesheet" href="{%static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'cadastro/cadastro-dash/style.css' %}">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 
@@ -19,7 +20,7 @@
 <body>
     <!-- Navbar horizontal com Bootstrap no topo -->
     {% include 'partials/nav-bar.html' %}
-
+    <!-- Container principal com sidebar e conteúdo -->
     <div id="logoutModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeModal"></span>
@@ -34,56 +35,114 @@
             </div>
         </div>
     </div>
-
-    <!-- Container principal com sidebar e conteúdo -->
     <div class="container-main">
         <!-- Barra lateral -->
         <div class="sidebar" id="sidebar">
             <div class="side-elements">
                 <div class="sidebar-top">
                     <ul>
+                        <!-- Dashboard -->
                         {% url 'dashboard_instituicao' as dashboard_instituicao_url %}
-                        {% if dashboard_instituicao_url %}
-                            <a class="btn-sidebar" href="{{ dashboard_instituicao_url }}">
-                                <li class="{% if request.path == dashboard_instituicao_url %}actived{% endif %}">
-                                    <span class="icon"><i class="fa-solid fa-house"></i></span>
-                                    <span class="text">Dashboard</span>
+                        <a class="btn-sidebar" href="{{ dashboard_instituicao_url }}">
+                            <li class="{% if request.path == dashboard_instituicao_url %}actived{% endif %}">
+                                <span class="icon"><i class="fa-solid fa-house"></i></span>
+                                <span class="text">Estágios</span>
+                            </li>
+                        </a>
+                        <!-- Toggle para Cursos -->
+                        <li class="sidebar-toggle" data-toggle-id="cursos">
+                            <div class="toggle-header">
+                                <span class="icon"><i class="fa-solid fa-book"></i></span>
+                                <span class="text">Cursos</span>
+                                <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <ul class="toggle-content">
+                                <li class="submenu-item">
+                                    <a href="{% url 'dashboard_cursos' %}" class="{% if request.path == dashboard_cursos_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-list"></i></span>
+                                        <span class="text">Lista de Cursos</span>
+                                    </a>
                                 </li>
-                            </a>
-                        {% endif %}
-                        {% url 'dashboard_cursos' as dashboard_cursos_url %}
-                        {% if dashboard_cursos_url %}
-                            <a class="btn-sidebar" href="{{ dashboard_cursos_url }}">
-                                <li class="{% if request.path == dashboard_cursos_url %}actived{% endif %}">
-                                    <span class="icon"><i class="fa-solid fa-book"></i></span>
-                                    <span class="text">Cursos</span>
+                                <li class="submenu-item">
+                                    <a href="{% url 'cadastrar_cursos' %}" class="{% if request.path == cadastrar_curso_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                                        <span class="text">Cadastrar Curso</span>
+                                    </a>
                                 </li>
-                            </a>
-                        {% endif %}
-                        <!-- Cadastro de Estagiário -->
-                        {% url 'dashboard_estagiario' as dashboard_estagiario_url %}
-                        {% if dashboard_estagiario_url %}
-                            <a class="btn-sidebar" href="{{ dashboard_estagiario_url }}">
-                                <li class="{% if request.path == dashboard_estagiario_url %}actived{% endif %}">
-                                    <span class="icon"><i class="fa-solid fa-user"></i></span>
-                                    <span class="text">Estagiário</span>
+                            </ul>
+                        </li>
+        
+                        <!-- Toggle para Empresas -->
+                        <li class="sidebar-toggle" data-toggle-id="empresas">
+                            <div class="toggle-header">
+                                <span class="icon"><i class="fa-solid fa-building"></i></span>
+                                <span class="text">Empresas</span>
+                                <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <ul class="toggle-content">
+                                <li class="submenu-item">
+                                    <a href="{% url 'dashboard_empresa' %}" class="{% if request.path == dashboard_empresa_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-list"></i></span>
+                                        <span class="text">Lista de Empresas</span>
+                                    </a>
                                 </li>
-                            </a>
-                        {% endif %}
-                        <!-- Cadastro de Empresa -->
-                        {% url 'dashboard_empresa' as dashboard_empresa %}
-                        {% if dashboard_empresa %}
-                            <a class="btn-sidebar" href="{{ dashboard_empresa }}">
-                                <li class="{% if request.path == dashboard_empresa %}actived{% endif %}">
-                                    <span class="icon"><i class="fa-solid fa-city"></i></span>
-                                    <span class="text">Empresa</span>
+                                <li class="submenu-item">
+                                    <a href="{% url 'cadastrar_empresa' %}" class="{% if request.path == cadastro_empresa_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+                                        <span class="text">Cadastrar Empresa</span>
+                                    </a>
                                 </li>
-                            </a>
-                        {% endif %}
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-toggle" data-toggle-id="estagiarios">
+                            <div class="toggle-header">
+                                <span class="icon"><i class="fa-solid fa-users"></i></span>
+                                <span class="text">Estagiários</span>
+                                <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <ul class="toggle-content">
+                                <li class="submenu-item">
+                                    <a href="{% url 'dashboard_estagiario' %}" class="{% if request.path == dashboard_estagiario_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-list"></i></span>
+                                        <span class="text">Lista de Estagiários</span>
+                                    </a>
+                                </li>
+                                <li class="submenu-item">
+                                    <a href="{% url 'cadastrar_estagiario' %}" class="{% if request.path == cadastrar_estagiario_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-user-plus"></i></span>
+                                        <span class="text">Cadastrar Estagiário</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+        
+                        <!-- Toggle para Relatórios -->
+                        <li class="sidebar-toggle" data-toggle-id="relatorios">
+                            <div class="toggle-header">
+                                <span class="icon"><i class="fa-solid fa-file-lines"></i></span>
+                                <span class="text">Relatórios</span>
+                                <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <ul class="toggle-content">
+                                <li class="submenu-item">
+                                    <a href="{% url 'dashboard_relatorios' %}" class="{% if request.path == dashboard_relatorios_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-clock"></i></span>
+                                        <span class="text">Pendentes</span>
+                                    </a>
+                                </li>
+                                <li class="submenu-item">
+                                    <a href="{% url 'dashboard_personalizados' %}" class="{% if request.path == dashboard_personalizados_url %}actived{% endif %}">
+                                        <span class="icon"><i class="fa-solid fa-chart-line"></i></span>
+                                        <span class="text">Personalizados</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 <div class="sidebar-bottom">
-                    
+                    <!-- Conteúdo inferior da sidebar -->
                 </div>
             </div>
             <!-- Botão para esconder/mostrar a sidebar -->
@@ -96,13 +155,13 @@
         <main class="main-content">
             {% block content %}{% endblock %}
         </main>
-
     </div>
 
     <script src="{% static 'dashboard/js/script.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
 </body>
 </html>
