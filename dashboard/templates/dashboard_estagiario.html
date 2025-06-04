@@ -159,7 +159,7 @@
                     <i class="fas fa-trash"></i> Excluir
                 </a>
                 {% if not estagiario.user %}
-                <form action="{% url 'aprovar_estagiario' estagiario.id %}" method="post">
+                <form action="{% url 'ativar_acesso_estagiario' estagiario.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn-action activate">
                         <i class="fas fa-check-circle"></i> Ativar Acesso
