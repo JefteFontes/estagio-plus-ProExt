@@ -3,7 +3,7 @@ import tempfile
 from django.shortcuts import get_object_or_404, render, redirect
 import pdfplumber
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse
 from dashboard.models import (
     Empresa,
@@ -85,29 +85,50 @@ def dashboard_empresa(request):
     return render(request, "dashboard_empresa.html", context)
 
 
+@login_required
+@user_passes_test(lambda u: hasattr(u, 'coordenadorextensao') and u.coordenadorextensao)
 def dashboard_estagiario(request):
-    coordenador = CoordenadorExtensao.objects.get(user=request.user)
-    instituicao = coordenador.instituicao
+    try:
+        coordenador = CoordenadorExtensao.objects.get(user=request.user)
+        instituicao = coordenador.instituicao
+    except CoordenadorExtensao.DoesNotExist:
+        messages.error(request, "Você não está associado a nenhuma instituição como coordenador.")
+        return redirect('alguma_pagina_de_erro_ou_dashboard_padrao') 
 
-    search = request.GET.get("search", "")
-    curso = request.GET.get("curso", "")
+    search_query = request.GET.get("search", "")
     search_matricula = request.GET.get("search-matricula", "")
+    curso_filter = request.GET.get("curso", "")
 
-    estagiarios = Estagiario.objects.filter(instituicao=instituicao)
-    if search:
-        estagiarios = estagiarios.filter(
-            Q(nome_completo__icontains=search) | Q(matricula__icontains=search)
+    estagiarios_da_instituicao = Estagiario.objects.filter(instituicao=instituicao)
+
+    if search_query:
+        estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
+            Q(nome_completo__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(cpf__icontains=search_query)
         )
-    if curso:
-        estagiarios = estagiarios.filter(curso__nome_curso__icontains=curso)
+    if curso_filter:
+        estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
+            curso__nome_curso__icontains=curso_filter
+        )
     if search_matricula:
-        estagiarios = estagiarios.filter(matricula__startswith=search_matricula)
+        estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
+            matricula__startswith=search_matricula
+        )
 
-    cursos = Cursos.objects.values_list("nome_curso", flat=True).distinct()
+    alunos_cadastrados = estagiarios_da_instituicao.filter(status=True).order_by('nome_completo')
+    alunos_aguardando_confirmacao = estagiarios_da_instituicao.filter(status=False).order_by('nome_completo')
 
+    total_estagiarios = alunos_cadastrados.count() + alunos_aguardando_confirmacao.count()
+    cursos_disponiveis = Cursos.objects.filter(instituicao=instituicao).order_by('nome_curso')
+   
     context = {
-        "estagiarios": estagiarios,
-        "cursos": cursos,
+        "alunos_cadastrados": alunos_cadastrados,
+        "alunos_aguardando_confirmacao": alunos_aguardando_confirmacao,
+        "cursos": cursos_disponiveis, 
+        "search_query": search_query, 
+        "search_matricula": search_matricula, 
+        "curso_filter": curso_filter, 
     }
     return render(request, "dashboard_estagiario.html", context)
 

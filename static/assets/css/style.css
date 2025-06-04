@@ -309,3 +309,37 @@ body {
     }
 }
 
+
+.section-title-status {
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.status-active {
+    background-color: #28a745;
+    border: 1px solid #218838;
+}
+
+.status-pending {
+    background-color: #ffc107;
+    color: #343a40;
+    border: 1px solid #e0a800;
+}
+
+hr {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-top: 1px solid #eee;
+}
+
+.dashboard-container h2 {
+    text-align: center;
+}

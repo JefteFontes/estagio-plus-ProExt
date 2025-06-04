@@ -79,6 +79,12 @@ class Cursos(models.Model):
 
 
 class Estagiario(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
     nome_completo = models.CharField(max_length=150)
     cpf = models.CharField(
         max_length=14,

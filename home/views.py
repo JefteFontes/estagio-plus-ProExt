@@ -21,23 +21,16 @@ def home(request):
         return redirect("/accounts/profile/")
     return render(request, "home/home.html")
 
+
 def pre_cadastro(request):
     return render(request, "cadastro/pre_cadastro.html")
 
-def load_cursos(request):
-    instituicao_id = request.GET.get('instituicao_id')
-    cursos = Cursos.objects.filter(instituicao_id=instituicao_id).order_by('nome_curso')
-    return JsonResponse(list(cursos.values('id', 'nome_curso')), safe=False)
 
-def cadastro_aluno(request):
-    try:
-        form = AlunoCadastroForm()
-    except Exception as e:
-        print("Erro ao instanciar o formulário GET:")
-        traceback.print_exc()
-        form = None
-        messages.error(request, f"Erro ao carregar o formulário: {str(e)}")
-    return render(request, "cadastro/cadastro_aluno.html", {"form": form})
+def load_cursos(request):
+    instituicao_id = request.GET.get("instituicao_id")
+    cursos = Cursos.objects.filter(instituicao_id=instituicao_id).order_by("nome_curso")
+    return JsonResponse(list(cursos.values("id", "nome_curso")), safe=False)
+
 
 def cadastrar_instituicao(request):
     if request.method == "POST":
@@ -47,7 +40,9 @@ def cadastrar_instituicao(request):
             print("Erro ao instanciar o formulário:")
             traceback.print_exc()
             messages.error(request, f"Erro ao processar o formulário: {str(e)}")
-            return render(request, "cadastro/cadastrar_instituicao.html", {"form": None})
+            return render(
+                request, "cadastro/cadastrar_instituicao.html", {"form": None}
+            )
 
         if form.is_valid():
             try:
@@ -56,7 +51,9 @@ def cadastrar_instituicao(request):
                 print("Erro ao salvar o formulário:")
                 traceback.print_exc()
                 messages.error(request, f"Erro ao salvar o cadastro: {str(e)}")
-                return render(request, "cadastro/cadastrar_instituicao.html", {"form": form})
+                return render(
+                    request, "cadastro/cadastrar_instituicao.html", {"form": form}
+                )
 
             try:
                 reset_form = ResetPasswordForm({"email": user.email})
@@ -110,7 +107,9 @@ def cadastrar_instituicao(request):
             print("Formulário inválido:")
             print(form.errors)
             messages.error(request, "Corrija os erros abaixo.")
-            return render(request, "cadastro/cadastrar_instituicao.html", {"form": form})
+            return render(
+                request, "cadastro/cadastrar_instituicao.html", {"form": form}
+            )
     else:
         try:
             form = CoordenadorCadastroForm()
@@ -159,3 +158,43 @@ def visualizar_termo(request, pdf_nome):
     else:
         # Caso o arquivo não exista, levanta uma exceção
         raise Http404("Arquivo não encontrado")
+
+
+def cadastro_aluno(request):
+    if request.method == "POST":
+        try:
+            form = AlunoCadastroForm(request.POST)
+            if form.is_valid():
+                estagiario = form.save()
+                messages.success(
+                    request,
+                    "Cadastro do aluno realizado com sucesso! Aguarde a validação do coordenador para obter o acesso ao sistema.",
+                )
+                return redirect("/login/")
+            else:
+                print("Formulário inválido:")
+                print(form.errors)
+                messages.error(
+                    request,
+                    "Houve erros no preenchimento do formulário. Por favor, corrija-os.",
+                )
+                return render(request, "cadastro/cadastro_aluno.html", {"form": form})
+        except Exception as e:
+            print("Erro ao processar o formulário POST:")
+            traceback.print_exc()
+            messages.error(
+                request, f"Ocorreu um erro inesperado ao cadastrar o aluno: {str(e)}"
+            )
+            return render(request, "cadastro/cadastro_aluno.html", {"form": form})
+    else:
+        try:
+            form = AlunoCadastroForm()
+        except Exception as e:
+            print("Erro ao instanciar o formulário GET:")
+            traceback.print_exc()
+            form = None
+            messages.error(
+                request, f"Erro ao carregar o formulário de cadastro: {str(e)}"
+            )
+
+    return render(request, "cadastro/cadastro_aluno.html", {"form": form})
