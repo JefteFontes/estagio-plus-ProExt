@@ -11,9 +11,11 @@ from django.utils.translation import gettext as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from allauth.account.forms import ResetPasswordForm
-from dashboard.models import Cursos
+from dashboard.models import Cursos, Estagiario
 from django.http import JsonResponse
-
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
+from allauth.account.models import EmailAddress
 
 # Create your views here.
 def home(request):
@@ -198,3 +200,36 @@ def cadastro_aluno(request):
             )
 
     return render(request, "cadastro/cadastro_aluno.html", {"form": form})
+
+
+@login_required
+@user_passes_test(lambda u: hasattr(u, 'coordenadorextensao'))
+def aprovar_estagiario(request, estagiario_id):
+    estagiario = Estagiario.objects.get(id=estagiario_id)
+    
+    if not estagiario.user:
+        # Cria o usuário no sistema via Allauth
+        user = User.objects.create_user(
+            username=estagiario.nome_completo,
+            email=estagiario.email,
+            password=estagiario.cpf  # Senha inicial = CPF
+        )
+        
+        # Configura o email como verificado no Allauth
+        EmailAddress.objects.create(
+            user=user,
+            email=estagiario.email,
+            primary=True,
+            verified=True
+        )
+        
+        estagiario.user = user
+        estagiario.status = True
+        print("Criando usuário...")
+        estagiario.save()
+        
+        messages.success(request, f"Acesso ativado para {estagiario.nome_completo}")
+    else:
+        messages.warning(request, "Este estagiário já possui acesso ao sistema")
+    
+    return redirect("dashboard_estagiario")

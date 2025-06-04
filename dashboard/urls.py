@@ -37,6 +37,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo
 from dashboard.views.personalizados import dashboard_personalizados, relatorio_personalidizado
+from home.views import aprovar_estagiario
 
 
 
@@ -47,6 +48,7 @@ urlpatterns = [
     path("home", home, name="home"),
     path("details", details, name="details"),
     path("dashboard_estagiario", dashboard_estagiario, name="dashboard_estagiario"),
+    path('coordenador/estagiario/<int:estagiario_id>/aprovar/', aprovar_estagiario, name='aprovar_estagiario'),
     path("dashboard_cursos", dashboard_cursos, name="dashboard_cursos"),
     path("cadastrar_cursos", cadastrar_cursos, name="cadastrar_cursos"),
     path("editar_cursos/<int:curso_id>", editar_curso, name="editar_curso"),

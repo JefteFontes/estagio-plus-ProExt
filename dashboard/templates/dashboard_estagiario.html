@@ -103,7 +103,7 @@
                     <span class="info-label">Email:</span>
                     <span class="info-value">{{ estagiario.email }}</span>
                 </div>
-                 <div class="info-row">
+                <div class="info-row">
                     <span class="info-label">Status do Usuário:</span>
                     <span class="info-value">{{ estagiario.user|yesno:"Ativo,Não Ativo" }}</span>
                 </div>
@@ -159,7 +159,7 @@
                     <i class="fas fa-trash"></i> Excluir
                 </a>
                 {% if not estagiario.user %}
-                <form action="#" method="post" style="display:inline;">
+                <form action="{% url 'aprovar_estagiario' estagiario.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn-action activate">
                         <i class="fas fa-check-circle"></i> Ativar Acesso

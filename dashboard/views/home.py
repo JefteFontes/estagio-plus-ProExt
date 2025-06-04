@@ -21,6 +21,7 @@ from dashboard.views.utils import parse_sections
 from dashboard.views.estagios import verificar_pendencias
 from dashboard.forms import CursosCadastroForm, EmpresaCadastroForm
 from django.db.models import Q
+from django.http import HttpResponseForbidden
 
 
 def home(request):
@@ -121,7 +122,7 @@ def dashboard_estagiario(request):
 
     total_estagiarios = alunos_cadastrados.count() + alunos_aguardando_confirmacao.count()
     cursos_disponiveis = Cursos.objects.filter(instituicao=instituicao).order_by('nome_curso')
-   
+
     context = {
         "alunos_cadastrados": alunos_cadastrados,
         "alunos_aguardando_confirmacao": alunos_aguardando_confirmacao,
@@ -129,6 +130,7 @@ def dashboard_estagiario(request):
         "search_query": search_query, 
         "search_matricula": search_matricula, 
         "curso_filter": curso_filter, 
+        "total_estagiarios": total_estagiarios
     }
     return render(request, "dashboard_estagiario.html", context)
 
@@ -136,10 +138,17 @@ def dashboard_estagiario(request):
 @login_required
 def dashboard_instituicao(request):
     errors = []
-    coordenador = CoordenadorExtensao.objects.get(user=request.user)
-    instituicao = coordenador.instituicao
-    # verificar_pendencias(request)
 
+    if hasattr(request.user, 'coordenadorextensao'):
+        coordenador = request.user.coordenadorextensao
+        instituicao = coordenador.instituicao
+        estagios = Estagio.objects.filter(instituicao=instituicao)
+    elif hasattr(request.user, 'estagiario'):
+        estagiario = request.user.estagiario
+        estagios = Estagio.objects.filter(estagiario=estagiario)
+        instituicao = estagiario.instituicao if hasattr(estagiario, 'instituicao') else None
+    else:
+        return HttpResponseForbidden("Acesso não autorizado")
 
     if request.method == "POST" and request.FILES.get("pdf_file"):
         pdf_file = request.FILES["pdf_file"]

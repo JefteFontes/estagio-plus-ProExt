@@ -56,7 +56,7 @@ def deletar_estagiario(request, estagiario_id):
 
 
 def estagiario_auto_cadastro(request, token):
-    invite = get_object_or_404(EstagiarioInvite, token=token, used=False)
+    invite = get_object_or_404(token=token, used=False)
     if request.method == "POST":
         form = EstagiarioCadastroForm(data=request.POST, instituicao=invite.instituicao)
         if form.is_valid():
