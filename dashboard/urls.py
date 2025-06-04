@@ -19,6 +19,7 @@ from dashboard.views.estagios import (
     add_estagios,
     complementar_estagio,
 )
+from dashboard.views.aluno import dashboard_aluno
 
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
 from dashboard.views.home import (
@@ -47,6 +48,7 @@ urlpatterns = [
     path("home", home, name="home"),
     path("details", details, name="details"),
     path("dashboard_estagiario", dashboard_estagiario, name="dashboard_estagiario"),
+    path("aluno/", dashboard_aluno, name="dashboard_aluno"),
     path("dashboard_cursos", dashboard_cursos, name="dashboard_cursos"),
     path("cadastrar_cursos", cadastrar_cursos, name="cadastrar_cursos"),
     path("editar_cursos/<int:curso_id>", editar_curso, name="editar_curso"),
