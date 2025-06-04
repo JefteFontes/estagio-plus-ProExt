@@ -3,6 +3,7 @@ from . import views
 from dashboard.views.utils import validate_cnpj, validate_cpf, buscar_cep
 from django.conf import settings
 from django.conf.urls.static import static
+from home.views import ativar_acesso_estagiario_view
 
 
 urlpatterns = [
@@ -15,6 +16,8 @@ urlpatterns = [
     path('validate_cpf/', validate_cpf, name='validate_cpf'),
     path('buscar_cep/', buscar_cep, name='buscar_cep'),
     path('<str:pdf_nome>/', views.visualizar_termo, name='visualizar_termo'),
+    path('aluno/<int:estagiario_id>/ativar_acesso/', ativar_acesso_estagiario_view, name='ativar_acesso_estagiario'),
     re_path(r'(?P<pdf_nome>.+)/$', views.visualizar_termo, name='visualizar_termo'),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
