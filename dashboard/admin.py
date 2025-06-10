@@ -22,7 +22,7 @@ class InstituicaoAdmin(admin.ModelAdmin):
     list_filter = ("endereco__cidade", "endereco__estado")
 
 
-@admin.register(models.Estagiario)
+@admin.register(models.Aluno)
 class EstagiarioAdmin(admin.ModelAdmin):
     list_display = (
         "nome_completo",

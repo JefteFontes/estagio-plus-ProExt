@@ -76,7 +76,7 @@ class Empresa(models.Model):
             )
         ],
     )
-    actividades = models.TextField(max_length=500, null=False)
+    atividades = models.TextField(max_length=500, null=False)
     endereco = models.ForeignKey(
         Endereco, on_delete=models.PROTECT, null=False, blank=True
     )
@@ -139,7 +139,7 @@ class Cursos(models.Model):
         return f"{self.nome_curso}"
 
 
-class Estagiario(models.Model):
+class Aluno(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.PROTECT,
@@ -283,7 +283,7 @@ class Estagio(models.Model):
     turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
     auxilio_transporte = models.FloatField(blank=True, null=True, default=0)
     estagiario = models.ForeignKey(
-        Estagiario, on_delete=models.PROTECT, null=True, blank=False
+        Aluno, on_delete=models.PROTECT, null=True, blank=False
     )
     empresa = models.ForeignKey(
         Empresa, on_delete=models.PROTECT, null=True, blank=True

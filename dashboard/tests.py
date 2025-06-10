@@ -6,7 +6,7 @@ from .models import (
     CoordenadorExtensao,
     Empresa,
     Cursos,
-    Estagiario,
+    Aluno,
     Supervisor,
     Estagio,
 )
@@ -64,7 +64,7 @@ class ViewsIntegrationTestCase(TestCase):
             email_coordenador="maria@example.com",
         )
 
-        self.estagiario = Estagiario.objects.create(
+        self.estagiario = Aluno.objects.create(
             nome_completo="Carlos Sousa",
             cpf="98765432101",
             matricula="2023123456",
@@ -166,7 +166,7 @@ class IntegracaoModelsTestCase(TestCase):
             email_coordenador="maria@example.com",
         )
 
-        self.estagiario = Estagiario.objects.create(
+        self.estagiario = Aluno.objects.create(
             nome_completo="Carlos da Silva",
             cpf="98765432101",
             matricula="2023123456",

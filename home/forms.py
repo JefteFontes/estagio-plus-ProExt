@@ -1,7 +1,7 @@
 import re
 from django import forms
 from django.contrib.auth.models import User
-from dashboard.models import CoordenadorExtensao, Instituicao, Endereco, Estagiario, Cursos
+from dashboard.models import CoordenadorExtensao, Instituicao, Endereco, Aluno, Cursos
 from dashboard.views.utils import validate_cpf
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -157,43 +157,64 @@ class CoordenadorCadastroForm(forms.ModelForm):
 
         return user, coordenador
 
+
 class AlunoCadastroForm(forms.ModelForm):
 
     # Campos de endereço
     rua = forms.CharField(
         max_length=255,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Rua das Flores"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Rua das Flores"}
+        ),
     )
     numero = forms.CharField(
         max_length=10,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Número (ex: 123)"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Número (ex: 123)"}
+        ),
     )
     bairro = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Bairro (ex: Centro)"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Bairro (ex: Centro)"}
+        ),
     )
     cidade = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Cidade (ex: Parnaíba)"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Cidade (ex: Parnaíba)"}
+        ),
     )
     estado = forms.CharField(
         max_length=50,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Estado (ex: PI)"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Estado (ex: PI)"}
+        ),
     )
     cep = forms.CharField(
         max_length=20,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "CEP (ex: 12345-678)"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "CEP (ex: 12345-678)"}
+        ),
     )
     complemento = forms.CharField(
         max_length=200,
         required=False,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Complemento"}),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Complemento"}
+        ),
     )
 
     ira = forms.FloatField(
         required=False,
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "IRA (ex: 7.5)", "step": "0.1", "min": "0", "max": "10"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "IRA (ex: 7.5)",
+                "step": "0.1",
+                "min": "0",
+                "max": "10",
+            }
         ),
         validators=[
             MinValueValidator(0.0, message="O IRA não pode ser menor que 0.0"),
@@ -204,23 +225,48 @@ class AlunoCadastroForm(forms.ModelForm):
     instituicao = forms.ModelChoiceField(
         queryset=Instituicao.objects.all(),
         widget=forms.Select(attrs={"class": "form-control", "id": "id_instituicao"}),
-        empty_label="Selecione a instituição"
+        empty_label="Selecione a instituição",
     )
 
     class Meta:
-        model = Estagiario
+        model = Aluno
         fields = [
-            "nome_completo", "cpf", "matricula", "telefone", "email", "curso",
-            "periodo", "turno", "ira", "instituicao"
+            "nome_completo",
+            "cpf",
+            "matricula",
+            "telefone",
+            "email",
+            "curso",
+            "periodo",
+            "turno",
+            "ira",
+            "instituicao",
         ]
         widgets = {
-            "nome_completo": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nome completo"}),
-            "cpf": forms.TextInput(attrs={"class": "form-control", "placeholder": "CPF"}),
-            "matricula": forms.TextInput(attrs={"class": "form-control", "placeholder": "Matrícula"}),
-            "telefone": forms.TextInput(attrs={"class": "form-control", "placeholder": "Telefone"}),
-            "email": forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email"}),
+            "nome_completo": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Nome completo"}
+            ),
+            "cpf": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "CPF"}
+            ),
+            "matricula": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Matrícula"}
+            ),
+            "telefone": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Telefone"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"class": "form-control", "placeholder": "Email"}
+            ),
             "curso": forms.Select(attrs={"class": "form-control", "id": "id_curso"}),
-            "periodo": forms.NumberInput(attrs={"class": "form-control", "placeholder": "Período", "min": 1, "max": 8}),
+            "periodo": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Período",
+                    "min": 1,
+                    "max": 8,
+                }
+            ),
             "turno": forms.Select(attrs={"class": "form-control"}),
         }
 
@@ -231,11 +277,15 @@ class AlunoCadastroForm(forms.ModelForm):
         if "instituicao" in self.data:
             try:
                 instituicao_id = int(self.data.get("instituicao"))
-                self.fields["curso"].queryset = Cursos.objects.filter(instituicao_id=instituicao_id)
+                self.fields["curso"].queryset = Cursos.objects.filter(
+                    instituicao_id=instituicao_id
+                )
             except (ValueError, TypeError):
                 self.fields["curso"].queryset = Cursos.objects.none()
         elif self.instance.pk:
-            self.fields["curso"].queryset = Cursos.objects.filter(instituicao=self.instance.instituicao)
+            self.fields["curso"].queryset = Cursos.objects.filter(
+                instituicao=self.instance.instituicao
+            )
         else:
             self.fields["curso"].queryset = Cursos.objects.none()
 

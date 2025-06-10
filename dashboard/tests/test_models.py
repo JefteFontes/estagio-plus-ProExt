@@ -5,7 +5,7 @@ from dashboard.models import (
     CoordenadorExtensao,
     Empresa,
     Cursos,
-    Estagiario,
+    Aluno,
     Supervisor,
     Estagio,
     ImportTermoEstagio,
@@ -104,7 +104,7 @@ class TestModels(TestCase):
             coordenador="Coordenador Teste",
             email_coordenador="coordenador@test.com",
         )
-        estagiario = Estagiario.objects.create(
+        estagiario = Aluno.objects.create(
             primeiro_nome="Estagiário",
             sobrenome="Teste",
             cpf="12345678901",
@@ -164,7 +164,7 @@ class TestModels(TestCase):
             email="empresa@test.com",
             instituicao=instituicao,
         )
-        estagiario = Estagiario.objects.create(
+        estagiario = Aluno.objects.create(
             primeiro_nome="Estagiário",
             sobrenome="Teste",
             cpf="12345678901",

@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "dashboard",
     "home",
     "base",
+    "aluno",
 ]
 
 SITE_ID = 1
