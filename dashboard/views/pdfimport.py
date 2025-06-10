@@ -4,7 +4,9 @@ from django.urls import reverse
 import pdfplumber
 from django.shortcuts import render, redirect
 from .utils import parse_sections
-from ..models import Estagio, Empresa, Aluno, Supervisor, Endereco
+from ..models import Estagio, Empresa, Supervisor, Endereco
+
+from aluno.models import Aluno
 
 
 def importar_pdf(request):
@@ -58,7 +60,7 @@ def importar_pdf(request):
                     cep=estagiario_data.get("cep", ""),
                 )
                 estagiario = Aluno.objects.create(
-                    nome_completo=estagiario_data.get("nome_completo", ""),
+                    nome=estagiario_data.get("nome", ""),
                     cpf=estagiario_data.get("cpf", ""),
                     matricula=estagiario_data.get("matricula", ""),
                     curso=estagiario_data.get("curso", ""),

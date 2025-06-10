@@ -10,7 +10,7 @@ def profile_redirect(request):
     if hasattr(user, "coordenadorextensao") and user.coordenadorextensao:
         return redirect("dashboard_instituicao")
 
-    if hasattr(user, "estagiario") and user.estagiario:
+    if hasattr(user, "aluno") and user.aluno:
         return redirect("dashboard_aluno")
 
     messages.warning(

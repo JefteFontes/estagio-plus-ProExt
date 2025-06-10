@@ -1,22 +1,22 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from dashboard.models import Aluno
+from aluno.models import Aluno
 
 
 @login_required
 def dashboard_aluno(request):
     try:
 
-        estagiario = Aluno.objects.get(user=request.user)
+        aluno = Aluno.objects.get(user=request.user)
     except Aluno.DoesNotExist:
         messages.error(
             request,
-            "Seu perfil de estagiário não foi encontrado. Por favor, contate o administrador.",
+            "Seu perfil de aluno não foi encontrado. Por favor, contate o administrador.",
         )
         return redirect("/login/")
 
     context = {
-        "estagiario": estagiario,
+        "estagiario": aluno,
     }
     return render(request, "dashboard_aluno.html", context)

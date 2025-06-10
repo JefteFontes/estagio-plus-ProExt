@@ -1,7 +1,8 @@
 import re
 from django import forms
 from django.contrib.auth.models import User
-from dashboard.models import CoordenadorExtensao, Instituicao, Endereco, Aluno, Cursos
+from aluno.models import Aluno
+from dashboard.models import CoordenadorExtensao, Instituicao, Endereco, Cursos
 from dashboard.views.utils import validate_cpf
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -231,7 +232,7 @@ class AlunoCadastroForm(forms.ModelForm):
     class Meta:
         model = Aluno
         fields = [
-            "nome_completo",
+            "nome",
             "cpf",
             "matricula",
             "telefone",
@@ -243,7 +244,7 @@ class AlunoCadastroForm(forms.ModelForm):
             "instituicao",
         ]
         widgets = {
-            "nome_completo": forms.TextInput(
+            "nome": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Nome completo"}
             ),
             "cpf": forms.TextInput(
@@ -308,9 +309,9 @@ class AlunoCadastroForm(forms.ModelForm):
         }
         endereco = Endereco.objects.create(**endereco_data)
 
-        estagiario = super().save(commit=False)
-        estagiario.endereco = endereco
-        estagiario.status = False  # Marcado como pendente para validação
+        aluno = super().save(commit=False)
+        aluno.endereco = endereco
+        aluno.status = False  # Marcado como pendente para validação
         if commit:
-            estagiario.save()
-        return estagiario
+            aluno.save()
+        return aluno

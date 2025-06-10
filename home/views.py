@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.conf import settings
 from django.http import FileResponse, Http404, HttpResponse
 import os
+
+from aluno.models import Aluno
 from .forms import CoordenadorCadastroForm, AlunoCadastroForm
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -11,10 +13,9 @@ from django.utils.translation import gettext as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from allauth.account.forms import ResetPasswordForm
-from dashboard.models import Cursos, Aluno
+from dashboard.models import Cursos
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
-from dashboard.models import Aluno
 from dashboard.views.utils import ativar_acesso_estagiario
 
 
@@ -168,7 +169,7 @@ def cadastro_aluno(request):
         try:
             form = AlunoCadastroForm(request.POST)
             if form.is_valid():
-                estagiario = form.save()
+                aluno = form.save()
                 messages.success(
                     request,
                     "Cadastro do aluno realizado com sucesso! Aguarde a validação do coordenador para obter o acesso ao sistema.",

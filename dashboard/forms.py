@@ -6,7 +6,6 @@ from django.db.models import Min
 from dateutil.relativedelta import relativedelta
 from django.core.validators import MinValueValidator, MaxValueValidator
 from .models import (
-    Aluno,
     Endereco,
     Estagio,
     Supervisor,
@@ -19,7 +18,7 @@ from .models import (
     Cursos,
     CoordenadorExtensao,
 )
-
+from aluno.models import Aluno
 
 class CursosCadastroForm(forms.ModelForm):
     class Meta:
@@ -189,7 +188,7 @@ class EstagioCadastroForm(forms.ModelForm):
         if instituicao_logada:
             self.fields["estagiario"].queryset = Aluno.objects.filter(
                 instituicao=instituicao_logada
-            ).order_by("nome_completo")
+            ).order_by("nome")
             self.fields["empresa"].queryset = Empresa.objects.filter(
                 instituicao=instituicao_logada
             ).order_by("empresa_nome")
@@ -320,7 +319,7 @@ class EstagioCadastroForm(forms.ModelForm):
                 "data_fim",
                 ValidationError(
                     f"A data de término ({data_fim_proposta.strftime('%d/%m/%Y')}) excede o limite total de 2 anos "
-                    f"de estágio para {estagiario_selecionado.nome_completo} na empresa {empresa_selecionada.empresa_nome}. "
+                    f"de estágio para {estagiario_selecionado.nome} na empresa {empresa_selecionada.empresa_nome}. "
                     f"O período de estágio nesta empresa iniciou-se em {primeira_data_inicio_geral_na_empresa.strftime('%d/%m/%Y')}, "
                     f"portanto, o estágio deve ser concluído até {data_limite_cumulativa.strftime('%d/%m/%Y')}.",
                     code="limite_cumulativo_2_anos",
@@ -489,7 +488,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
     class Meta:
         model = Aluno
         fields = [
-            "nome_completo",
+            "nome",
             "cpf",
             "matricula",
             "telefone",
@@ -501,7 +500,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
             "ira",
         ]
         widgets = {
-            "nome_completo": forms.TextInput(
+            "nome": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": "Nome Completo (ex: João da Silva)",

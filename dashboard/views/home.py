@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from dashboard.models import (
     Empresa,
     Endereco,
-    Aluno,
     Estagio,
     StatusChoices,
     Supervisor,
@@ -22,6 +21,8 @@ from dashboard.views.estagios import verificar_pendencias
 from dashboard.forms import CursosCadastroForm, EmpresaCadastroForm
 from django.db.models import Q
 from django.http import HttpResponseForbidden
+
+from aluno.models import Aluno
 
 
 def home(request):
@@ -120,11 +121,11 @@ def dashboard_estagiario(request):
         )
 
     alunos_cadastrados = estagiarios_da_instituicao.filter(status=True).order_by(
-        "nome_completo"
+        "nome"
     )
     alunos_aguardando_confirmacao = estagiarios_da_instituicao.filter(
         status=False
-    ).order_by("nome_completo")
+    ).order_by("nome")
 
     total_estagiarios = (
         alunos_cadastrados.count() + alunos_aguardando_confirmacao.count()
@@ -153,8 +154,8 @@ def dashboard_instituicao(request):
         coordenador = request.user.coordenadorextensao
         instituicao = coordenador.instituicao
         estagios = Estagio.objects.filter(instituicao=instituicao)
-    elif hasattr(request.user, "estagiario"):
-        estagiario = request.user.estagiario
+    elif hasattr(request.user, "aluno"):
+        estagiario = request.user.aluno
         estagios = Estagio.objects.filter(estagiario=estagiario)
         instituicao = (
             estagiario.instituicao if hasattr(estagiario, "instituicao") else None
@@ -223,7 +224,7 @@ def dashboard_instituicao(request):
             )
 
             estagiario = Aluno.objects.create(
-                nome_completo=estagiario_data.get("nome_completo", ""),
+                nome=estagiario_data.get("nome", ""),
                 cpf=estagiario_data.get("cpf", ""),
                 matricula=estagiario_data.get("matricula", ""),
                 curso=estagiario_data.get("curso", ""),

@@ -26,8 +26,8 @@
                     {# Exibe as iniciais do coordenador ou aluno #}
                     {% if request.user.coordenadorextensao %}
                         {{ request.user.coordenadorextensao.nome_completo|slice:":2"|upper }}
-                    {% elif request.user.estagiario %}
-                        {{ request.user.estagiario.nome_completo|slice:":2"|upper }}
+                    {% elif request.user.aluno %}
+                        {{ request.user.aluno.nome|slice:":2"|upper }}
                     {% else %}
                         {# Fallback caso não seja nem coordenador nem estagiário #}
                         {{ request.user.username|slice:":2"|upper }}
@@ -38,8 +38,8 @@
                     {# Prioriza nome completo do Coordenador, depois do Estagiário, depois get_full_name, depois username #}
                     {% if request.user.coordenadorextensao %}
                         {{ request.user.coordenadorextensao.nome_completo }}
-                    {% elif request.user.estagiario %}
-                        {{ request.user.estagiario.nome_completo }} {# <--- AQUI ESTÁ A MUDANÇA PRINCIPAL #}
+                    {% elif request.user.aluno %}
+                        {{ request.user.aluno.nome }} {# <--- AQUI ESTÁ A MUDANÇA PRINCIPAL #}
                     {% else %}
                         {{ request.user.get_full_name|default:request.user.username }}
                     {% endif %}

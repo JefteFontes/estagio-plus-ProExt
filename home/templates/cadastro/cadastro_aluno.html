@@ -33,8 +33,8 @@
             
             <div class="form-step" id="step1">
                 <div class="form-group">
-                    <label for="{{ form.nome_completo.id_for_label }}">Nome Completo:</label>
-                    {{ form.nome_completo }}
+                    <label for="{{ form.nome.id_for_label }}">Nome Completo:</label>
+                    {{ form.nome }}
                     <span id="nome-error" class="error-message"></span>
                 </div>
 
@@ -203,11 +203,11 @@
         $('#error-alert').addClass('d-none');
         
         if(step === 1) {
-            if($('#id_nome_completo').val().trim() === '') {
-                showError('#id_nome_completo', 'O nome completo é obrigatório.');
+            if($('#id_nome').val().trim() === '') {
+                showError('#id_nome', 'O nome completo é obrigatório.');
                 isValid = false;
             } else {
-                clearError('#id_nome_completo');
+                clearError('#id_nome');
             }
             
             const cpf = $('#id_cpf').val().replace(/\D/g, '');

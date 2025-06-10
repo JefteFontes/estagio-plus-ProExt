@@ -139,61 +139,6 @@ class Cursos(models.Model):
         return f"{self.nome_curso}"
 
 
-class Aluno(models.Model):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-    )
-    nome_completo = models.CharField(max_length=150)
-    cpf = models.CharField(
-        max_length=14,
-        unique=True,
-        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
-    )
-    matricula = models.CharField(
-        max_length=55,
-        null=True,
-        blank=True,
-        unique=True,
-    )
-    email = models.EmailField(unique=True)
-    telefone = models.CharField(max_length=20)
-    curso = models.ForeignKey(Cursos, on_delete=models.PROTECT, null=True, blank=True)
-    periodo = models.IntegerField(
-        null=True,
-        blank=True,
-        default=4,
-        validators=[
-            RegexValidator(regex=r"^[0-9]+$", message="Use apenas números."),
-            MaxValueValidator(8, message="O valor não pode ser maior que 8"),
-            MinValueValidator(1, message="O valor não pode ser menor que 1"),
-        ],
-    )
-    turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
-    status = models.BooleanField(default=False)
-    endereco = models.ForeignKey(
-        Endereco, on_delete=models.PROTECT, null=True, blank=True
-    )
-    instituicao = models.ForeignKey(
-        Instituicao, on_delete=models.PROTECT, null=True, blank=True
-    )
-
-    ira = models.FloatField(
-        null=True,
-        blank=True,
-        validators=[
-            MinValueValidator(0.0, message="O IRA não pode ser menor que 0.0"),
-            MaxValueValidator(10.0, message="O IRA não pode ser maior que 10.0"),
-        ],
-        verbose_name="Índice de Rendimento Acadêmico",
-    )
-
-    def __str__(self):
-        return f"{self.nome_completo}"
-
-
 class CoordenadorExtensao(models.Model):
     user = models.OneToOneField(
         User,
@@ -236,19 +181,12 @@ class Supervisor(models.Model):
     email = models.EmailField(unique=True)
     telefone = models.CharField(
         max_length=20,
-        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
     )
     nome_completo = models.CharField(
         max_length=150,
-        validators=[
-            RegexValidator(regex=r"^[a-zA-Z ]+$", message="Use apenas letras.")
-        ],
     )
     cargo = models.CharField(
         max_length=254,
-        validators=[
-            RegexValidator(regex=r"^[a-zA-Z ]+$", message="Use apenas letras.")
-        ],
     )
     empresa = models.ForeignKey(
         Empresa, on_delete=models.CASCADE, null=True, blank=True
@@ -283,7 +221,7 @@ class Estagio(models.Model):
     turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
     auxilio_transporte = models.FloatField(blank=True, null=True, default=0)
     estagiario = models.ForeignKey(
-        Aluno, on_delete=models.PROTECT, null=True, blank=False
+        "aluno.Aluno", on_delete=models.PROTECT, null=True, blank=False
     )
     empresa = models.ForeignKey(
         Empresa, on_delete=models.PROTECT, null=True, blank=True
@@ -342,7 +280,7 @@ class Estagio(models.Model):
             )
 
     def __str__(self):
-        return f"Estágio: {self.estagiario.nome_completo} em {self.empresa.empresa_nome} ({self.get_status_display()})"
+        return f"Estágio: {self.estagiario.bome} em {self.empresa.empresa_nome} ({self.get_status_display()})"
 
 
 TIPOS_RELATORIO = [
@@ -362,12 +300,3 @@ class RelatorioEstagio(models.Model):
 
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.estagio.estagiario}"
-
-
-class EstagiarioInvite(models.Model):
-    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    instituicao = models.ForeignKey("Instituicao", on_delete=models.CASCADE)
-    coordenador = models.ForeignKey("CoordenadorExtensao", on_delete=models.CASCADE)
-    email = models.EmailField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    used = models.BooleanField(default=False)

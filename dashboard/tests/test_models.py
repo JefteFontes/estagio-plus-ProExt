@@ -5,13 +5,13 @@ from dashboard.models import (
     CoordenadorExtensao,
     Empresa,
     Cursos,
-    Aluno,
     Supervisor,
     Estagio,
     ImportTermoEstagio,
 )
 from django.core.exceptions import ValidationError
 from datetime import timedelta, date
+from aluno.models import Aluno
 
 
 class TestModels(TestCase):

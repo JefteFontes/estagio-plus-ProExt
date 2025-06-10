@@ -6,11 +6,11 @@ from .models import (
     CoordenadorExtensao,
     Empresa,
     Cursos,
-    Aluno,
     Supervisor,
     Estagio,
 )
 from django.urls import reverse
+from aluno.models import Aluno
 
 
 class ViewsIntegrationTestCase(TestCase):
@@ -65,7 +65,7 @@ class ViewsIntegrationTestCase(TestCase):
         )
 
         self.estagiario = Aluno.objects.create(
-            nome_completo="Carlos Sousa",
+            nome="Carlos Sousa",
             cpf="98765432101",
             matricula="2023123456",
             email="carlos@example.com",
@@ -167,7 +167,7 @@ class IntegracaoModelsTestCase(TestCase):
         )
 
         self.estagiario = Aluno.objects.create(
-            nome_completo="Carlos da Silva",
+            nome="Carlos da Silva",
             cpf="98765432101",
             matricula="2023123456",
             email="carlos@example.com",

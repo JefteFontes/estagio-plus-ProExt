@@ -136,7 +136,7 @@ def notificar_estagiarios_relatorios_pendentes(request):
         
         if relatorios_proximos_vencimento:
             context = {
-                'estagiario_nome': estagio.estagiario.nome_completo,
+                'estagiario_nome': estagio.estagiario.nome,
                 'relatorios_pendentes': relatorios_proximos_vencimento,
                 'site_name': settings.SITE_NAME,
                 'site_url': request.build_absolute_uri('/'),
