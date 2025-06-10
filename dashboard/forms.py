@@ -534,8 +534,6 @@ class EmpresaCadastroForm(forms.ModelForm):
     # Campos para os dados do usuário
     convenio = forms.CharField(
         max_length=8,
-        unique=True,
-        required=True,
         widget=forms.TextInput(
             attrs={"class": "form-control", "placeholder": "Convênio"}
         ),
@@ -602,7 +600,6 @@ class EmpresaCadastroForm(forms.ModelForm):
     )
     empresa_cnpj = forms.CharField(
         max_length=20,
-        unique=True,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
