@@ -33,7 +33,7 @@ class Aluno(models.Model):
         default=4,
         validators=[
             RegexValidator(regex=r"^[0-9]+$", message="Use apenas números."),
-            MaxValueValidator(8, message="O valor não pode ser maior que 8"),
+            MaxValueValidator(12, message="O valor não pode ser maior que 12"),
             MinValueValidator(1, message="O valor não pode ser menor que 1"),
         ],
     )
