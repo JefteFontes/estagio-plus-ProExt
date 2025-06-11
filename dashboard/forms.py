@@ -585,7 +585,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
                     "class": "form-control",
                     "placeholder": "Período (ex:1)",
                     "min": "1",
-                    "max": "8",
+                    "max": "12",
                 }
             ),
             "telefone": forms.TextInput(
