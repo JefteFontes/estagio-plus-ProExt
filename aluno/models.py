@@ -26,7 +26,6 @@ class Aluno(models.Model):
     )
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20)
-    curso = models.ForeignKey(Cursos, on_delete=models.PROTECT, null=True, blank=True)
     periodo = models.IntegerField(
         null=True,
         blank=True,
@@ -37,15 +36,7 @@ class Aluno(models.Model):
             MinValueValidator(1, message="O valor não pode ser menor que 1"),
         ],
     )
-    turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
     status = models.BooleanField(default=False)
-    endereco = models.ForeignKey(
-        Endereco, on_delete=models.PROTECT, null=True, blank=True
-    )
-    instituicao = models.ForeignKey(
-        Instituicao, on_delete=models.PROTECT, null=True, blank=True
-    )
-
     ira = models.FloatField(
         null=True,
         blank=True,
@@ -55,6 +46,16 @@ class Aluno(models.Model):
         ],
         verbose_name="Índice de Rendimento Acadêmico",
     )
+
+    instituicao = models.ForeignKey(
+        Instituicao, on_delete=models.PROTECT, null=True, blank=True
+    )
+    curso = models.ForeignKey(Cursos, on_delete=models.PROTECT, null=True, blank=True)
+    turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
+    endereco = models.ForeignKey(
+        Endereco, on_delete=models.PROTECT, null=True, blank=True
+    )
+
 
     def __str__(self):
         return f"{self.nome}"
