@@ -7,7 +7,6 @@ from aluno.models import Aluno
 @login_required
 def dashboard_aluno(request):
     try:
-
         aluno = Aluno.objects.get(user=request.user)
     except Aluno.DoesNotExist:
         messages.error(
@@ -19,4 +18,4 @@ def dashboard_aluno(request):
     context = {
         "estagiario": aluno,
     }
-    return render(request, "dashboard_aluno.html", context)
+    return render(request, "aluno/dashboard_aluno.html", context)
