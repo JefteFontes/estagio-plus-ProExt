@@ -2,7 +2,6 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from .models import (
     Endereco,
-    Instituicao,
     CoordenadorExtensao,
     Empresa,
     Cursos,
@@ -11,6 +10,7 @@ from .models import (
 )
 from django.urls import reverse
 from aluno.models import Aluno
+from instituicao.models import Instituicao
 
 
 class ViewsIntegrationTestCase(TestCase):

@@ -1,11 +1,9 @@
 import re
 from django import forms
 from django.contrib.auth.models import User
-from aluno.models import Aluno
-from dashboard.models import CoordenadorExtensao, Instituicao, Endereco, Cursos
+from dashboard.models import CoordenadorExtensao, Endereco
 from dashboard.views.utils import validate_cpf
-from django.core.validators import MinValueValidator, MaxValueValidator
-
+from instituicao.models import Instituicao
 
 class CoordenadorCadastroForm(forms.ModelForm):
     email = forms.EmailField(

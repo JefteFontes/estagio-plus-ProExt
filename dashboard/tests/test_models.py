@@ -1,7 +1,6 @@
 from django.test import TestCase
 from dashboard.models import (
     Endereco,
-    Instituicao,
     CoordenadorExtensao,
     Empresa,
     Cursos,
@@ -12,6 +11,7 @@ from dashboard.models import (
 from django.core.exceptions import ValidationError
 from datetime import timedelta, date
 from aluno.models import Aluno
+from instituicao.models import Instituicao
 
 
 class TestModels(TestCase):

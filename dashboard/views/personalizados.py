@@ -1,14 +1,11 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.shortcuts import render
 from aluno.models import Aluno
 from dashboard.models import (
-    CoordenadorExtensao,
     Estagio,
     Empresa,
-    Instituicao,
     Supervisor,
 )
-from django.db.models import Q
 from django.utils.dateparse import parse_date
 
 

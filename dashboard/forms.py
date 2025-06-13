@@ -10,7 +10,6 @@ from .models import (
     Estagio,
     Supervisor,
     Empresa,
-    Instituicao,
     TipoChoices,
     TurnoChoices,
     StatusChoices,
@@ -19,6 +18,7 @@ from .models import (
     CoordenadorExtensao,
 )
 from aluno.models import Aluno
+from instituicao.models import Instituicao
 
 class CursosCadastroForm(forms.ModelForm):
     class Meta:

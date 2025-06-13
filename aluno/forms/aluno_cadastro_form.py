@@ -2,7 +2,8 @@ from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from aluno.models import Aluno
-from dashboard.models import Cursos, Endereco, Instituicao
+from dashboard.models import Cursos, Endereco
+from instituicao.models import Instituicao
 from dashboard.views.utils import validate_cpf
 
 class AlunoCadastroForm(forms.ModelForm):

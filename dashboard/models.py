@@ -1,10 +1,7 @@
 from django.db import models
-from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
+from django.core.validators import RegexValidator
 from django.forms import ValidationError
 from django.contrib.auth.models import User
-import uuid
-from base.models import InstituicaoLegal
-
 
 class TurnoChoices(models.TextChoices):
     MANHA = "Manhã"
@@ -29,18 +26,8 @@ class Endereco(models.Model):
         return f"{self.rua}, {self.numero} - {self.bairro}"
 
 
-class Instituicao(InstituicaoLegal):
-    endereco = models.ForeignKey(
-        Endereco, on_delete=models.PROTECT, null=True, blank=True
-    )
-    logo = models.ImageField(upload_to="instituicao_logos/", null=True, blank=True)
-
-    def __str__(self):
-        return self.nome
-
-
 class Empresa(models.Model):
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
+    instituicao = models.ForeignKey("instituicao.Instituicao", on_delete=models.PROTECT)
     convenio = models.CharField(
         max_length=80,
         null=True,
@@ -96,7 +83,7 @@ class Areachoices(models.TextChoices):
 
 
 class Cursos(models.Model):
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
+    instituicao = models.ForeignKey("instituicao.Instituicao", on_delete=models.PROTECT)
     nome_curso = models.CharField(
         max_length=50,
         null=False,
@@ -165,7 +152,7 @@ class CoordenadorExtensao(models.Model):
         ],
     )
     instituicao = models.ForeignKey(
-        Instituicao, on_delete=models.PROTECT, null=True, blank=True
+        "instituicao.Instituicao", on_delete=models.PROTECT, null=True, blank=True
     )
 
     def __str__(self):
@@ -230,7 +217,7 @@ class Estagio(models.Model):
         Supervisor, on_delete=models.PROTECT, null=True, blank=True
     )
     instituicao = models.ForeignKey(
-        Instituicao, on_delete=models.PROTECT, null=True, blank=True
+        "instituicao.Instituicao", on_delete=models.PROTECT, null=True, blank=True
     )
     orientador = models.TextField(max_length=100, null=True, blank=True)
     pdf_termo = models.FileField(upload_to="termos/", null=True, blank=True)

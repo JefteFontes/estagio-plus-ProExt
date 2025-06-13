@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 
-from dashboard.models import Cursos, Endereco, Instituicao, TurnoChoices
+from dashboard.models import Cursos, Endereco, TurnoChoices
+from instituicao.models import Instituicao
 
 
 class Aluno(models.Model):

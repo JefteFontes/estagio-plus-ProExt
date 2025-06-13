@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "home",
     "base",
     "aluno",
+    "instituicao",
 ]
 
 SITE_ID = 1
@@ -52,7 +53,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'dashboard.context_processors.relatorios_pendentes',
+                "dashboard.context_processors.relatorios_pendentes",
             ],
         },
     },
