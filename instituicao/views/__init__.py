@@ -1,0 +1,1 @@
+from .cadastro_intituicao import cadastrar_instituicao

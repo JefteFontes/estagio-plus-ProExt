@@ -133,8 +133,8 @@ def ativar_acesso_estagiario(request, estagiario_instance):
             user = User.objects.create_user(
                 username=estagiario_instance.email, # O email é usado como username para login
                 email=estagiario_instance.email,
-                first_name=estagiario_instance.nome_completo.split(' ')[0] if estagiario_instance.nome_completo else '',
-                last_name=' '.join(estagiario_instance.nome_completo.split(' ')[1:]) if estagiario_instance.nome_completo else '',
+                first_name=estagiario_instance.nome.split(' ')[0] if estagiario_instance.nome else '',
+                last_name=' '.join(estagiario_instance.nome.split(' ')[1:]) if estagiario_instance.nome else '',
                 is_active=True, 
             )
 

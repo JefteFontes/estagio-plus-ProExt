@@ -26,7 +26,7 @@
         {% for grupo in relatorios_por_estagio.values %}
         <div class="company-card">
             <div class="card-header text-center">
-                <div class="initials">{{ grupo.estagio.estagiario.nome_completo|slice:":1"|upper }}</div>
+                <div class="initials">{{ grupo.estagio.estagiario.nome|slice:":1"|upper }}</div>
                 <h3 class="company-name mt-2">{{ grupo.estagio.estagiario }}</h3>
             </div>
 

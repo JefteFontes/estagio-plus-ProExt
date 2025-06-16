@@ -2,9 +2,11 @@ import os
 import tempfile
 from django.urls import reverse
 import pdfplumber
-from django.shortcuts import  render, redirect
+from django.shortcuts import render, redirect
 from .utils import parse_sections
-from ..models import Estagio, Empresa, Estagiario, Supervisor, Endereco
+from ..models import Estagio, Empresa, Supervisor, Endereco
+
+from aluno.models import Aluno
 
 
 def importar_pdf(request):
@@ -45,7 +47,7 @@ def importar_pdf(request):
 
             # Criar ou Recuperar Estagiário
             estagiario_data = sections.get("estagiário", {})
-            estagiario = Estagiario.objects.filter(
+            estagiario = Aluno.objects.filter(
                 email=estagiario_data.get("email", "")
             ).first()
             if not estagiario:
@@ -57,8 +59,8 @@ def importar_pdf(request):
                     estado=estagiario_data.get("estado", ""),
                     cep=estagiario_data.get("cep", ""),
                 )
-                estagiario = Estagiario.objects.create(
-                    nome_completo=estagiario_data.get("nome_completo", ""),
+                estagiario = Aluno.objects.create(
+                    nome=estagiario_data.get("nome", ""),
                     cpf=estagiario_data.get("cpf", ""),
                     matricula=estagiario_data.get("matricula", ""),
                     curso=estagiario_data.get("curso", ""),

@@ -1,17 +1,17 @@
 from django.test import TestCase
 from dashboard.models import (
     Endereco,
-    Instituicao,
     CoordenadorExtensao,
     Empresa,
     Cursos,
-    Estagiario,
     Supervisor,
     Estagio,
     ImportTermoEstagio,
 )
 from django.core.exceptions import ValidationError
 from datetime import timedelta, date
+from aluno.models import Aluno
+from instituicao.models import Instituicao
 
 
 class TestModels(TestCase):
@@ -104,7 +104,7 @@ class TestModels(TestCase):
             coordenador="Coordenador Teste",
             email_coordenador="coordenador@test.com",
         )
-        estagiario = Estagiario.objects.create(
+        estagiario = Aluno.objects.create(
             primeiro_nome="Estagiário",
             sobrenome="Teste",
             cpf="12345678901",
@@ -164,7 +164,7 @@ class TestModels(TestCase):
             email="empresa@test.com",
             instituicao=instituicao,
         )
-        estagiario = Estagiario.objects.create(
+        estagiario = Aluno.objects.create(
             primeiro_nome="Estagiário",
             sobrenome="Teste",
             cpf="12345678901",

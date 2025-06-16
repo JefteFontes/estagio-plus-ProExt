@@ -1,9 +1,12 @@
-from django.shortcuts import get_object_or_404, render
 from django.shortcuts import render
-from dashboard.models import CoordenadorExtensao, Estagio, Empresa, Instituicao, Supervisor, Estagiario
-from django.db.models import Q
+from django.shortcuts import render
+from aluno.models import Aluno
+from dashboard.models import (
+    Estagio,
+    Empresa,
+    Supervisor,
+)
 from django.utils.dateparse import parse_date
-
 
 
 def dashboard_personalizados(request):
@@ -14,10 +17,9 @@ def dashboard_personalizados(request):
         "turnos": Estagio._meta.get_field("turno").choices,
         "empresas": Empresa.objects.all(),
         "supervisores": Supervisor.objects.all(),
-        "estagiarios": Estagiario.objects.all()
-        
+        "estagiarios": Aluno.objects.all(),
     }
-    return render(request, 'dashboard_personalizados.html', context)
+    return render(request, "dashboard_personalizados.html", context)
 
 
 def relatorio_personalidizado(request):
@@ -56,6 +58,6 @@ def relatorio_personalidizado(request):
     context = {
         "estagios": estagios,
         "filtros": request.GET,
-        "instituicao": Estagio.objects.first().instituicao
+        "instituicao": Estagio.objects.first().instituicao,
     }
     return render(request, "relatorio_personalizado.html", context)

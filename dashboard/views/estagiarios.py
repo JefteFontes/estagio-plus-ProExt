@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.core.mail import send_mail
 
 from dashboard.models import CoordenadorExtensao, Estagio
-from ..forms import EstagiarioCadastroForm, Estagiario
+from ..forms import EstagiarioCadastroForm, Aluno
 
 
 @login_required
@@ -23,9 +23,10 @@ def cadastrar_estagiario(request):
 
     return render(request, "cadastrar_estagiario.html", {"form": form})
 
+
 @login_required
 def editar_estagiario(request, estagiario_id):
-    estagiario = get_object_or_404(Estagiario, id=estagiario_id)
+    estagiario = get_object_or_404(Aluno, id=estagiario_id)
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
 
     if request.method == "POST":
@@ -41,9 +42,10 @@ def editar_estagiario(request, estagiario_id):
         request, "cadastrar_estagiario.html", {"form": form, "estagiario": estagiario}
     )
 
+
 @login_required
 def deletar_estagiario(request, estagiario_id):
-    estagiario = get_object_or_404(Estagiario, id=estagiario_id)
+    estagiario = get_object_or_404(Aluno, id=estagiario_id)
     # verificar se der algum erro
     if Estagio.objects.filter(estagiario=estagiario).exists():
         messages.error(
@@ -66,7 +68,9 @@ def estagiario_auto_cadastro(request, token):
             invite.used = True
             invite.save()
             messages.success(request, "Cadastro realizado com sucesso!")
-            return redirect('dashboard_estagiario')
+            return redirect("dashboard_estagiario")
     else:
-        form = EstagiarioCadastroForm(initial={'email': invite.email}, instituicao=invite.instituicao)
+        form = EstagiarioCadastroForm(
+            initial={"email": invite.email}, instituicao=invite.instituicao
+        )
     return render(request, "cadastrar_estagiario.html", {"form": form})

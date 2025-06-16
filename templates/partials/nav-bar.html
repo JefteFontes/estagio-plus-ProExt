@@ -22,8 +22,29 @@
                 </div>
             </div>
             <div class="user-info">
-                <span class="initials-user">{{ request.user.username|slice:":2"|upper }}</span>
-                <span class="user-name">{{ request.user.username }}</span>
+                <span class="initials-user">
+                    {# Exibe as iniciais do coordenador ou aluno #}
+                    {% if request.user.coordenadorextensao %}
+                        {{ request.user.coordenadorextensao.nome_completo|slice:":2"|upper }}
+                    {% elif request.user.aluno %}
+                        {{ request.user.aluno.nome|slice:":2"|upper }}
+                    {% else %}
+                        {# Fallback caso não seja nem coordenador nem estagiário #}
+                        {{ request.user.username|slice:":2"|upper }}
+                    {% endif %}
+                </span>
+                
+                <span class="user-name">
+                    {# Prioriza nome completo do Coordenador, depois do Estagiário, depois get_full_name, depois username #}
+                    {% if request.user.coordenadorextensao %}
+                        {{ request.user.coordenadorextensao.nome_completo }}
+                    {% elif request.user.aluno %}
+                        {{ request.user.aluno.nome }} {# <--- AQUI ESTÁ A MUDANÇA PRINCIPAL #}
+                    {% else %}
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    {% endif %}
+                </span>
+                
                 <div class="user-dropdown">
                     <button title="User logout-edit" class="user-button" onclick="toggleDropdown()" id="userDropdownButton">
                         <i class="fa-solid fa-chevron-down"></i>
@@ -37,18 +58,18 @@
                 </div>
             </div>
         </div>
-            {% else %}
-            <div class="navbar-menu">
-                {% url 'home' as inicio_url_ %}
-                {% if inicio_url_ %}
-                    <a href="{{ inicio_url_ }}">Inicio</a>
-                {% endif %}
-                {% if login_url_ %}
-                    <a href="{{ login_url_ }}">Login</a>
-                {% endif %}
-                <a href="#">Contato</a>
-                <a href="#">Sobre</a>
-            </div>
+        {% else %}
+        <div class="navbar-menu">
+            {% url 'home' as inicio_url_ %}
+            {% if inicio_url_ %}
+                <a href="{{ inicio_url_ }}">Inicio</a>
+            {% endif %}
+            {% if login_url_ %}
+                <a href="{{ login_url_ }}">Login</a>
+            {% endif %}
+            <a href="#">Contato</a>
+            <a href="#">Sobre</a>
+        </div>
         {% endif %}
     </nav>
 </header>
