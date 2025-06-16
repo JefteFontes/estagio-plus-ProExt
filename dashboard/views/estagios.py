@@ -1,7 +1,9 @@
 import datetime
+import os
+from .utils import preencher_tceu
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from ..forms import EstagioCadastroForm
@@ -163,9 +165,29 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
     if request.method == "POST":
         form = EstagioCadastroForm(request.POST, instance=estagio, user=request.user)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Estágio salvo com sucesso!")
-            return redirect("dashboard_instituicao")
+            estagio_instance = form.save()
+            
+            template_path = str(os.path.join(settings.BASE_DIR, "dashboard", "templates", "docs", "TceuTemplate.docx"))
+            
+            output_pdf_path = preencher_tceu(estagio_instance, template_path)
+            
+            if output_pdf_path and os.path.exists(str(output_pdf_path)): 
+                
+                relative_path = str(output_pdf_path).replace(str(settings.MEDIA_ROOT), '').lstrip('/')
+                estagio_instance.pdf_termo.name = relative_path
+                estagio_instance.save()
+
+                with open(str(output_pdf_path), 'rb') as fh:  
+                    response = HttpResponse(fh.read(), content_type="application/pdf")
+                    filename = os.path.basename(str(output_pdf_path))   
+                    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+                    
+                    # Adicionando mensagem de sucesso antes do retorno
+                    messages.success(request, "Estágio salvo com sucesso!")
+                    return response
+            else:
+                messages.error(request, "O documento PDF não pôde ser gerado.")
+                raise Http404("O documento PDF não pôde ser gerado.")
         else:
             messages.error(request, "Erro ao salvar estágio.")
     else:
@@ -214,6 +236,13 @@ def detalhes_estagio(request):
     duracao = estagio_duracao(estagio)
     tempo_falta = estagio_falta_dias(estagio)
     relatorios_pendentes = verificar_relatorios_pendentes(estagio)
+    documento_path = None
+    documento_url = None
+    if estagio.pdf_termo: 
+        documento_path = os.path.join(settings.MEDIA_ROOT, estagio.pdf_termo.name)
+        documento_url = estagio.pdf_termo.url if hasattr(estagio.pdf_termo, 'url') else None
+    print("Documento Path:", documento_path)
+    print("Documento URL:", documento_url)
 
     return render(
         request,
@@ -223,6 +252,9 @@ def detalhes_estagio(request):
             "duracao": duracao,
             "tempo_falta": tempo_falta,
             "relatorios_pendentes": relatorios_pendentes,
+            "documento_path": documento_path,
+            "documento_url": documento_url,
+            "documento_existe": os.path.exists(documento_url) if documento_url else False,
         },
     )
 
@@ -235,3 +267,19 @@ def get_supervisores(request):
         )
         return JsonResponse(list(supervisores), safe=False)
     return JsonResponse([], safe=False)
+
+def download_tceu(request, estagio_id):
+    estagio = get_object_or_404(Estagio, id=estagio_id)
+
+    if not estagio.pdf_termo:
+        raise Http404("Documento não encontrado.")
+    
+    file_path = os.path.join(settings.MEDIA_ROOT, estagio.pdf_termo.name)
+    
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/pdf")
+            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+            return response
+    else:
+        raise Http404("Documento não encontrado.")

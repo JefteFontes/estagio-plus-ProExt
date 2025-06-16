@@ -1,10 +1,16 @@
 # dashboard/views/utils.py
 
 import traceback
+import os
+from docx import Document
+import docxedit
+from docx2pdf import convert
+from num2words import num2words
 import requests
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.conf import settings
 from allauth.account.forms import ResetPasswordForm
 # Remova: from pyexpat.errors import messages  <-- ISTO ESTÁ ERRADO E CAUSA PROBLEMAS
 from django.contrib import messages # <--- Use esta importação correta para messages
@@ -12,6 +18,7 @@ from django.contrib import messages # <--- Use esta importação correta para me
 # Importe os módulos nativos do Python para geração de senha aleatória
 import secrets
 import string
+import pythoncom
 
 # Obtém o modelo de usuário ativo no seu projeto
 User = get_user_model()
@@ -156,3 +163,97 @@ def ativar_acesso_estagiario(request, estagiario_instance):
         traceback.print_exc() # Imprime o stack trace completo para depuração
         message = f"Ocorreu um erro inesperado ao ativar o estagiário como usuário: {str(e)}"
         return False, message
+    
+def preencher_tceu(estagio, template_path):
+    safe_student_name = "".join([c for c in estagio.estagiario.nome_completo if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+    base_filename = f'TCE_{safe_student_name.replace(" ", "_")}'
+    
+    output_dir = os.path.join(settings.MEDIA_ROOT, 'temp_docs')
+    os.makedirs(output_dir, exist_ok=True)
+
+    docx_path = os.path.join(output_dir, f'{base_filename}.docx')
+    pdf_path = os.path.join(output_dir, f'{base_filename}.pdf')
+    
+    try:
+        pythoncom.CoInitialize()
+
+        document = Document(template_path)
+        estagiario = estagio.estagiario
+        empresa = estagio.empresa
+        supervisor = estagio.supervisor
+        endereco_estagiario = estagiario.endereco
+        endereco_empresa = empresa.endereco
+
+        docxedit.replace_string(document, old_string='NomeEstagiario', new_string=estagiario.nome_completo)
+        docxedit.replace_string(document, old_string='MatriculaEstagiario', new_string=estagiario.matricula)
+        docxedit.replace_string(document, old_string='CPFEstagiario', new_string=estagiario.cpf) 
+        docxedit.replace_string(document, old_string='CursoEstagiario', new_string=estagiario.curso.nome_curso) 
+        docxedit.replace_string(document, old_string='PeriodoEstagiario', new_string=str(estagiario.periodo)) 
+        docxedit.replace_string(document, old_string='EmailEstagiario', new_string=estagiario.email)
+        docxedit.replace_string(document, old_string='TelefoneEstagiario', new_string=estagiario.telefone)
+        docxedit.replace_string(document, old_string='EnderecoEstagiario', new_string=endereco_estagiario.rua)
+        docxedit.replace_string(document, old_string='NEstagiario', new_string=endereco_estagiario.numero)
+        docxedit.replace_string(document, old_string='BairroEstagiario', new_string=endereco_estagiario.bairro)
+        docxedit.replace_string(document, old_string='CidadeEstagiario', new_string=endereco_estagiario.cidade)
+        docxedit.replace_string(document, old_string='CEPEstagiario', new_string=endereco_estagiario.cep)
+        docxedit.replace_string(document, old_string='UFEstagiario', new_string=endereco_estagiario.estado)
+
+        docxedit.replace_string(document, old_string='RazaoEmpresa', new_string=empresa.empresa_nome) 
+        docxedit.replace_string(document, old_string='Razão social/Nome:', new_string=f'Razão social/Nome: {empresa.empresa_nome}') 
+        docxedit.replace_string(document, old_string='CNPJEmpresa', new_string=empresa.cnpj) 
+        docxedit.replace_string(document, old_string='CNPJ/CPF:', new_string=f'CNPJ/CPF: {empresa.cnpj}') 
+        docxedit.replace_string(document, old_string='RepresentanteEmpresa', new_string=supervisor.nome_completo) 
+        docxedit.replace_string(document, old_string='CPFEmpresaRepresentante', new_string=supervisor.cpf)
+        docxedit.replace_string(document, old_string='CargoEmpresaRepresentante', new_string=supervisor.cargo)
+        docxedit.replace_string(document, old_string='EnderecoEmpresa', new_string=endereco_empresa.rua)
+        docxedit.replace_string(document, old_string='NEstagiarioEmpresa', new_string=endereco_empresa.numero)
+        docxedit.replace_string(document, old_string='BairroEmpresa', new_string=endereco_empresa.bairro)
+        docxedit.replace_string(document, old_string='CidadeEstagiarioEmpresa', new_string=endereco_empresa.cidade)    
+        docxedit.replace_string(document, old_string='CEPEstagiarioEmpresa', new_string=endereco_empresa.cep)
+        docxedit.replace_string(document, old_string='UFEstagiarioEmpresa', new_string=endereco_empresa.estado)
+        docxedit.replace_string(document, old_string='EmailEmpresa', new_string=empresa.email)
+
+        if supervisor:
+            docxedit.replace_string(document, old_string='EstagiarioSupervisor', new_string=supervisor.nome_completo) 
+            docxedit.replace_string(document, old_string='CPFSupervisor', new_string=supervisor.cpf) 
+            docxedit.replace_string(document, old_string='Nome do Supervisor/Preceptor:', new_string=f'Nome do Supervisor/Preceptor: {supervisor.nome_completo}') 
+
+        docxedit.replace_string(document, old_string='Início: __/__/___', new_string=f"Início: {estagio.data_inicio.strftime('%d/%m/%Y')}") 
+        docxedit.replace_string(document, old_string='Término: ___/___/___', new_string=f"Término: {estagio.data_fim.strftime('%d/%m/%Y')}") 
+
+        carga_horaria_diaria = 6
+        carga_horaria_semanal = 30
+
+        docxedit.replace_string(document, old_string='Carga horária diária: __ horas', new_string=f'Carga horária diária: {carga_horaria_diaria} horas') 
+        docxedit.replace_string(document, old_string='semanal de ___ horas', new_string=f'semanal de {carga_horaria_semanal} horas') 
+
+        bolsa_valor = estagio.bolsa_estagio or 0
+        bolsa_extenso = num2words(bolsa_valor, lang='pt_BR', to='currency')
+        docxedit.replace_string(document, old_string='R$___ (___)', new_string=f'R${bolsa_valor:.2f} ({bolsa_extenso})') 
+        
+        auxilio_valor = estagio.auxilio_transporte or 0
+        auxilio_extenso = num2words(auxilio_valor, lang='pt_BR', to='currency')
+        docxedit.replace_string(document, old_string='R$___ (__)', new_string=f'R${auxilio_valor:.2f} ({auxilio_extenso})') 
+
+        
+        docxedit.replace_string(document, old_string='Atividades a serem desenvolvidas pelo(a) estagiário(a):,', new_string=f'Atividades a serem desenvolvidas pelo(a) estagiário(a): {estagio.descricao}')
+        
+        safe_student_name = "".join([c for c in estagiario.nome_completo if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+        output_filename = f'TCE_{safe_student_name.replace(" ", "_")}.docx'
+        output_path = os.path.join(settings.MEDIA_ROOT, 'temp_docs', output_filename)
+        
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        document.save(docx_path)
+
+        convert(docx_path, pdf_path)
+        
+        return pdf_path
+
+    except Exception as e:
+        print(f"Ocorreu um erro ao gerar o documento: {e}")
+        return None
+    finally:
+        if os.path.exists(docx_path):
+            os.remove(docx_path)
+        
+        pythoncom.CoUninitialize()

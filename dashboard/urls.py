@@ -18,6 +18,7 @@ from dashboard.views.estagios import (
     editar_estagio,
     add_estagios,
     complementar_estagio,
+    download_tceu
 )
 
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
@@ -52,6 +53,7 @@ urlpatterns = [
     path("editar_cursos/<int:curso_id>", editar_curso, name="editar_curso"),
     path("deletar_curso/<int:curso_id>", deletar_curso, name="deletar_curso"),
     path("detalhes-estagio", detalhes_estagio, name="detalhes_estagio"),
+    path('estagio/<int:estagio_id>/download-tceu/', download_tceu, name='download_tceu'),
     path("relatorios/", relatorios, name="dashboard_relatorios"),
     path(
         "estagio/<int:estagio_id>/relatorios/",
