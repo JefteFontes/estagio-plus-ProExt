@@ -165,7 +165,7 @@ def ativar_acesso_estagiario(request, estagiario_instance):
         return False, message
     
 def preencher_tceu(estagio, template_path):
-    safe_student_name = "".join([c for c in estagio.estagiario.nome_completo if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+    safe_student_name = "".join([c for c in estagio.estagiario.nome if c.isalpha() or c.isdigit() or c==' ']).rstrip()
     base_filename = f'TCE_{safe_student_name.replace(" ", "_")}'
     
     output_dir = os.path.join(settings.MEDIA_ROOT, 'temp_docs')
@@ -184,7 +184,7 @@ def preencher_tceu(estagio, template_path):
         endereco_estagiario = estagiario.endereco
         endereco_empresa = empresa.endereco
 
-        docxedit.replace_string(document, old_string='NomeEstagiario', new_string=estagiario.nome_completo)
+        docxedit.replace_string(document, old_string='NomeEstagiario', new_string=estagiario.nome)
         docxedit.replace_string(document, old_string='MatriculaEstagiario', new_string=estagiario.matricula)
         docxedit.replace_string(document, old_string='CPFEstagiario', new_string=estagiario.cpf) 
         docxedit.replace_string(document, old_string='CursoEstagiario', new_string=estagiario.curso.nome_curso) 
@@ -238,7 +238,7 @@ def preencher_tceu(estagio, template_path):
         
         docxedit.replace_string(document, old_string='Atividades a serem desenvolvidas pelo(a) estagiário(a):,', new_string=f'Atividades a serem desenvolvidas pelo(a) estagiário(a): {estagio.descricao}')
         
-        safe_student_name = "".join([c for c in estagiario.nome_completo if c.isalpha() or c.isdigit() or c==' ']).rstrip()
+        safe_student_name = "".join([c for c in estagiario.nome if c.isalpha() or c.isdigit() or c==' ']).rstrip()
         output_filename = f'TCE_{safe_student_name.replace(" ", "_")}.docx'
         output_path = os.path.join(settings.MEDIA_ROOT, 'temp_docs', output_filename)
         

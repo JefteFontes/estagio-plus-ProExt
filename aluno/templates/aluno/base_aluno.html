@@ -41,10 +41,10 @@
             <div class="side-elements">
                 <div class="sidebar-top">
                     <ul>
-                        {% url 'dashboard_aluno' as dashboard_aluno_url %}
-                        <a class="btn-sidebar" href="{{ dashboard_aluno_url }}">
-                            <li class="{% if request.path == dashboard_aluno_url %}actived{% endif %}">
-                                <span class="icon"><i class="fa-solid fa-gauge-high"></i></span>
+                        {% url 'estagios_aluno' as estagios_aluno_url %}
+                        <a class="btn-sidebar" href="{{ estagios_aluno_url }}">
+                            <li class="{% if request.path == estagios_aluno_url %}btn-active-student{% endif %}">
+                                <span class="icon"><i class="fa-solid fa-briefcase"></i></span> 
                                 <span class="text">Meus Estágios</span>
                             </li>
                         </a>

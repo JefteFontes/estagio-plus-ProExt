@@ -150,18 +150,12 @@ def dashboard_estagiario(request):
 def dashboard_instituicao(request):
     errors = []
 
-    if hasattr(request.user, "coordenadorextensao"):
+    if hasattr(request.user, "coordenadorextensao") and request.user.coordenadorextensao:
         coordenador = request.user.coordenadorextensao
         instituicao = coordenador.instituicao
         estagios = Estagio.objects.filter(instituicao=instituicao)
-    elif hasattr(request.user, "aluno"):
-        estagiario = request.user.aluno
-        estagios = Estagio.objects.filter(estagiario=estagiario)
-        instituicao = (
-            estagiario.instituicao if hasattr(estagiario, "instituicao") else None
-        )
     else:
-        return HttpResponseForbidden("Acesso não autorizado")
+        return HttpResponseForbidden("Acesso não autorizado. Esta página é exclusiva para Coordenadores de Extensão.")
 
     if request.method == "POST" and request.FILES.get("pdf_file"):
         pdf_file = request.FILES["pdf_file"]
@@ -175,12 +169,9 @@ def dashboard_instituicao(request):
                 text = "\n".join(page.extract_text() or "" for page in pdf.pages)
 
                 sections = parse_sections(text)
-                print(
-                    f"Seções extraídas: {sections.keys()}"
-                )  # Log das seções extraídas
+                print(f"Seções extraídas: {sections.keys()}")
             print("- - - - - - - - - - - - - - - - - - - - - -")
 
-            # Tratamento dos dados da empresa
             empresa_data = sections.get("empresa", {})
             if not empresa_data:
                 errors.append("Dados da empresa não encontrados no PDF.")
@@ -188,9 +179,7 @@ def dashboard_instituicao(request):
 
             try:
                 empresa = Empresa.objects.get(email=empresa_data.get("email", ""))
-                print(
-                    f"Empresa já existente: {empresa.nome}"
-                )  # Log da empresa encontrada
+                print(f"Empresa já existente: {empresa.nome}")
             except Empresa.DoesNotExist:
                 endereco_empresa = Endereco.objects.create(
                     rua=empresa_data.get("rua", ""),
@@ -208,7 +197,6 @@ def dashboard_instituicao(request):
                     email=empresa_data.get("email", ""),
                 )
 
-            # Tratamento dos dados do estagiário
             estagiario_data = sections.get("estagiário", {})
             if not estagiario_data:
                 errors.append("Dados do estagiário não encontrados no PDF.")
@@ -230,10 +218,9 @@ def dashboard_instituicao(request):
                 curso=estagiario_data.get("curso", ""),
                 telefone=estagiario_data.get("telefone", ""),
                 email=estagiario_data.get("email", ""),
-                endereco=endereco_estagiario,  # Associando o endereço ao estagiário
+                endereco=endereco_estagiario,
             )
 
-            # Tratamento dos dados do estágio
             estagio_data = sections.get("estágio", {})
             if not estagio_data:
                 errors.append("Dados do estágio não encontrados no PDF.")
@@ -256,7 +243,7 @@ def dashboard_instituicao(request):
 
         except Exception as e:
             errors.append(f"Erro ao processar o PDF ou salvar dados: {str(e)}")
-            print(f"Erro detalhado: {str(e)}")  # Log do erro
+            print(f"Erro detalhado: {str(e)}")
 
         finally:
             os.remove(file_path)
@@ -292,7 +279,6 @@ def dashboard_instituicao(request):
         "errors": errors,
     }
     return render(request, "dashboard_instituicao.html", context)
-
 
 def cadastrar_cursos(request):
     coordenador_extensao = CoordenadorExtensao.objects.get(user=request.user)

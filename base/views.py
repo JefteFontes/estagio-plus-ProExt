@@ -11,7 +11,7 @@ def profile_redirect(request):
         return redirect("dashboard_instituicao")
 
     if hasattr(user, "aluno") and user.aluno:
-        return redirect("dashboard_aluno")
+        return redirect("estagios_aluno")
 
     messages.warning(
         request,

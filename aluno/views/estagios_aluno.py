@@ -2,12 +2,17 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from aluno.models import Aluno
+from dashboard.models import Estagio
 
 
 @login_required
-def dashboard_aluno(request):
+def estagios_aluno(request):
+    aluno = None
+    estagios = []
+
     try:
         aluno = Aluno.objects.get(user=request.user)
+        estagios = Estagio.objects.filter(estagiario=aluno).order_by("-data_inicio")
     except Aluno.DoesNotExist:
         messages.error(
             request,
@@ -16,6 +21,7 @@ def dashboard_aluno(request):
         return redirect("/login/")
 
     context = {
-        "estagiario": aluno,
+        "aluno": aluno,
+        "estagios": estagios,
     }
-    return render(request, "aluno/dashboard_aluno.html", context)
+    return render(request, "aluno/estagios_aluno.html", context)
