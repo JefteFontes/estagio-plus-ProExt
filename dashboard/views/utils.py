@@ -133,8 +133,8 @@ def ativar_acesso_estagiario(request, estagiario_instance):
             user = User.objects.create_user(
                 username=estagiario_instance.email, # O email é usado como username para login
                 email=estagiario_instance.email,
-                first_name=estagiario_instance.nome.split(' ')[0] if estagiario_instance.nome else '',
-                last_name=' '.join(estagiario_instance.nome.split(' ')[1:]) if estagiario_instance.nome else '',
+                first_name=estagiario_instance.nome_completo.split(' ')[0] if estagiario_instance.nome_completo else '',
+                last_name=' '.join(estagiario_instance.nome_completo.split(' ')[1:]) if estagiario_instance.nome_completo else '',
                 is_active=True, 
             )
 
@@ -192,16 +192,17 @@ def preencher_tceu(estagio, template_path):
         docxedit.replace_string(document, old_string='EmailEstagiario', new_string=estagiario.email)
         docxedit.replace_string(document, old_string='TelefoneEstagiario', new_string=estagiario.telefone)
         docxedit.replace_string(document, old_string='EnderecoEstagiario', new_string=endereco_estagiario.rua)
-        docxedit.replace_string(document, old_string='NEstagiario', new_string=endereco_estagiario.numero)
+        docxedit.replace_string(document, old_string='NumCasa', new_string=endereco_estagiario.numero)
         docxedit.replace_string(document, old_string='BairroEstagiario', new_string=endereco_estagiario.bairro)
-        docxedit.replace_string(document, old_string='CidadeEstagiario', new_string=endereco_estagiario.cidade)
-        docxedit.replace_string(document, old_string='CEPEstagiario', new_string=endereco_estagiario.cep)
-        docxedit.replace_string(document, old_string='UFEstagiario', new_string=endereco_estagiario.estado)
+        docxedit.replace_string(document, old_string='EstagiCi', new_string=endereco_estagiario.cidade)
+        docxedit.replace_string(document, old_string='EstagiCeP', new_string=endereco_estagiario.cep)
+        docxedit.replace_string(document, old_string=' EstagiUF', new_string=endereco_estagiario.estado)
+        docxedit.replace_string(document, old_string='EstadoEstagiario', new_string=endereco_estagiario.estado)
+        docxedit.replace_string(document, old_string='UFEstagiarioEndereco', new_string=endereco_estagiario.estado)
 
         docxedit.replace_string(document, old_string='RazaoEmpresa', new_string=empresa.empresa_nome) 
-        docxedit.replace_string(document, old_string='Razão social/Nome:', new_string=f'Razão social/Nome: {empresa.empresa_nome}') 
-        docxedit.replace_string(document, old_string='CNPJEmpresa', new_string=empresa.cnpj) 
-        docxedit.replace_string(document, old_string='CNPJ/CPF:', new_string=f'CNPJ/CPF: {empresa.cnpj}') 
+        docxedit.replace_string(document, old_string='RamoEmpresa', new_string=empresa.atividades)
+        docxedit.replace_string(document, old_string='CNPJEmpresa', new_string=empresa.cnpj)
         docxedit.replace_string(document, old_string='RepresentanteEmpresa', new_string=supervisor.nome_completo) 
         docxedit.replace_string(document, old_string='CPFEmpresaRepresentante', new_string=supervisor.cpf)
         docxedit.replace_string(document, old_string='CargoEmpresaRepresentante', new_string=supervisor.cargo)
@@ -216,6 +217,8 @@ def preencher_tceu(estagio, template_path):
         if supervisor:
             docxedit.replace_string(document, old_string='EstagiarioSupervisor', new_string=supervisor.nome_completo) 
             docxedit.replace_string(document, old_string='CPFSupervisor', new_string=supervisor.cpf) 
+            docxedit.replace_string(document, old_string='EmailSupervisor', new_string=supervisor.email) 
+
             docxedit.replace_string(document, old_string='Nome do Supervisor/Preceptor:', new_string=f'Nome do Supervisor/Preceptor: {supervisor.nome_completo}') 
 
         docxedit.replace_string(document, old_string='Início: __/__/___', new_string=f"Início: {estagio.data_inicio.strftime('%d/%m/%Y')}") 

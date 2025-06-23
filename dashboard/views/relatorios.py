@@ -140,7 +140,7 @@ def importar_termo(request, estagio_id):
 
     # Se passou em todas as validações, salva o arquivo
     ano = estagio.data_inicio.year
-    nome_estagiario = estagio.estagiario.nome.replace(' ', '').lower()
+    nome_estagiario = estagio.estagiario.nome_completo.replace(' ', '').lower()
     nome_arquivo = f"{ano}TCE_{nome_estagiario}.pdf"
 
     with open(temp_path, 'rb') as f:

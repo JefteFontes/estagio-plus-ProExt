@@ -87,8 +87,8 @@
         {% for estagiario in alunos_cadastrados %}
         <div class="intern-card">
             <div class="card-header">
-                <span class="initials">{{ estagiario.nome|slice:":2"|upper }}</span>
-                <h3 class="intern-name">{{ estagiario.nome }}</h3>
+                <span class="initials">{{ estagiario.nome_completo|slice:":2"|upper }}</span>
+                <h3 class="intern-name">{{ estagiario.nome_completo }}</h3>
             </div>
             <div class="card-body">
                 <div class="info-row">
@@ -134,8 +134,8 @@
         {% for estagiario in alunos_aguardando_confirmacao %}
         <div class="intern-card">
             <div class="card-header">
-                <span class="initials">{{ estagiario.nome|slice:":2"|upper }}</span>
-                <h3 class="intern-name">{{ estagiario.nome }}</h3>
+                <span class="initials">{{ estagiario.nome_completo|slice:":2"|upper }}</span>
+                <h3 class="intern-name">{{ estagiario.nome_completo }}</h3>
             </div>
             <div class="card-body">
                 <div class="info-row">

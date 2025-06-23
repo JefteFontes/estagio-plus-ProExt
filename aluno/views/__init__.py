@@ -1,2 +1,0 @@
-from .cadastro_aluno import cadastro_aluno
-from.dashboard_aluno import dashboard_aluno
