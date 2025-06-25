@@ -11,14 +11,14 @@ from dashboard.views.estagiarios import (
     deletar_estagiario,
     estagiario_auto_cadastro,
 )
-from dashboard.views.pdfimport import importar_pdf
 from dashboard.views.estagios import (
     detalhes_estagio,
     get_supervisores,
     editar_estagio,
     add_estagios,
     complementar_estagio,
-    download_tceu
+    download_tceu,
+    importar_termo,
 )
 
 from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
@@ -36,10 +36,8 @@ from dashboard.views.home import (
 from dashboard.views.user import editar_perfil
 from django.conf import settings
 from django.conf.urls.static import static
-from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo
+from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendentes
 from dashboard.views.personalizados import dashboard_personalizados, relatorio_personalidizado
-
-
 
 
 urlpatterns = [
@@ -81,9 +79,7 @@ urlpatterns = [
     path('editar_estagio/<int:estagio_id>', editar_estagio, name='editar_estagio'),   
 
 
-    path('importar-pdf', importar_pdf, name='importar_pdf'),
-    path('importar_termo', importar_termo, name='importar_termo'),
-     path('importar-termo/<int:estagio_id>/', importar_termo, name='importar_termo'),
+    path('estagio/<int:estagio_id>/importar-termo/', importar_termo, name='importar_termo'),
     path('parse-sections', parse_sections, name='parse_sections'),
     path('buscar-cep', buscar_cep, name='buscar_cep'),
     path('validate_cnpj', validate_cnpj, name='validate_cnpj'),

@@ -12,6 +12,9 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def formatar_duracao(diferenca):
@@ -45,7 +48,7 @@ def verificar_relatorios_pendentes(estagio):
     relatorios = []
 
     # Termo de compromisso
-    if hoje >= estagio.data_inicio:
+    if hoje >= estagio.data_inicio and not estagio.pdf_termo:
         relatorios.append(
             {"tipo": "Termo de Compromisso", "data_prevista": estagio.data_inicio}
         )
@@ -184,7 +187,6 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
                     
                     # Adicionando mensagem de sucesso antes do retorno
                     messages.success(request, "Estágio salvo com sucesso!")
-                    return response
             else:
                 messages.error(request, "O documento PDF não pôde ser gerado.")
                 raise Http404("O documento PDF não pôde ser gerado.")
@@ -283,3 +285,50 @@ def download_tceu(request, estagio_id):
             return response
     else:
         raise Http404("Documento não encontrado.")
+    
+def importar_termo(request, estagio_id):
+    estagio = get_object_or_404(Estagio, pk=estagio_id)
+    
+    if request.method == 'POST':
+        # Verifica se o arquivo foi enviado
+        print("Request Files:", request.FILES)
+        print("Request POST:", request.POST)
+
+        if 'pdf_termo' not in request.FILES:  # Alterado para 'documento' que é o name do input
+            return JsonResponse({'status': 'error', 'message': 'Nenhum arquivo enviado'}, status=400)
+
+        arquivo = request.FILES['pdf_termo']
+
+        # Validações do arquivo
+        if arquivo.size > settings.MAX_UPLOAD_SIZE:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Arquivo muito grande (máximo {settings.MAX_UPLOAD_SIZE/1024/1024}MB)'
+            }, status=400)
+        
+        if not arquivo.name.lower().endswith('.pdf'):
+            return JsonResponse({'status': 'error', 'message': 'Apenas arquivos PDF são permitidos'}, status=400)
+        
+        try:
+            # Remove o arquivo antigo se existir
+            if estagio.pdf_termo:
+                estagio.pdf_termo = None
+                estagio.save() # Usando delete() que é mais seguro
+            
+            # Salva o novo arquivo
+            estagio.pdf_termo.save(arquivo.name, arquivo)
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Documento importado com sucesso',
+                'file_url': estagio.pdf_termo.url
+            })
+        
+        except Exception as e:
+            logger.error(f"Erro ao importar documento: {str(e)}", exc_info=True)
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Erro interno ao processar o documento'
+            }, status=500)
+    
+    return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
