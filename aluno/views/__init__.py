@@ -1,3 +1,0 @@
-from .cadastro_aluno import cadastro_aluno
-from .estagios_aluno import estagios_aluno
-from .detalhes_estagio_aluno import detalhes_estagio_aluno

@@ -15,14 +15,14 @@ from dashboard.models import (
     TipoChoices,
     TurnoChoices,
     CoordenadorExtensao,
+    Aluno,
 )
-from dashboard.views.utils import parse_sections
+from home.utils import parse_sections
 from dashboard.views.estagios import verificar_pendencias
 from dashboard.forms import CursosCadastroForm, EmpresaCadastroForm
 from django.db.models import Q
 from django.http import HttpResponseForbidden
 
-from aluno.models import Aluno
 
 
 def home(request):

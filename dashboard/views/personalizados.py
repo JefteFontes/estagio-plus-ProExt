@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import render
-from aluno.models import Aluno
 from dashboard.models import (
     Estagio,
     Empresa,
     Supervisor,
+    Aluno,
 )
 from django.utils.dateparse import parse_date
 

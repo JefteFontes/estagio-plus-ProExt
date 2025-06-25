@@ -6,10 +6,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("allauth.urls")), 
-    path("accounts/profile/", include("base.urls")), 
+    path("accounts/profile/", include("home.urls")), 
     path("dashboard/", include("dashboard.urls")),
-    path("aluno/", include("aluno.urls")),
-    path("instituicao/", include("instituicao.urls")),
     path("validate/", include("home.urls")), 
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

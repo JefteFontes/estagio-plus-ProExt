@@ -2,6 +2,8 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.forms import ValidationError
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+
 
 class TurnoChoices(models.TextChoices):
     MANHA = "Manhã"
@@ -25,9 +27,25 @@ class Endereco(models.Model):
     def __str__(self):
         return f"{self.rua}, {self.numero} - {self.bairro}"
 
+class Instituicao(models.Model):
+    cnpj = models.CharField(
+        max_length=14,
+        unique=True,
+        validators=[RegexValidator(regex="^[0-9]{14}$", message="Use apenas números.")],
+    )
+    nome = models.CharField(max_length=250)
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(max_length=20)
+    endereco = models.ForeignKey(
+        Endereco, on_delete=models.PROTECT, null=True, blank=True
+    )
+    logo = models.ImageField(upload_to="instituicao_logos/", null=True, blank=True)
+
+    def __str__(self):
+        return self.nome
 
 class Empresa(models.Model):
-    instituicao = models.ForeignKey("instituicao.Instituicao", on_delete=models.PROTECT)
+    instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
     convenio = models.CharField(
         max_length=80,
         null=True,
@@ -83,7 +101,7 @@ class Areachoices(models.TextChoices):
 
 
 class Cursos(models.Model):
-    instituicao = models.ForeignKey("instituicao.Instituicao", on_delete=models.PROTECT)
+    instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
     nome_curso = models.CharField(
         max_length=50,
         null=False,
@@ -124,6 +142,61 @@ class Cursos(models.Model):
 
     def __str__(self):
         return f"{self.nome_curso}"
+    
+class Aluno(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    nome = models.CharField(max_length=100)
+    cpf = models.CharField(
+        max_length=14,
+        unique=True,
+        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
+    )
+    matricula = models.CharField(
+        max_length=55,
+        null=True,
+        blank=True,
+        unique=True,
+    )
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(max_length=20)
+    periodo = models.IntegerField(
+        null=True,
+        blank=True,
+        default=4,
+        validators=[
+            RegexValidator(regex=r"^[0-9]+$", message="Use apenas números."),
+            MaxValueValidator(12, message="O valor não pode ser maior que 12"),
+            MinValueValidator(1, message="O valor não pode ser menor que 1"),
+        ],
+    )
+    status = models.BooleanField(default=False)
+    ira = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[
+            MinValueValidator(0.0, message="O IRA não pode ser menor que 0.0"),
+            MaxValueValidator(10.0, message="O IRA não pode ser maior que 10.0"),
+        ],
+        verbose_name="Índice de Rendimento Acadêmico",
+    )
+
+    instituicao = models.ForeignKey(
+        Instituicao, on_delete=models.PROTECT, null=True, blank=True
+    )
+    curso = models.ForeignKey(Cursos, on_delete=models.PROTECT, null=True, blank=True)
+    turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
+    endereco = models.ForeignKey(
+        Endereco, on_delete=models.PROTECT, null=True, blank=True
+    )
+
+
+    def __str__(self):
+        return f"{self.nome}"
 
 
 class CoordenadorExtensao(models.Model):
@@ -152,7 +225,7 @@ class CoordenadorExtensao(models.Model):
         ],
     )
     instituicao = models.ForeignKey(
-        "instituicao.Instituicao", on_delete=models.PROTECT, null=True, blank=True
+        Instituicao, on_delete=models.PROTECT, null=True, blank=True
     )
 
     def __str__(self):
@@ -208,7 +281,7 @@ class Estagio(models.Model):
     turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
     auxilio_transporte = models.FloatField(blank=True, null=True, default=0)
     estagiario = models.ForeignKey(
-        "aluno.Aluno", on_delete=models.PROTECT, null=True, blank=False
+        Aluno, on_delete=models.PROTECT, null=True, blank=False
     )
     empresa = models.ForeignKey(
         Empresa, on_delete=models.PROTECT, null=True, blank=True
@@ -217,7 +290,7 @@ class Estagio(models.Model):
         Supervisor, on_delete=models.PROTECT, null=True, blank=True
     )
     instituicao = models.ForeignKey(
-        "instituicao.Instituicao", on_delete=models.PROTECT, null=True, blank=True
+        Instituicao, on_delete=models.PROTECT, null=True, blank=True
     )
     orientador = models.TextField(max_length=100, null=True, blank=True)
     pdf_termo = models.FileField(upload_to="termos/", null=True, blank=True)

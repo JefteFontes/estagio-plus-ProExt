@@ -1,13 +1,14 @@
 from django.urls import path, re_path
 from . import views
-from dashboard.views.utils import validate_cnpj, validate_cpf, buscar_cep
+from home.utils import validate_cnpj, validate_cpf, buscar_cep
 from django.conf import settings
 from django.conf.urls.static import static
-from home.views import ativar_acesso_estagiario_view
+from home.views import ativar_acesso_estagiario_view, profile_redirect
 
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', profile_redirect, name='profile_redirect'),
+    # path('', views.home, name='home'),
     path('pre-cadastro', views.pre_cadastro, name='pre_cadastro'),
     path('ajax/load-cursos/', views.load_cursos, name='load_cursos'),
     path('validate_cnpj/', validate_cnpj, name='validate_cnpj'),

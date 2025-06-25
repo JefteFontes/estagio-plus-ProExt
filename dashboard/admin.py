@@ -7,6 +7,24 @@ class EnderecoAdmin(admin.ModelAdmin):
     list_display = ("rua", "numero", "bairro", "cidade", "estado", "cep")
     search_fields = ("rua", "bairro", "cidade", "estado", "cep")
 
+@admin.register(models.Instituicao)
+class InstituicaoAdmin(admin.ModelAdmin):
+    list_display = ("nome", "cnpj", "email", "telefone", "endereco")
+    search_fields = ("nome", "cnpj", "email")
+    list_filter = ("endereco__cidade", "endereco__estado")
+
+@admin.register(models.Aluno)
+class AlunoAdmin(admin.ModelAdmin):
+    list_display = (
+        "nome",
+        "cpf",
+        "matricula",
+        "email",
+        "status",
+        "instituicao",
+    )
+    search_fields = ("nome", "cpf", "matricula", "email")
+    list_filter = ("instituicao", "status", "endereco__cidade")
 
 @admin.register(models.Empresa)
 class EmpresaAdmin(admin.ModelAdmin):

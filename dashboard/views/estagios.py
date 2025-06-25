@@ -1,11 +1,12 @@
 import datetime
 import os
-from .utils import preencher_tceu
 from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
+
+from home.utils import preencher_tceu
 from ..forms import EstagioCadastroForm
 from ..models import Empresa, Estagio, Supervisor, RelatorioEstagio
 from django.core.mail import send_mail
@@ -44,19 +45,16 @@ def verificar_relatorios_pendentes(estagio):
     hoje = datetime.date.today()
     relatorios = []
 
-    # Termo de compromisso
     if hoje >= estagio.data_inicio:
         relatorios.append(
             {"tipo": "Termo de Compromisso", "data_prevista": estagio.data_inicio}
         )
 
-    # Relatórios semestrais
     data = estagio.data_inicio + relativedelta(months=6)
     while data <= hoje and data < estagio.data_fim:
         relatorios.append({"tipo": "Relatório Semestral", "data_prevista": data})
         data += relativedelta(months=6)
 
-    # Relatórios finais
     if hoje >= estagio.data_fim:
         for tipo in ["Relatório de Avaliação", "Relatório de Conclusão"]:
             relatorios.append({"tipo": tipo, "data_prevista": estagio.data_fim})
@@ -182,9 +180,8 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
                     filename = os.path.basename(str(output_pdf_path))   
                     response['Content-Disposition'] = f'attachment; filename="{filename}"'
                     
-                    # Adicionando mensagem de sucesso antes do retorno
                     messages.success(request, "Estágio salvo com sucesso!")
-                    return response
+                    return redirect('dashboard_instituicao')
             else:
                 messages.error(request, "O documento PDF não pôde ser gerado.")
                 raise Http404("O documento PDF não pôde ser gerado.")

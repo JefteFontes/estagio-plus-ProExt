@@ -1,12 +1,15 @@
 from django.contrib import messages
 import traceback
 
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.shortcuts import redirect, render
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from home.forms import CoordenadorCadastroForm
 from allauth.account.forms import ResetPasswordForm
+
+from dashboard.forms import CoordenadorCadastroForm
+
 
 def cadastrar_instituicao(request):
     if request.method == "POST":

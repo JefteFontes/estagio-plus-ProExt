@@ -2,8 +2,7 @@ from pyexpat.errors import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from aluno.models import Aluno
-from dashboard.models import Estagio
+from dashboard.models import Aluno, Estagio
 from dashboard.views.estagios import (
     estagio_duracao,
     estagio_falta_dias,

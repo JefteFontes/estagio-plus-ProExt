@@ -3,15 +3,16 @@ import tempfile
 from django.urls import reverse
 import pdfplumber
 from django.shortcuts import render, redirect
-from .utils import parse_sections
+
+from home.utils import parse_sections
 from ..models import Estagio, Empresa, Supervisor, Endereco
 
-from aluno.models import Aluno
+from dashboard.models import Aluno
 
 
 def importar_pdf(request):
     errors = []
-    estagio_incompleto_id = None  # Para redirecionar se os dados estiverem incompletos
+    estagio_incompleto_id = None
 
     if request.method == "POST" and request.FILES.get("pdf_file"):
         pdf_file = request.FILES["pdf_file"]
@@ -25,7 +26,6 @@ def importar_pdf(request):
 
             sections = parse_sections(text)
 
-            # Criar ou Recuperar Empresa
             empresa_data = sections.get("empresa", {})
             empresa = Empresa.objects.filter(cnpj=empresa_data.get("cnpj", "")).first()
             if not empresa:
@@ -45,7 +45,6 @@ def importar_pdf(request):
                     email=empresa_data.get("email", ""),
                 )
 
-            # Criar ou Recuperar Estagiário
             estagiario_data = sections.get("estagiário", {})
             estagiario = Aluno.objects.filter(
                 email=estagiario_data.get("email", "")
@@ -69,7 +68,6 @@ def importar_pdf(request):
                     endereco=endereco_estagiario,
                 )
 
-            # Criar ou Recuperar Supervisor
             supervisor_data = sections.get("supervisor", {})
             supervisor, created = Supervisor.objects.get_or_create(
                 cpf=supervisor_data.get("cpf", ""),
@@ -81,7 +79,6 @@ def importar_pdf(request):
                 },
             )
 
-            # Criar Estágio
             estagio_data = sections.get("estágio", {})
             estagio = Estagio.objects.create(
                 bolsa_estagio=estagio_data.get("bolsa", "") or None,
@@ -95,11 +92,10 @@ def importar_pdf(request):
                 supervisor=supervisor,
             )
 
-            # Identificar se há dados faltantes no estágio
             if not all([estagio.bolsa_estagio, estagio.area, estagio.descricao]):
                 estagio_incompleto_id = (
                     estagio.id
-                )  # Identifica o registro para complementação
+                )  
 
         except Exception as e:
             errors.append(f"Erro ao processar o PDF ou salvar dados: {str(e)}")
@@ -107,7 +103,6 @@ def importar_pdf(request):
         finally:
             os.remove(file_path)
 
-        # Se há dados incompletos, redirecionar para formulário de complementação
         if estagio_incompleto_id:
             return redirect(
                 reverse("complementar_estagio", args=[estagio_incompleto_id])

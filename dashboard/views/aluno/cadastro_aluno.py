@@ -1,8 +1,7 @@
 import traceback
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from aluno.forms import AlunoCadastroForm
-
+from dashboard.views.estagiarios import AlunoCadastroForm 
 
 def cadastro_aluno(request):
     if request.method == "POST":
@@ -29,7 +28,7 @@ def cadastro_aluno(request):
             messages.error(
                 request, f"Ocorreu um erro inesperado ao cadastrar o aluno: {str(e)}"
             )
-            return render(request, "cadastro/cadastro_aluno.html", {"form": form})
+            return render(request, "aluno/cadastro_aluno.html", {"form": form})
     else:
         try:
             form = AlunoCadastroForm()
