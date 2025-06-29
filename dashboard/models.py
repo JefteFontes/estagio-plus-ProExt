@@ -6,9 +6,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 
 
 class TurnoChoices(models.TextChoices):
-    MANHA = "Manhã"
-    TARDE = "Tarde"
-    NOITE = "Noite"
+    MANHA = "manha", "Manhã"
+    TARDE = "tarde", "Tarde"
+    NOITE = "noite", "Noite"
 
 
 class Endereco(models.Model):
@@ -60,7 +60,7 @@ class Empresa(models.Model):
     empresa_nome = models.CharField(
         max_length=250,
         validators=[
-            RegexValidator(regex=r"^[a-zA-Z ]+$", message="Use apenas letras.")
+            RegexValidator(regex=r"^[a-zA-ZáàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s]+$", message="Use apenas letras.")
         ],
     )
     cnpj = models.CharField(
@@ -110,7 +110,7 @@ class Cursos(models.Model):
         unique=True,
         validators=[
             RegexValidator(
-                regex=r"^[a-zA-ZáéíóúÁÉÍÓÚãõÃÕçÇ\s]+$", message="Use apenas letras."
+                regex=r"^[a-zA-ZáàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s]+$", message="Use apenas letras."
             )
         ],
     )
@@ -126,7 +126,7 @@ class Cursos(models.Model):
         null=False,
         validators=[
             RegexValidator(
-                regex=r"^[a-zA-ZáéíóúÁÉÍÓÚãõÃÕçÇ\s]+$", message="Use apenas letras."
+                regex=r"^[a-zA-ZáàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s]+$", message="Use apenas letras."
             )
         ],
     )
@@ -225,7 +225,7 @@ class CoordenadorExtensao(models.Model):
     nome_completo = models.CharField(
         max_length=150,
         validators=[
-            RegexValidator(regex=r"^[a-zA-Z ]+$", message="Use apenas letras.")
+            RegexValidator(regex=r"^[a-zA-ZáàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s]+$", message="Use apenas letras.")
         ],
     )
     instituicao = models.ForeignKey(
@@ -291,13 +291,13 @@ class Orientador(models.Model):
 
 
 class StatusChoices(models.TextChoices):
-    em_andamento = "Em andamento"
-    concluido = "Concluído"
+    em_andamento = "em_andamento", "Em andamento"
+    concluido = "concluido", "Concluído"
 
 
 class TipoChoices(models.TextChoices):
-    nao_obrigatorio = "Não obrigatório"
-    obrigatorio = "Obrigatório"
+    nao_obrigatorio = "nao_obrigatorio", "Não obrigatório"
+    obrigatorio = "obrigatorio", "Obrigatório"
 
 
 class Estagio(models.Model):
