@@ -1,0 +1,1 @@
+from .cadastro_orientador import cadastro_orientador

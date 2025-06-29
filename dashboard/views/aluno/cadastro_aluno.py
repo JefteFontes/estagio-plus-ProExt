@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from dashboard.views.estagiarios import AlunoCadastroForm 
 
+
 def cadastro_aluno(request):
     if request.method == "POST":
         try:

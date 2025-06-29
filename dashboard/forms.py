@@ -20,6 +20,7 @@ from .models import (
     CoordenadorExtensao,
     Instituicao,
     Aluno,
+    Orientador
 )
 
 class CursosCadastroForm(forms.ModelForm):
@@ -140,15 +141,12 @@ class EstagioCadastroForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "form-select"}),
         empty_label=None,
     )
-    orientador = forms.CharField(
-        max_length=100,
+    orientador = forms.ModelChoiceField(
+        queryset=Orientador.objects.none(),
         required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Orientador na Instituição de Ensino (Opcional)",
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-select"}),
+        empty_label="--- Selecione o Orientador ---",
+        label="Orientador"
     )
     tipo_estagio = forms.ChoiceField(
         choices=TipoChoices.choices, widget=forms.Select(attrs={"class": "form-select"})
@@ -202,11 +200,16 @@ class EstagioCadastroForm(forms.ModelForm):
             self.fields["supervisor"].queryset = Supervisor.objects.filter(
                 empresa__instituicao=instituicao_logada
             ).order_by("nome_completo")
+            # Orientador: apenas da instituição logada
+            self.fields["orientador"].queryset = Orientador.objects.filter(
+                instituicao=instituicao_logada
+            ).order_by("nome_completo")
         else:
             self.fields["estagiario"].queryset = Aluno.objects.none()
             self.fields["empresa"].queryset = Empresa.objects.none()
             self.fields["instituicao"].queryset = Instituicao.objects.none()
             self.fields["supervisor"].queryset = Supervisor.objects.none()
+            self.fields["orientador"].queryset = Orientador.objects.none()
 
     def clean(self):
         cleaned_data = super().clean()
@@ -921,6 +924,7 @@ class CoordenadorEditForm(forms.ModelForm):
             coordenador.save()
         return coordenador
 
+
 class CoordenadorCadastroForm(forms.ModelForm):
     email = forms.EmailField(
         widget=forms.EmailInput(
@@ -1072,3 +1076,120 @@ class CoordenadorCadastroForm(forms.ModelForm):
 
         return user, coordenador
 
+
+class OrientadorCadastroForm(forms.ModelForm):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "exemplo@dominio.com"}
+        )
+    )
+    rua = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Rua das Flores"}
+        ),
+    )
+    numero = forms.CharField(
+        max_length=10,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Número (ex: 123)"}
+        ),
+    )
+    bairro = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Bairro (ex: Centro)"}
+        ),
+    )
+    cidade = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Cidade (ex: São Paulo)"}
+        ),
+    )
+    estado = forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Estado (ex: SP)"}
+        ),
+    )
+    cep = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "CEP (ex: 12345-678)"}
+        ),
+    )
+    complemento = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Complemento"}
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = Orientador  
+        fields = ["nome_completo", "cpf"]
+        widgets = {
+            "nome_completo": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Nome Completo (ex: João da Silva)",
+                }
+            ),
+            "cpf": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "CPF (ex: 12345678900)"}
+            ),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        self.coordenador = kwargs.pop("coordenador", None)
+        super().__init__(*args, **kwargs)
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data["cpf"]
+        cpf = re.sub(r"\D", "", cpf)  # Remove tudo que não for número
+
+        if not validate_cpf(cpf):  # Valida CPF depois de limpar
+            raise forms.ValidationError(
+                "CPF inválido. Use um CPF válido com 11 dígitos."
+            )
+
+        return cpf
+
+    def save(self, commit=True):
+        user_data = {
+            "username": f"{self.cleaned_data['nome_completo']}",
+            "email": self.cleaned_data["email"],
+        }
+
+        if User.objects.filter(email=self.cleaned_data["email"]).exists():
+            raise forms.ValidationError("Já existe um usuário com este e-mail.")
+
+        password = self.clean_cpf()
+
+        user = User.objects.create_user(**user_data, password=password)
+
+        endereco = Endereco.objects.create(
+            rua=self.cleaned_data["rua"],
+            numero=self.cleaned_data["numero"],
+            bairro=self.cleaned_data["bairro"],
+            cidade=self.cleaned_data["cidade"],
+            estado=self.cleaned_data["estado"],
+            cep=self.cleaned_data["cep"],
+            complemento=self.cleaned_data["complemento"],
+        )
+
+        orientador = super().save(commit=False)
+        if not self.coordenador or not self.coordenador.instituicao:
+            raise forms.ValidationError("Instituição do coordenador não encontrada.")
+        orientador.instituicao = self.coordenador.instituicao
+        orientador.email = self.cleaned_data["email"]
+        orientador.endereco = endereco
+        orientador.user = user
+
+        if commit:
+            user.save()
+            orientador.save()
+
+        return user, orientador

@@ -40,7 +40,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo
 from dashboard.views.personalizados import dashboard_personalizados, relatorio_personalidizado
-
+from dashboard.views.orientador import cadastro_orientador
 
 urlpatterns = [
     path("", dashboard_instituicao, name="dashboard_instituicao"),
@@ -78,6 +78,8 @@ urlpatterns = [
     path('editar_estagiario/<int:estagiario_id>', editar_estagiario, name='editar_estagiario'),
     path('deletar_estagiario/<int:estagiario_id>', deletar_estagiario, name='deletar_estagiario'),
     path('estagiario/cadastro/<uuid:token>/', estagiario_auto_cadastro, name='estagiario_auto_cadastro'),
+
+    path("cadastrar_orientador/", cadastro_orientador, name="cadastrar_orientador"),
 
     path('add-estagio', add_estagios, name='add_estagio'),
     path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),
