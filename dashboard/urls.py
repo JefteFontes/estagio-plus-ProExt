@@ -42,9 +42,6 @@ from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendent
 from dashboard.views.personalizados import dashboard_personalizados, relatorio_personalidizado
 
 
-
-
-
 urlpatterns = [
     path("", dashboard_instituicao, name="dashboard_instituicao"),
     path("dashboard", dashboard_instituicao, name="dashboard_instituicao"),
@@ -90,7 +87,7 @@ urlpatterns = [
 
     path('importar-pdf', importar_pdf, name='importar_pdf'),
     path('importar_termo', importar_termo, name='importar_termo'),
-     path('importar-termo/<int:estagio_id>/', importar_termo, name='importar_termo'),
+    path('importar-termo/<int:estagio_id>/', importar_termo, name='importar_termo'),
     path('parse-sections', parse_sections, name='parse_sections'),
     path('buscar-cep', buscar_cep, name='buscar_cep'),
     path('validate_cnpj', validate_cnpj, name='validate_cnpj'),

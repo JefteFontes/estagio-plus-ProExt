@@ -27,6 +27,7 @@ class Endereco(models.Model):
     def __str__(self):
         return f"{self.rua}, {self.numero} - {self.bairro}"
 
+
 class Instituicao(models.Model):
     cnpj = models.CharField(
         max_length=14,
@@ -43,6 +44,7 @@ class Instituicao(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class Empresa(models.Model):
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
@@ -91,13 +93,13 @@ class Empresa(models.Model):
 
 
 class Areachoices(models.TextChoices):
-    saude = "Saúde"
-    tecnologia = "Tecnologia"
-    gestao_e_negocios = "Gestão e Negócios"
-    engenharia_e_construcao = "Engenharia e Construção"
-    eletronica_e_automacao = "Eletrônica e Automação"
-    educacao = "Educação"
-    outros = "Outros"
+    SAUDE = "saude", "Saúde"
+    TECNOLOGIA = "tecnologia", "Tecnologia"
+    GESTAO_E_NEGOCIOS = "gestao_e_negocios", "Gestão e Negócios"
+    ENGENHARIA_E_CONSTRUCAO = "engenharia_e_construcao", "Engenharia e Construção"
+    ELETRONICA_E_AUTOMACAO = "eletronica_e_automacao", "Eletrônica e Automação"
+    EDUCACAO = "educacao", "Educação"
+    OUTROS = "outros", "Outros"
 
 
 class Cursos(models.Model):
@@ -116,7 +118,7 @@ class Cursos(models.Model):
     area = models.CharField(
         max_length=50,
         choices=Areachoices.choices,
-        default=Areachoices.tecnologia,
+        default=Areachoices.TECNOLOGIA,
         null=False,
     )
     coordenador = models.CharField(
@@ -142,7 +144,8 @@ class Cursos(models.Model):
 
     def __str__(self):
         return f"{self.nome_curso}"
-    
+
+
 class Aluno(models.Model):
     user = models.OneToOneField(
         User,
@@ -194,7 +197,6 @@ class Aluno(models.Model):
         Endereco, on_delete=models.PROTECT, null=True, blank=True
     )
 
-
     def __str__(self):
         return f"{self.nome}"
 
@@ -203,6 +205,8 @@ class CoordenadorExtensao(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.PROTECT,
+        null=True,
+        blank=True,
     )
     cpf = models.CharField(
         max_length=15,
@@ -256,6 +260,36 @@ class Supervisor(models.Model):
         return f"{self.nome_completo}"
 
 
+class Orientador(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    cpf = models.CharField(
+        max_length=14,
+        unique=True,
+        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
+    )
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(
+        max_length=20,
+    )
+    nome_completo = models.CharField(
+        max_length=150,
+    )
+    cargo = models.CharField(
+        max_length=254,
+    )
+    instituicao = models.ForeignKey(
+        Instituicao, on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    def __str__(self):
+        return f"{self.nome_completo}"
+
+
 class StatusChoices(models.TextChoices):
     em_andamento = "Em andamento"
     concluido = "Concluído"
@@ -292,7 +326,9 @@ class Estagio(models.Model):
     instituicao = models.ForeignKey(
         Instituicao, on_delete=models.PROTECT, null=True, blank=True
     )
-    orientador = models.TextField(max_length=100, null=True, blank=True)
+    orientador = models.ForeignKey(
+        Orientador, on_delete=models.PROTECT, null=True, blank=True
+    )
     pdf_termo = models.FileField(upload_to="termos/", null=True, blank=True)
 
     def clean(self):

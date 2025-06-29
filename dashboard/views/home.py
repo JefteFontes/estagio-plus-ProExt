@@ -24,7 +24,6 @@ from django.db.models import Q
 from django.http import HttpResponseForbidden
 
 
-
 def home(request):
     if request.user.is_authenticated:
         return redirect("/dashboard/")
