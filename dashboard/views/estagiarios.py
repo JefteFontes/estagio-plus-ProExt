@@ -10,7 +10,7 @@ from home.utils import validate_cpf
 
 
 from dashboard.models import CoordenadorExtensao, Estagio
-from ..forms import EstagiarioCadastroForm, Estagiario
+from ..forms import EstagiarioCadastroForm, Aluno
 
 
 @login_required
@@ -29,7 +29,7 @@ def cadastrar_estagiario(request):
 
 @login_required
 def editar_estagiario(request, estagiario_id):
-    estagiario = get_object_or_404(Estagiario, id=estagiario_id)
+    estagiario = get_object_or_404(Aluno, id=estagiario_id)
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
 
     if request.method == "POST":
@@ -47,7 +47,7 @@ def editar_estagiario(request, estagiario_id):
 
 @login_required
 def deletar_estagiario(request, estagiario_id):
-    estagiario = get_object_or_404(Estagiario, id=estagiario_id)
+    estagiario = get_object_or_404(Aluno, id=estagiario_id)
     # verificar se der algum erro
     if Estagio.objects.filter(estagiario=estagiario).exists():
         messages.error(
@@ -147,7 +147,7 @@ class AlunoCadastroForm(forms.ModelForm):
     class Meta:
         model = Aluno
         fields = [
-            "nome",
+            "nome_completo",
             "cpf",
             "matricula",
             "telefone",

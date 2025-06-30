@@ -8,7 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from home.utils import validate_cpf
 from .models import (
-    Estagiario,
+    Aluno,
     Endereco,
     Estagio,
     Supervisor,
@@ -21,7 +21,6 @@ from .models import (
     Cursos,
     CoordenadorExtensao,
     Instituicao,
-    Aluno,
 )
 
 
@@ -118,7 +117,7 @@ class EstagioCadastroForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "form-select"}),
     )
     estagiario = forms.ModelChoiceField(
-        queryset=Estagiario.objects.all(),
+        queryset=Aluno.objects.all(),
         widget=forms.Select(attrs={"class": "form-select"}),
         empty_label="--- Selecione o Estagiário ---"
     )
@@ -171,14 +170,14 @@ class EstagioCadastroForm(forms.ModelForm):
                 instituicao_logada = coordenador_extensao.instituicao
 
         if instituicao_logada:
-            self.fields["estagiario"].queryset = Estagiario.objects.filter(instituicao=instituicao_logada).order_by('nome_completo')
+            self.fields["estagiario"].queryset = Aluno.objects.filter(instituicao=instituicao_logada).order_by('nome_completo')
             self.fields["empresa"].queryset = Empresa.objects.filter(instituicao=instituicao_logada).order_by('empresa_nome')
             self.fields["instituicao"].queryset = Instituicao.objects.filter(id=instituicao_logada.id)
             self.fields["instituicao"].initial = instituicao_logada
             self.fields["instituicao"].disabled = True 
             self.fields["supervisor"].queryset = Supervisor.objects.filter(empresa__instituicao=instituicao_logada).order_by('nome_completo')
         else:
-            self.fields["estagiario"].queryset = Estagiario.objects.none()
+            self.fields["estagiario"].queryset = Aluno.objects.none()
             self.fields["empresa"].queryset = Empresa.objects.none()
             self.fields["instituicao"].queryset = Instituicao.objects.none()
             self.fields["supervisor"].queryset = Supervisor.objects.none()
@@ -337,7 +336,7 @@ class EstagioCadastroForm(forms.ModelForm):
                     for field, messages in e.message_dict.items():
                         self.add_error(field if field != '__all__' else None, messages)
                 elif hasattr(e, 'messages'):
-                     for message in e.messages:
+                    for message in e.messages:
                         self.add_error(None, message)
                 else:
                     self.add_error(None, str(e))
@@ -426,7 +425,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
         return cpf
 
     class Meta:
-        model = Estagiario
+        model = Aluno
         fields = [
             "nome_completo",
             "cpf",

@@ -11,11 +11,13 @@ from django.utils.translation import gettext as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from allauth.account.forms import ResetPasswordForm
-from dashboard.models import Cursos, Estagiario
+from dashboard.models import Cursos,Aluno
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from home.utils import ativar_acesso_estagiario
 import traceback
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
 
 def home(request):
     if request.user.is_authenticated:
@@ -197,7 +199,7 @@ def cadastro_aluno(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff or hasattr(u, 'coordenadorextensao'))
 def ativar_acesso_estagiario_view(request, estagiario_id):
-    estagiario = get_object_or_404(Estagiario, pk=estagiario_id)
+    estagiario = get_object_or_404(Aluno, pk=estagiario_id)
 
     if request.method == "POST":
         success, message = ativar_acesso_estagiario(request, estagiario)

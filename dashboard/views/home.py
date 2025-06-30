@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from dashboard.models import (
     Empresa,
     Endereco,
-    Estagiario,
+    Aluno,
     Estagio,
     StatusChoices,
     Supervisor,
@@ -16,7 +16,6 @@ from dashboard.models import (
     TipoChoices,
     TurnoChoices,
     CoordenadorExtensao,
-    Aluno,
 )
 from home.utils import parse_sections
 from dashboard.views.estagios import verificar_pendencias
@@ -102,7 +101,7 @@ def dashboard_estagiario(request):
     search_matricula = request.GET.get("search-matricula", "")
     curso_filter = request.GET.get("curso", "")
 
-    estagiarios_da_instituicao = Estagiario.objects.filter(instituicao=instituicao)
+    estagiarios_da_instituicao = Aluno.objects.filter(instituicao=instituicao)
 
     if search_query:
         estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
@@ -206,7 +205,7 @@ def dashboard_instituicao(request):
                 cep=estagiario_data.get("cep", ""),
             )
 
-            estagiario = Estagiario.objects.create(
+            estagiario = Aluno.objects.create(
                 nome_completo=estagiario_data.get("nome_completo", ""),
                 cpf=estagiario_data.get("cpf", ""),
                 matricula=estagiario_data.get("matricula", ""),
@@ -312,8 +311,8 @@ def editar_curso(request, curso_id):
 
 def deletar_curso(request, curso_id):
     curso = get_object_or_404(Cursos, id=curso_id)
-    # mensagem de erro se tiver estagiario vinculado ao curso
-    if Estagiario.objects.filter(curso=curso).exists():
+    # mensagem de erro se tiver aluno vinculado ao curso
+    if Aluno.objects.filter(curso=curso).exists():
         messages.error(
             request, "O curso possui estagiarios vinculados e nao pode ser deletado."
         )
