@@ -279,6 +279,7 @@ def dashboard_instituicao(request):
     }
     return render(request, "dashboard_instituicao.html", context)
 
+
 def cadastrar_cursos(request):
     coordenador_extensao = CoordenadorExtensao.objects.get(user=request.user)
 

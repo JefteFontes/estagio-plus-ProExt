@@ -100,7 +100,7 @@
                     <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
                     <td>
                         <span class="status-badge {% if estagio.status == 'Concluído' %}completed{% else %}in-progress{% endif %}">
-                            {{ estagio.status }}
+                            {{ estagio.get_status_display }}
                         </span>
                     </td>
                     <td class="actions-cell">

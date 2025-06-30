@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from dashboard.forms import OrientadorCadastroForm
+from allauth.account.forms import ResetPasswordForm
 
 
 @login_required
@@ -16,8 +17,12 @@ def cadastro_orientador(request):
         form = OrientadorCadastroForm(request.POST, coordenador=coordenador)
         if form.is_valid():
             try:
-                form.save()
-                messages.success(request, "Orientador cadastrado com sucesso!")
+                user, orientador = form.save()
+                # Envia e-mail de redefinição de senha
+                reset_form = ResetPasswordForm({'email': user.email})
+                if reset_form.is_valid():
+                    reset_form.save(request=request)
+                messages.success(request, "Orientador cadastrado com sucesso! Um e-mail foi enviado para definir a senha.")
                 return redirect("dashboard_instituicao")
             except Exception as e:
                 messages.error(request, f"Erro ao cadastrar orientador: {e}")

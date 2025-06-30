@@ -1,0 +1,42 @@
+{% extends "orientador/base_orientador.html" %}
+{% block content %}
+<div class="dashboard-container">
+    <h2>Relatórios dos meus estágios</h2>
+    {% if relatorios_por_estagio %}
+        {% for grupo in relatorios_por_estagio.values %}
+            <div class="company-card mb-4">
+                <div class="card-header text-center">
+                    <h3 class="company-name mt-2">{{ grupo.estagio.estagiario.nome }}</h3>
+                    <span class="info-label">Empresa:</span>
+                    <span class="info-value">{{ grupo.estagio.empresa }}</span>
+                </div>
+                <div class="card-body">
+                    {% for relatorio in grupo.relatorios %}
+                        <hr>
+                        <div class="info-row">
+                            <span class="info-label">{{ relatorio.get_tipo_display }}:</span>
+                            <span class="info-value">
+                                Previsto para {{ relatorio.data_prevista|date:"d/m/Y" }}
+                                {% if relatorio.preenchido %}
+                                    <span class="badge bg-success">Enviado</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Pendente</span>
+                                {% endif %}
+                            </span>
+                            {% if relatorio.arquivo %}
+                                <a href="{{ relatorio.arquivo.url }}" target="_blank" class="btn btn-outline-primary btn-sm ms-2">
+                                    <i class="fas fa-download"></i> Baixar
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% empty %}
+                        <div class="alert alert-info mt-2">Nenhum relatório cadastrado para este estágio.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center">Você não é orientador de nenhum estágio.</div>
+    {% endif %}
+</div>
+{% endblock %}

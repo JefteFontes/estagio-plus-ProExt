@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Min
 from dateutil.relativedelta import relativedelta
 from django.core.validators import MinValueValidator, MaxValueValidator
+from allauth.account.forms import ResetPasswordForm
 
 from home.utils import validate_cpf
 from .models import (

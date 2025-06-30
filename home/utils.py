@@ -115,12 +115,14 @@ def validate_cpf(cpf: str) -> bool:
 
     return check_digit1 == int(cpf[9]) and check_digit2 == int(cpf[10])
 
+
 # --- Função Auxiliar para Geração de Senha Aleatória ---
 def gerar_senha_aleatoria(length=12):
     """Gera uma senha aleatória com letras, números e símbolos."""
     alphabet = string.ascii_letters + string.digits + string.punctuation
     password = ''.join(secrets.choice(alphabet) for i in range(length))
     return password
+
 
 def ativar_acesso_estagiario(request, estagiario_instance):
     if estagiario_instance.user:
