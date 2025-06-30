@@ -2,6 +2,8 @@ from django.db import models
 from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 from django.forms import ValidationError
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+
 from datetime import timedelta, date
 import uuid
 
@@ -28,8 +30,15 @@ class Endereco(models.Model):
     def __str__(self):
         return f"{self.rua}, {self.numero} - {self.bairro}"
 
-
-class Instituicao(InstituicaoLegal):
+class Instituicao(models.Model):
+    cnpj = models.CharField(
+        max_length=14,
+        unique=True,
+        validators=[RegexValidator(regex="^[0-9]{14}$", message="Use apenas números.")],
+    )
+    nome = models.CharField(max_length=250)
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(max_length=20)
     endereco = models.ForeignKey(
         Endereco, on_delete=models.PROTECT, null=True, blank=True
     )
@@ -38,11 +47,33 @@ class Instituicao(InstituicaoLegal):
     def __str__(self):
         return self.nome
 
-
 class Empresa(models.Model):
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
-    empresa_nome = models.CharField(max_length=250)
-    cnpj = models.CharField(max_length=250)
+    convenio = models.CharField(
+        max_length=80,
+        null=True,
+        blank=True,
+        unique=True,
+        validators=[
+            RegexValidator(regex=r"^[0-9]{4}/[0-9]{4}$", message="Use apenas números.")
+        ],
+    )
+    empresa_nome = models.CharField(
+        max_length=250,
+        validators=[
+            RegexValidator(regex=r"^[a-zA-Z ]+$", message="Use apenas letras.")
+        ],
+    )
+    cnpj = models.CharField(
+        max_length=250,
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r"^[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2}$",
+                message="Use apenas números.",
+            )
+        ],
+    )
     razao_social = models.CharField(max_length=250)
     email = models.EmailField(unique=True)
     atividades = models.TextField(max_length=500, null=True)
@@ -66,7 +97,16 @@ class Areachoices(models.TextChoices):
 
 class Cursos(models.Model):
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
-    nome_curso = models.CharField(max_length=50)
+    nome_curso = models.CharField(
+        max_length=50,
+        null=False,
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r"^[a-zA-ZáéíóúÁÉÍÓÚãõÃÕçÇ\s]+$", message="Use apenas letras."
+            )
+        ],
+    )
     descricao = models.CharField(max_length=250)
     area = models.CharField(
         max_length=50, choices=Areachoices.choices, default=Areachoices.tecnologia
@@ -120,7 +160,62 @@ class Estagiario(models.Model):
     )
 
     def __str__(self):
-        return f"{self.nome_completo}"
+        return f"{self.nome_curso}"
+    
+class Aluno(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    nome = models.CharField(max_length=100)
+    cpf = models.CharField(
+        max_length=14,
+        unique=True,
+        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
+    )
+    matricula = models.CharField(
+        max_length=55,
+        null=True,
+        blank=True,
+        unique=True,
+    )
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(max_length=20)
+    periodo = models.IntegerField(
+        null=True,
+        blank=True,
+        default=4,
+        validators=[
+            RegexValidator(regex=r"^[0-9]+$", message="Use apenas números."),
+            MaxValueValidator(12, message="O valor não pode ser maior que 12"),
+            MinValueValidator(1, message="O valor não pode ser menor que 1"),
+        ],
+    )
+    status = models.BooleanField(default=False)
+    ira = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[
+            MinValueValidator(0.0, message="O IRA não pode ser menor que 0.0"),
+            MaxValueValidator(10.0, message="O IRA não pode ser maior que 10.0"),
+        ],
+        verbose_name="Índice de Rendimento Acadêmico",
+    )
+
+    instituicao = models.ForeignKey(
+        Instituicao, on_delete=models.PROTECT, null=True, blank=True
+    )
+    curso = models.ForeignKey(Cursos, on_delete=models.PROTECT, null=True, blank=True)
+    turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
+    endereco = models.ForeignKey(
+        Endereco, on_delete=models.PROTECT, null=True, blank=True
+    )
+
+
+    def __str__(self):
+        return f"{self.nome}"
 
 
 class CoordenadorExtensao(models.Model):
@@ -187,7 +282,7 @@ class Estagio(models.Model):
     turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
     auxilio_transporte = models.FloatField(blank=True, null=True, default=0)
     estagiario = models.ForeignKey(
-        Estagiario, on_delete=models.PROTECT, null=True, blank=True
+        Aluno, on_delete=models.PROTECT, null=True, blank=False
     )
     empresa = models.ForeignKey(
         Empresa, on_delete=models.PROTECT, null=True, blank=True

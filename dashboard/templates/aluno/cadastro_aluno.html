@@ -1,0 +1,337 @@
+{% extends "cadastro/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-login">
+    <!-- Área do Formulário -->
+    <div class="login-form">
+        <img src="{% static 'img/logo.png' %}" alt="Logo +Estagio" class="logo">
+
+        <div class='text-login'>
+            <h1>Cadastro de Aluno</h1>
+            <p>Preencha seus dados de aluno</p>
+        </div>
+
+        <!-- Barra de Progresso -->
+        <div class="progress-steps">
+            <div class="step active" id="step-indicator-1">
+                <div class="step-number">1</div>
+                <div class="step-label">Dados Pessoais</div>
+            </div>
+            <div class="step" id="step-indicator-2">
+                <div class="step-number">2</div>
+                <div class="step-label">Endereço</div>
+            </div>
+            <div class="step" id="step-indicator-3">
+                <div class="step-number">3</div>
+                <div class="step-label">Dados Acadêmicos</div>
+            </div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" id="cadastroForm" novalidate>
+            {% csrf_token %}
+            
+            <div class="form-step" id="step1">
+                <div class="form-group">
+                    <label for="{{ form.nome_completo.id_for_label }}">Nome Completo:</label>
+                    {{ form.nome_completo }}
+                    <span id="nome-error" class="error-message"></span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.cpf.id_for_label }}">CPF:</label>
+                        {{ form.cpf }}
+                        <span id="cpf-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.telefone.id_for_label }}">Telefone:</label>
+                        {{ form.telefone }}
+                        <span id="telefone-error" class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email:</label>
+                    {{ form.email }}
+                    <span id="email-error" class="error-message"></span>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn-next" onclick="nextStep(1)">Próximo</button>
+                </div>
+            </div>
+
+            <div class="form-step d-none" id="step2">
+                <div class="form-group">
+                    <label for="{{ form.cep.id_for_label }}">CEP:</label>
+                    {{ form.cep }}
+                    <span id="cep-error" class="error-message"></span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-8">
+                        <label for="{{ form.rua.id_for_label }}">Rua:</label>
+                        {{ form.rua }}
+                        <span id="rua-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.numero.id_for_label }}">Número:</label>
+                        {{ form.numero }}
+                        <span id="numero-error" class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-8">
+                        <label for="{{ form.bairro.id_for_label }}">Bairro:</label>
+                        {{ form.bairro }}
+                        <span id="bairro-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.complemento.id_for_label }}">Complemento:</label>
+                        {{ form.complemento }}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-8">
+                        <label for="{{ form.cidade.id_for_label }}">Cidade:</label>
+                        {{ form.cidade }}
+                        <span id="cidade-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.estado.id_for_label }}">Estado:</label>
+                        {{ form.estado }}
+                        <span id="estado-error" class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn-prev" onclick="prevStep(2)">Anterior</button>
+                    <button type="button" class="btn-next" onclick="nextStep(2)">Próximo</button>
+                </div>
+            </div>
+
+            <div class="form-step d-none" id="step3">
+                <div class="form-group">
+                    <label for="{{ form.instituicao.id_for_label }}">Instituição:</label>
+                    {{ form.instituicao }}
+                    <span id="instituicao-error" class="error-message"></span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.matricula.id_for_label }}">Matrícula:</label>
+                        {{ form.matricula }}
+                        <span id="matricula-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.curso.id_for_label }}">Curso:</label>
+                        {{ form.curso }}
+                        <span id="curso-error" class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.periodo.id_for_label }}">Período:</label>
+                        {{ form.periodo }}
+                        <span id="periodo-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.turno.id_for_label }}">Turno:</label>
+                        {{ form.turno }}
+                        <span id="turno-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.ira.id_for_label }}">IRA:</label>
+                        {{ form.ira }}
+                        <span id="ira-error" class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn-prev" onclick="prevStep(3)">Anterior</button>
+                    <button type="submit" class="btn-submit">Finalizar Cadastro</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="image-side">
+        <div class="incentive-message">
+            <h2>Cadastre seus estagiários de forma simples!</h2>
+            <p>Gerencie todas as informações dos estudantes em um só lugar.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+    
+    $(document).ready(function() {
+        $('#id_telefone').mask('(00) 00000-0000');
+        $('#id_cpf').mask('000.000.000-00');
+        $('#id_cep').mask('00000-000');
+        
+        $('.close-alert').click(function() {
+            $(this).parent().addClass('d-none');
+        });
+    });
+
+    function nextStep(currentStep) {
+        if(validateStep(currentStep)) {
+            $('.step').removeClass('active');
+            $('#step-indicator-' + (currentStep + 1)).addClass('active');
+            
+            $('#step' + currentStep).addClass('d-none');
+            $('#step' + (currentStep + 1)).removeClass('d-none');
+        }
+    }
+
+    function prevStep(currentStep) {
+        $('.step').removeClass('active');
+        $('#step-indicator-' + (currentStep - 1)).addClass('active');
+        
+        $('#step' + currentStep).addClass('d-none');
+        $('#step' + (currentStep - 1)).removeClass('d-none');
+    }
+
+    function validateStep(step) {
+        let isValid = true;
+        $('#error-alert').addClass('d-none');
+        
+        if(step === 1) {
+            if($('#id_nome_completo').val().trim() === '') {
+                showError('#id_nome_completo', 'O nome completo é obrigatório.');
+                isValid = false;
+            } else {
+                clearError('#id_nome_completo');
+            }
+            
+            const cpf = $('#id_cpf').val().replace(/\D/g, '');
+            if(cpf.length !== 11) {
+                showError('#id_cpf', 'CPF inválido! Digite 11 números.');
+                isValid = false;
+            } else {
+                clearError('#id_cpf');
+            }
+            
+            const telefone = $('#id_telefone').val().replace(/\D/g, '');
+            if(telefone.length !== 11) {
+                showError('#id_telefone', 'Telefone inválido! Digite 11 números.');
+                isValid = false;
+            } else {
+                clearError('#id_telefone');
+            }
+            
+            const email = $('#id_email').val();
+            if(email === '' || !email.includes('@')) {
+                showError('#id_email', 'Email inválido!');
+                isValid = false;
+            } else {
+                clearError('#id_email');
+            }
+        }
+        
+        if(step === 2) {
+            const cep = $('#id_cep').val().replace(/\D/g, '');
+            if(cep.length !== 8) {
+                showError('#id_cep', 'CEP inválido! Digite 8 números.');
+                isValid = false;
+            } else {
+                clearError('#id_cep');
+            }
+        
+            const requiredFields = ['#id_rua', '#id_numero', '#id_bairro', '#id_cidade', '#id_estado'];
+            requiredFields.forEach(field => {
+                if($(field).val().trim() === '') {
+                    const fieldName = $(field).attr('name').replace('_', ' ');
+                    showError(field, `O campo ${fieldName} é obrigatório.`);
+                    isValid = false;
+                } else {
+                    clearError(field);
+                }
+            });
+        }
+        
+        return isValid;
+    }
+
+    $('#id_cep').on('blur', function() {
+        const cep = $(this).val().replace(/\D/g, '');
+        
+        if (cep.length === 8) {
+            $.ajax({
+                url: "{% url 'buscar_cep' %}",
+                method: "GET",
+                data: { cep: cep },
+                beforeSend: function() {
+                    $('#id_rua, #id_bairro, #id_cidade, #id_estado').val('...Buscando...').prop('readonly', true);
+                },
+                success: function(data) {
+                    $('#id_rua').val(data.logradouro).prop('readonly', false);
+                    $('#id_bairro').val(data.bairro).prop('readonly', false);
+                    $('#id_cidade').val(data.cidade).prop('readonly', false);
+                    $('#id_estado').val(data.estado).prop('readonly', false);
+                    $('#id_complemento').val(data.complemento);
+                    clearError('#id_cep');
+                },
+                error: function(xhr) {
+                    showError('#id_cep', xhr.responseJSON.error || 'CEP não encontrado ou serviço indisponível.');
+                    $('#id_rua, #id_bairro, #id_cidade, #id_estado').val('').prop('readonly', false);
+                }
+            });
+        }
+    });
+
+    function showError(element, message) {
+        const errorElement = $(element).next('.error-message');
+        errorElement.text(message);
+        $(element).addClass('field-error');
+        
+        $('html, body').animate({
+            scrollTop: $(element).offset().top - 100
+        }, 300);
+        
+        $('#error-text').text(message);
+        $('#error-alert').removeClass('d-none');
+    }
+
+    function clearError(element) {
+        $(element).removeClass('field-error');
+        $(element).next('.error-message').text('');
+    }
+
+
+    $('input').on('input', function() {
+        if($(this).hasClass('field-error')) {
+            clearError(this);
+        }
+    });
+
+    $(document).ready(function() {
+    $("#id_instituicao").change(function() {
+        var instituicaoId = $(this).val();
+        if (instituicaoId) {
+            $.ajax({
+                url: "{% url 'load_cursos' %}",  
+                data: {
+                    'instituicao_id': instituicaoId
+                },
+                success: function(data) {
+                    var options = '<option value="">Selecione um curso</option>';
+                    $.each(data, function(index, curso) {
+                        options += '<option value="' + curso.id + '">' + curso.nome_curso + '</option>';
+                    });
+                    $("#id_curso").html(options);
+                }
+            });
+        } else {
+            $("#id_curso").html('<option value="">Selecione uma instituição primeiro</option>');
+        }
+    });
+});
+</script>
+{% endblock %}

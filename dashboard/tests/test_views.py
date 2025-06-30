@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 import requests_mock
 from ..views import buscar_cep
 import json
-from dashboard.views.utils import validate_cpf
+from home.utils import validate_cpf
 from django.contrib.messages import get_messages
 from dashboard.models import *
 

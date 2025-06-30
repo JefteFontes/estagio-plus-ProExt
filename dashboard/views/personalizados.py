@@ -1,7 +1,12 @@
 from django.shortcuts import get_object_or_404, render
 from django.shortcuts import render
-from dashboard.models import CoordenadorExtensao, Estagio, Empresa, Instituicao, Supervisor, Estagiario
-from django.db.models import Q
+from django.shortcuts import render
+from dashboard.models import (
+    Estagio,
+    Empresa,
+    Supervisor,
+    Aluno,
+)
 from django.utils.dateparse import parse_date
 
 

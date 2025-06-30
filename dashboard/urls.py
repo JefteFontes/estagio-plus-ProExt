@@ -5,12 +5,15 @@ from dashboard.views.empresa import (
     deletar_empresa,
     get_supervisores,
 )
+from .views import cadastrar_instituicao
 from dashboard.views.estagiarios import (
     cadastrar_estagiario,
     editar_estagiario,
     deletar_estagiario,
     estagiario_auto_cadastro,
 )
+from .views.aluno import cadastro_aluno, estagios_aluno, detalhes_estagio_aluno
+from dashboard.views.pdfimport import importar_pdf
 from dashboard.views.estagios import (
     detalhes_estagio,
     get_supervisores,
@@ -21,7 +24,7 @@ from dashboard.views.estagios import (
     importar_termo,
 )
 
-from dashboard.views.utils import parse_sections, buscar_cep, validate_cnpj
+from home.utils import parse_sections, buscar_cep, validate_cnpj
 from dashboard.views.home import (
     home,
     details,
@@ -40,9 +43,16 @@ from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendent
 from dashboard.views.personalizados import dashboard_personalizados, relatorio_personalidizado
 
 
+
+
+
 urlpatterns = [
     path("", dashboard_instituicao, name="dashboard_instituicao"),
     path("dashboard", dashboard_instituicao, name="dashboard_instituicao"),
+    path("instituicao/cadastro", cadastrar_instituicao,name="cadastro_instituicao"),
+    path('cadastro/', cadastro_aluno, name='cadastro_aluno'),
+    path('dashboard/estagios-aluno/', estagios_aluno, name='estagios_aluno'),
+    path('dashboard/estagio/<int:pk>/', detalhes_estagio_aluno, name='detalhes_estagio_aluno'),
     path("home", home, name="home"),
     path("details", details, name="details"),
     path("dashboard_estagiario", dashboard_estagiario, name="dashboard_estagiario"),
