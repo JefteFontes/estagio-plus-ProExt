@@ -3,12 +3,12 @@ from django.conf import settings
 from django.http import FileResponse, Http404
 import os
 
-from dashboard.forms import CoordenadorCadastroForm
-from dashboard.models import Aluno
+from mais_estagio.forms import CoordenadorCadastroForm
+from mais_estagio.models import Aluno
 from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.conf import settings
-from dashboard.models import Cursos
+from mais_estagio.models import Cursos
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from home.utils import ativar_acesso_estagiario

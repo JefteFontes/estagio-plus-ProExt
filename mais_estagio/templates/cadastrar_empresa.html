@@ -1,0 +1,152 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="cadastro-container-dashboard">
+    <h2>Cadastro de Empresa</h2>
+    <p class="form-header">Preencha os dados da empresa</p>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h3 class="section-title">Dados da Empresa</h3>
+            <div class="form-row">
+                
+                <div class="form-group compact-group">
+                    <label for="{{ form.convenio.id_for_label }}" class="form-label">Convênio</label>
+                    {{ form.convenio }}
+                </div>
+                
+                <div class="form-group compact-group">
+                    <label for="{{ form.empresa_cnpj.id_for_label }}" class="form-label">CNPJ</label>
+                    {{ form.empresa_cnpj }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.empresa_nome.id_for_label }}" class="form-label">Nome Fantasia</label>
+                    {{ form.empresa_nome }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.empresa_razao_social.id_for_label }}" class="form-label">Razão Social</label>
+                    {{ form.empresa_razao_social }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.empresa_atividades.id_for_label }}" class="form-label">Atividades</label>
+                    {{ form.empresa_atividades }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3 class="section-title">Endereço</h3>
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.cep.id_for_label }}" class="form-label">CEP</label>
+                    {{ form.cep }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group" style="flex: 2;">
+                    <label for="{{ form.rua.id_for_label }}" class="form-label">Rua</label>
+                    {{ form.rua }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.numero.id_for_label }}" class="form-label">Número</label>
+                    {{ form.numero }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.bairro.id_for_label }}" class="form-label">Bairro</label>
+                    {{ form.bairro }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.cidade.id_for_label }}" class="form-label">Cidade</label>
+                    {{ form.cidade }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.estado.id_for_label }}" class="form-label">Estado</label>
+                    {{ form.estado }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.complemento.id_for_label }}" class="form-label">Complemento</label>
+                    {{ form.complemento }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-user-signup">Salvar</button>
+            <a href="{% url 'dashboard_empresa' %}" class="btn-cancel">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#id_telefone').mask('(00) 00000-0000');
+    $('#id_cpf').mask('000.000.000-00');
+    $('#id_empresa_cnpj').mask('00.000.000/0000-00');
+    $('#id_cep').mask('00000-000');
+    
+    $('#id_cep').on('blur', function() {
+        let cep = $(this).val().replace(/\D/g, '');
+        
+        if (cep.length === 8) {
+            $.ajax({
+                url: "{% url 'buscar_cep' %}",
+                method: "GET",
+                data: { cep: cep },
+                success: function(data) {
+                    $('#id_rua').val(data.logradouro);
+                    $('#id_bairro').val(data.bairro);
+                    $('#id_cidade').val(data.cidade);
+                    $('#id_estado').val(data.estado);
+                },
+                error: function(xhr) {
+                    alert(xhr.responseJSON.error || 'Erro ao buscar o CEP.');
+                }
+            });
+        }
+    });
+    
+    $('#id_empresa_cnpj').on('blur', function() {
+        let cnpj = $(this).val().replace(/\D/g, '');
+        
+        if (cnpj.length === 14) {
+            $.ajax({
+                url: "{% url 'validate_cnpj' %}",
+                method: "GET",
+                data: { cnpj: cnpj },
+                success: function(data) {
+                    $('#id_empresa_nome').val(data.name);
+                    $('#id_empresa_razao_social').val(data.razao_social);
+                    $('#id_cep').val(data.cep);
+                    $('#id_numero').val(data.numero);
+                    $('#id_empresa_atividades').val(data.atividades);
+                    $('#id_complemento').val(data.complemento);
+                },
+                error: function(xhr) {
+                    alert(xhr.responseJSON.error || 'Erro ao buscar o CNPJ.');
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
