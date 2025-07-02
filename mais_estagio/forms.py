@@ -940,7 +940,6 @@ class CoordenadorEditForm(forms.ModelForm):
             coordenador.save()
         return coordenador
 
-
 class CoordenadorCadastroForm(forms.ModelForm):
     email = forms.EmailField(
         widget=forms.EmailInput(

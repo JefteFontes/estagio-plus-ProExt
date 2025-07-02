@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "allauth",
     "allauth.account",
-    "dashboard",
+    "mais_estagio",
     "home",
 ]
 
@@ -37,7 +37,7 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
-ROOT_URLCONF = "estagio_plus.urls"
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
@@ -50,13 +50,13 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "dashboard.context_processors.relatorios_pendentes",
+                "mais_estagio.context_processors.relatorios_pendentes",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = "estagio_plus.wsgi.application"
+WSGI_APPLICATION = "core.wsgi.application"
 
 DATABASES = {
     "default": {

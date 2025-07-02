@@ -27,7 +27,6 @@ class Endereco(models.Model):
     def __str__(self):
         return f"{self.rua}, {self.numero} - {self.bairro}"
 
-
 class Instituicao(models.Model):
     cnpj = models.CharField(
         max_length=14,
@@ -44,7 +43,6 @@ class Instituicao(models.Model):
 
     def __str__(self):
         return self.nome
-
 
 class Empresa(models.Model):
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)

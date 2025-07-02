@@ -10,8 +10,7 @@ from mais_estagio.models import (
 )
 from django.core.exceptions import ValidationError
 from datetime import timedelta, date
-from aluno.models import Aluno
-from instituicao.models import Instituicao
+from mais_estagio.models import Aluno, Instituicao
 
 
 class TestModels(TestCase):

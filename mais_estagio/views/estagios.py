@@ -277,6 +277,7 @@ def get_supervisores(request):
         return JsonResponse(list(supervisores), safe=False)
     return JsonResponse([], safe=False)
 
+
 def download_tceu(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)
 
