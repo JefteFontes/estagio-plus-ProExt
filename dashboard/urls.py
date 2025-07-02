@@ -41,6 +41,8 @@ from django.conf.urls.static import static
 from dashboard.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo
 from dashboard.views.personalizados import dashboard_personalizados, relatorio_personalidizado
 from dashboard.views.orientador import cadastro_orientador, dashboard_orientador , relatorios_orientador
+from dashboard.views.supervisor import cadastro_supervisor, dashboard_supervisor, relatorios_supervisor
+
 
 urlpatterns = [
     path("", dashboard_instituicao, name="dashboard_instituicao"),
@@ -82,6 +84,11 @@ urlpatterns = [
     path("cadastrar_orientador/", cadastro_orientador, name="cadastrar_orientador"),
     path("dashboard_orientador/", dashboard_orientador, name="dashboard_orientador"),
     path("relatorios_orientador/", relatorios_orientador, name="relatorios_orientador"),
+
+    path("cadastrar_supervisor/<int:empresa_id>/", cadastro_supervisor, name="cadastrar_supervisor"),
+    path("dashboard_supervisor/", dashboard_supervisor, name="dashboard_supervisor"),
+    path("relatorios_supervisor/", relatorios_supervisor, name="relatorios_supervisor"),
+    
 
     path('add-estagio', add_estagios, name='add_estagio'),
     path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),

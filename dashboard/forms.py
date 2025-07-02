@@ -24,6 +24,7 @@ from .models import (
     Orientador
 )
 
+
 class CursosCadastroForm(forms.ModelForm):
     class Meta:
         model = Cursos
@@ -672,20 +673,12 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
 
 class EmpresaCadastroForm(forms.ModelForm):
-    # Campos para os dados do usuário
     convenio = forms.CharField(
         max_length=8,
         widget=forms.TextInput(
             attrs={"class": "form-control", "placeholder": "Convênio"}
         ),
     )
-    email = forms.EmailField(
-        widget=forms.EmailInput(
-            attrs={"class": "form-control", "placeholder": "exemplo@dominio.com"}
-        )
-    )
-
-    # Campos para os dados de endereço da empresa
     rua = forms.CharField(
         max_length=255,
         widget=forms.TextInput(
@@ -729,7 +722,6 @@ class EmpresaCadastroForm(forms.ModelForm):
             attrs={"class": "form-control", "placeholder": "Complemento"}
         ),
     )
-    # Campos para dados da empresa
     empresa_nome = forms.CharField(
         max_length=250,
         widget=forms.TextInput(
@@ -769,17 +761,65 @@ class EmpresaCadastroForm(forms.ModelForm):
         ),
     )
 
-    def clean_cpf(self):
-        cpf = self.cleaned_data["cpf"]
-        cpf = "".join(filter(str.isdigit, cpf))
-        if not validate_cpf(cpf):
-            print("CPF inválido")
-            raise forms.ValidationError("CPF inválido")
-        return cpf
+    class Meta:
+        model = Empresa
+        fields = [
+            "convenio",
+            "empresa_nome",
+            "empresa_cnpj",
+            "empresa_razao_social",
+            "empresa_atividades",
+            "rua",
+            "numero",
+            "bairro",
+            "cidade",
+            "estado",
+            "cep",
+            "complemento",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        self.coordenador = kwargs.pop("coordenador", None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        # Cria ou atualiza o endereço
+        endereco = Endereco.objects.create(
+            rua=self.cleaned_data["rua"],
+            numero=self.cleaned_data["numero"],
+            bairro=self.cleaned_data["bairro"],
+            cidade=self.cleaned_data["cidade"],
+            estado=self.cleaned_data["estado"],
+            cep=self.cleaned_data["cep"],
+            complemento=self.cleaned_data["complemento"],
+        )
+
+        empresa = super().save(commit=False)
+        empresa.endereco = endereco
+        if self.coordenador and self.coordenador.instituicao:
+            empresa.instituicao = self.coordenador.instituicao
+
+        if commit:
+            empresa.save()
+
+        return empresa
+
+
+class SupervisorCadastroForm(forms.ModelForm):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "exemplo@dominio.com"}
+        )
+    )
+    empresa = forms.ModelChoiceField(
+        queryset=Empresa.objects.none(),  # será definido na view
+        widget=forms.HiddenInput(),
+        required=False,
+    )
 
     class Meta:
         model = Supervisor
-        fields = ["nome_completo", "cpf", "cargo", "telefone"]
+        fields = ["nome_completo", "cpf", "cargo", "telefone", "email", "empresa"]
         widgets = {
             "nome_completo": forms.TextInput(
                 attrs={
@@ -804,58 +844,33 @@ class EmpresaCadastroForm(forms.ModelForm):
             ),
         }
 
-    def __init__(self, *args, **kwargs):
-        self.coordenador = kwargs.pop("coordenador", None)
-        super().__init__(*args, **kwargs)
+    def clean_cpf(self):
+        cpf = self.cleaned_data["cpf"]
+        cpf = "".join(filter(str.isdigit, cpf))
+        if not validate_cpf(cpf):
+            raise forms.ValidationError("CPF inválido")
+        return cpf
 
     def save(self, commit=True):
-        if self.instance.pk:
-            supervisor = self.instance
-            empresa = supervisor.empresa
-            endereco = empresa.endereco
-        else:
-            supervisor = super().save(commit=False)
-            endereco = Endereco()
-            empresa = Empresa()
+        user_data = {
+            "username": self.cleaned_data["nome_completo"],
+            "email": self.cleaned_data["email"],
+        }
+        if User.objects.filter(email=self.cleaned_data["email"]).exists():
+            raise forms.ValidationError("Já existe um usuário com este e-mail.")
 
-        # Atualizando os dados do endereço
-        endereco.rua = self.cleaned_data["rua"]
-        endereco.numero = self.cleaned_data["numero"]
-        endereco.bairro = self.cleaned_data["bairro"]
-        endereco.cidade = self.cleaned_data["cidade"]
-        endereco.estado = self.cleaned_data["estado"]
-        endereco.cep = self.cleaned_data["cep"]
-        endereco.complemento = self.cleaned_data["complemento"]
-        endereco.save()
+        password = self.clean_cpf()
+        user = User.objects.create_user(**user_data, password=password)
 
-        # Atualizando os dados da empresa
-        empresa.empresa_nome = self.cleaned_data["empresa_nome"]
-        empresa.cnpj = self.cleaned_data["empresa_cnpj"]
-        empresa.razao_social = self.cleaned_data["empresa_razao_social"]
-        empresa.endereco = endereco
-        empresa.email = self.cleaned_data["email"]
-
-        if not self.instance.pk:  # Só cria uma nova empresa se não for edição
-            empresa = Empresa.objects.create(
-                empresa_nome=self.cleaned_data["empresa_nome"],
-                cnpj=self.cleaned_data["empresa_cnpj"],
-                razao_social=self.cleaned_data["empresa_razao_social"],
-                endereco=endereco,
-                email=self.cleaned_data["email"],
-                instituicao=self.coordenador.instituicao,
-            )
-        else:
-            empresa.save()  # Apenas salva se for uma edição
-
-        # Atualizando os dados do supervisor
-        supervisor.empresa = empresa
+        supervisor = super().save(commit=False)
         supervisor.email = self.cleaned_data["email"]
+        supervisor.user = user
 
         if commit:
+            user.save()
             supervisor.save()
 
-        return supervisor
-
+        return user, supervisor
 
 class CoordenadorEditForm(forms.ModelForm):
     # Fields for user data

@@ -92,6 +92,9 @@ def profile_redirect(request):
     if hasattr(user, "orientador") and user.orientador:
         return redirect("dashboard_orientador")
 
+    if hasattr(user, "supervisor") and user.supervisor:
+        return redirect("dashboard_supervisor")
+
     messages.warning(
         request,
         "Seu perfil não está associado a um tipo de usuário válido. Contate o Coordenador.",

@@ -54,13 +54,13 @@ class Empresa(models.Model):
         blank=True,
         unique=True,
         validators=[
-            RegexValidator(regex=r"^[0-9]{4}/[0-9]{4}$", message="Use apenas números.")
+            RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")
         ],
     )
     empresa_nome = models.CharField(
         max_length=250,
         validators=[
-            RegexValidator(regex=r"^[a-zA-ZáàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s]+$", message="Use apenas letras.")
+            RegexValidator(regex=r"^[a-zA-Z0-9áàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s\-\.&]+$", message="Use apenas letras e números.")
         ],
     )
     cnpj = models.CharField(
@@ -237,6 +237,12 @@ class CoordenadorExtensao(models.Model):
 
 
 class Supervisor(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     cpf = models.CharField(
         max_length=14,
         unique=True,

@@ -102,6 +102,9 @@
                 <a href="{% url 'deletar_empresa' empresa.id %}" class="btn-action delete">
                     <i class="fas fa-trash"></i> Excluir
                 </a>
+                <a href="{% url 'cadastrar_supervisor' empresa.id %}" class="btn-action add">
+                    <i class="fas fa-user-plus"></i> Cadastrar Supervisor
+                </a>
             </div>
         </div>
         {% endfor %}

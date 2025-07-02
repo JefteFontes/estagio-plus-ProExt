@@ -49,6 +49,13 @@ class SupervisorAdmin(admin.ModelAdmin):
     list_filter = ("empresa",)
 
 
+@admin.register(models.Orientador)
+class OrientadorAdmin(admin.ModelAdmin):
+    list_display = ("nome_completo", "email", "telefone", "cargo", "instituicao")
+    search_fields = ("nome_completo", "email", "telefone", "cargo")
+    list_filter = ("instituicao",)
+
+
 @admin.register(models.Cursos)
 class CursosAdmin(admin.ModelAdmin):
     list_display = (
