@@ -101,6 +101,9 @@
                         Documento não disponível
                     </div>
                 {% endif %}
+                <button type="button" class="btn btn-success" id="btnImportar" data-estagio-id="{{ estagio.id }}">
+                    <i class="fas fa-file-import"></i> Importar Documento
+                </button>
             </div>
         </div>
         
@@ -139,5 +142,204 @@
         </a>
     </div>
 </div>
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Importar Termo de Estágio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="importForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="documento" class="form-label">Selecione o arquivo (PDF)</label>
+                        <input type="file" class="form-control" id="documento" name="pdf_termo" accept=".pdf" required>
+                        <div class="invalid-feedback" id="fileError">Por favor, selecione um arquivo PDF válido.</div>
+                    </div>
+                    
+                    <div class="progress mt-3 d-none" id="uploadProgress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="uploadStatus" class="mt-3 d-none">
+                        <div id="uploadSuccess" class="alert alert-success d-none">
+                            <i class="fas fa-check-circle"></i> Documento importado com sucesso!
+                        </div>
+                        <div id="uploadError" class="alert alert-danger d-none">
+                            <i class="fas fa-exclamation-circle"></i> <span id="errorMessage">Erro ao importar documento!</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span id="submitText">Importar</span>
+                        <span id="submitSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnImportar = document.getElementById('btnImportar');
+    const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+    const importForm = document.getElementById('importForm');
+    const fileInput = document.getElementById('documento');
+    const fileError = document.getElementById('fileError');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const uploadSuccess = document.getElementById('uploadSuccess');
+    const uploadError = document.getElementById('uploadError');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    // Abrir modal
+    btnImportar.addEventListener('click', function() {
+        resetModalState();
+        importModal.show();
+    });
+    
+    // Validar arquivo ao selecionar
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                this.classList.remove('is-invalid');
+                fileError.classList.add('d-none');
+            } else {
+                this.classList.add('is-invalid');
+                fileError.classList.remove('d-none');
+            }
+        }
+    });
+    
+    // Enviar formulário
+    importForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        resetStatusMessages();
+        
+        // Validação do arquivo
+        if (fileInput.files.length === 0 || 
+            (!fileInput.files[0].type.includes('pdf') && !fileInput.files[0].name.endsWith('.pdf'))) {
+            fileInput.classList.add('is-invalid');
+            fileError.classList.remove('d-none');
+            return;
+        }
+        
+        // Preparar UI para upload
+        prepareForUpload();
+        
+        // Configurar requisição AJAX
+        const formData = new FormData(this);
+        const estagioId = btnImportar.getAttribute('data-estagio-id');
+        const xhr = new XMLHttpRequest();
+        
+        xhr.open('POST', `/accounts/profile/estagio/${estagioId}/importar-termo/`, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        
+        // Acompanhar progresso
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                uploadProgress.querySelector('.progress-bar').style.width = percentComplete + '%';
+            }
+        });
+        
+        // Tratar resposta
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.status === 'success') {
+                        handleUploadSuccess();
+                    } else {
+                        handleUploadError(response.message || 'Erro ao importar documento');
+                    }
+                } catch (e) {
+                    handleUploadError('Resposta inválida do servidor');
+                }
+            } else {
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    handleUploadError(errorResponse.message || `Erro ${xhr.status}: ${xhr.statusText}`);
+                } catch {
+                    handleUploadError(`Erro ${xhr.status}: ${xhr.statusText}`);
+                }
+            }
+        };
+        
+        // Tratar erros de rede
+        xhr.onerror = function() {
+            handleUploadError('Erro de conexão. Verifique sua rede.');
+        };
+        
+        // Configurar timeout
+        xhr.timeout = 60000; // 1 minuto
+        xhr.ontimeout = function() {
+            handleUploadError('Tempo limite excedido. Tente novamente.');
+        };
+        
+        // Enviar requisição
+        xhr.send(formData);
+    });
+    
+    // Resetar modal quando fechado
+    document.getElementById('importModal').addEventListener('hidden.bs.modal', resetModalState);
+    
+    // Funções auxiliares
+    function resetModalState() {
+        importForm.reset();
+        fileInput.classList.remove('is-invalid');
+        fileError.classList.add('d-none');
+        resetStatusMessages();
+        resetUploadUI();
+    }
+    
+    function resetStatusMessages() {
+        uploadStatus.classList.add('d-none');
+        uploadSuccess.classList.add('d-none');
+        uploadError.classList.add('d-none');
+    }
+    
+    function resetUploadUI() {
+        submitBtn.disabled = false;
+        submitText.textContent = 'Importar';
+        submitSpinner.classList.add('d-none');
+        uploadProgress.classList.add('d-none');
+        uploadProgress.querySelector('.progress-bar').style.width = '0%';
+    }
+    
+    function prepareForUpload() {
+        submitBtn.disabled = true;
+        submitText.textContent = 'Importando...';
+        submitSpinner.classList.remove('d-none');
+        uploadProgress.classList.remove('d-none');
+    }
+    
+    function handleUploadSuccess() {
+        uploadStatus.classList.remove('d-none');
+        uploadSuccess.classList.remove('d-none');
+        
+        // Fechar modal após 2 segundos e recarregar
+        setTimeout(() => {
+            importModal.hide();
+            window.location.reload();
+        }, 2000);
+    }
+    
+    function handleUploadError(message) {
+        uploadStatus.classList.remove('d-none');
+        uploadError.classList.remove('d-none');
+        errorMessage.textContent = message;
+        resetUploadUI();
+    }
+});
+</script>
 
 {% endblock %}

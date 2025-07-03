@@ -27,7 +27,6 @@ def cadastrar_estagiario(request):
 
     return render(request, "cadastrar_estagiario.html", {"form": form})
 
-
 @login_required
 def editar_estagiario(request, estagiario_id):
     estagiario = get_object_or_404(Aluno, id=estagiario_id)
@@ -45,7 +44,6 @@ def editar_estagiario(request, estagiario_id):
     return render(
         request, "cadastrar_estagiario.html", {"form": form, "estagiario": estagiario}
     )
-
 
 @login_required
 def deletar_estagiario(request, estagiario_id):
@@ -72,11 +70,9 @@ def estagiario_auto_cadastro(request, token):
             invite.used = True
             invite.save()
             messages.success(request, "Cadastro realizado com sucesso!")
-            return redirect("dashboard_estagiario")
+            return redirect('dashboard_estagiario')
     else:
-        form = EstagiarioCadastroForm(
-            initial={"email": invite.email}, instituicao=invite.instituicao
-        )
+        form = EstagiarioCadastroForm(initial={'email': invite.email}, instituicao=invite.instituicao)
     return render(request, "cadastrar_estagiario.html", {"form": form})
 
 class AlunoCadastroForm(forms.ModelForm):
@@ -151,7 +147,7 @@ class AlunoCadastroForm(forms.ModelForm):
     class Meta:
         model = Aluno
         fields = [
-            "nome",
+            "nome_completo",
             "cpf",
             "matricula",
             "telefone",

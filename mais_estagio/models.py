@@ -1,15 +1,17 @@
 from django.db import models
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 from django.forms import ValidationError
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+
+from datetime import timedelta, date
+import uuid
 
 
 class TurnoChoices(models.TextChoices):
     MANHA = "Manhã"
     TARDE = "Tarde"
     NOITE = "Noite"
-
 
 class Endereco(models.Model):
     rua = models.CharField(max_length=255)
@@ -19,8 +21,7 @@ class Endereco(models.Model):
     estado = models.CharField(max_length=50)
     cep = models.CharField(
         max_length=20,
-        null=False,
-        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
+        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
     )
     complemento = models.CharField(max_length=100, null=True, blank=True)
 
@@ -72,18 +73,10 @@ class Empresa(models.Model):
         ],
     )
     razao_social = models.CharField(max_length=250)
-    email = models.EmailField(
-        unique=True,
-        validators=[
-            RegexValidator(
-                regex=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                message="Use um e-mail valido.",
-            )
-        ],
-    )
-    atividades = models.TextField(max_length=500, null=False)
+    email = models.EmailField(unique=True)
+    atividades = models.TextField(max_length=500, null=True)
     endereco = models.ForeignKey(
-        Endereco, on_delete=models.PROTECT, null=False, blank=True
+        Endereco, on_delete=models.PROTECT, null=True, blank=True
     )
 
     def __str__(self):
@@ -114,34 +107,16 @@ class Cursos(models.Model):
     )
     descricao = models.CharField(max_length=250)
     area = models.CharField(
-        max_length=50,
-        choices=Areachoices.choices,
-        default=Areachoices.tecnologia,
-        null=False,
+        max_length=50, choices=Areachoices.choices, default=Areachoices.tecnologia
     )
-    coordenador = models.CharField(
-        max_length=50,
-        null=False,
-        validators=[
-            RegexValidator(
-                regex=r"^[a-zA-ZáéíóúÁÉÍÓÚãõÃÕçÇ\s]+$", message="Use apenas letras."
-            )
-        ],
-    )
-    email_coordenador = models.EmailField(
-        max_length=254,
-        unique=True,
-        null=False,
-        validators=[
-            RegexValidator(
-                regex=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                message="Use um e-mail valido.",
-            )
-        ],
-    )
+    coordenador = models.CharField(max_length=50)
+    email_coordenador = models.EmailField(max_length=254)
 
     def __str__(self):
         return f"{self.nome_curso}"
+
+
+
     
 class Aluno(models.Model):
     user = models.OneToOneField(
@@ -150,7 +125,7 @@ class Aluno(models.Model):
         null=True,
         blank=True,
     )
-    nome = models.CharField(max_length=100)
+    nome_completo = models.CharField(max_length=100)
     cpf = models.CharField(
         max_length=14,
         unique=True,
@@ -196,7 +171,7 @@ class Aluno(models.Model):
 
 
     def __str__(self):
-        return f"{self.nome}"
+        return f"{self.nome_completo}"
 
 
 class CoordenadorExtensao(models.Model):
@@ -207,23 +182,10 @@ class CoordenadorExtensao(models.Model):
     cpf = models.CharField(
         max_length=15,
         unique=True,
-        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
+        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
     )
-    email = models.EmailField(
-        unique=True,
-        validators=[
-            RegexValidator(
-                regex=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                message="Use um e-mail valido.",
-            )
-        ],
-    )
-    nome_completo = models.CharField(
-        max_length=150,
-        validators=[
-            RegexValidator(regex=r"^[a-zA-Z ]+$", message="Use apenas letras.")
-        ],
-    )
+    email = models.EmailField(unique=True)
+    nome_completo = models.CharField(max_length=150)
     instituicao = models.ForeignKey(
         Instituicao, on_delete=models.PROTECT, null=True, blank=True
     )
@@ -236,24 +198,19 @@ class Supervisor(models.Model):
     cpf = models.CharField(
         max_length=14,
         unique=True,
-        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
+        validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
     )
     email = models.EmailField(unique=True)
-    telefone = models.CharField(
-        max_length=20,
-    )
-    nome_completo = models.CharField(
-        max_length=150,
-    )
-    cargo = models.CharField(
-        max_length=254,
-    )
+    telefone = models.CharField(max_length=20)
+    nome_completo = models.CharField(max_length=150)
+    cargo = models.CharField(max_length=254)
     empresa = models.ForeignKey(
         Empresa, on_delete=models.CASCADE, null=True, blank=True
     )
 
     def __str__(self):
         return f"{self.nome_completo}"
+
 
 
 class StatusChoices(models.TextChoices):
@@ -293,54 +250,45 @@ class Estagio(models.Model):
         Instituicao, on_delete=models.PROTECT, null=True, blank=True
     )
     orientador = models.TextField(max_length=100, null=True, blank=True)
-    pdf_termo = models.FileField(upload_to="termos/", null=True, blank=True)
+    pdf_termo = models.FileField(upload_to='temp_docs/', null=True, blank=True)
+def clean(self):
+    super().clean()
+    
+    if not self.estagiario:
+        raise ValidationError({'estagiario': 'Selecione um estagiário'})
+    
+    if self.data_inicio and self.data_fim:
+        if self.data_fim < self.data_inicio:
+            raise ValidationError({
+                'data_fim': 'A data de término não pode ser anterior à data de início (validação do modelo).'
+            })
+    
+    if hasattr(self.estagiario, 'periodo') and self.estagiario.periodo < 4:
+        raise ValidationError({
+            'estagiario': 'O estudante precisa estar cursando e concluído no mínimo 03 (três) período letivos do curso'
+        })
+    
+    if hasattr(self.estagiario, 'turno') and self.estagiario.turno == self.turno:
+        raise ValidationError({
+            'turno': 'O turno do estagiário e o turno do estágio devem ser diferentes.'
+        })
 
-    def clean(self):
-        super().clean()
+    if self.supervisor and self.empresa and self.supervisor.empresa != self.empresa:
+        raise ValidationError({
+            'empresa': 'O supervisor precisa estar vinculado à mesma empresa do estagiário.'
+        })
+    
+    if hasattr(self.estagiario, 'ira') and (self.estagiario.ira is None or self.estagiario.ira < 6.0):
+        raise ValidationError({
+            'estagiario': 'O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0'
+        })
 
-        if not self.estagiario:
-            raise ValidationError({"estagiario": "Selecione um estagiário"})
-
-        if self.data_inicio and self.data_fim:
-            if self.data_fim < self.data_inicio:
-                raise ValidationError(
-                    {
-                        "data_fim": "A data de término não pode ser anterior à data de início (validação do modelo)."
-                    }
-                )
-
-        if hasattr(self.estagiario, "periodo") and self.estagiario.periodo < 4:
-            raise ValidationError(
-                {
-                    "estagiario": "O estudante precisa estar cursando e concluído no mínimo 03 (três) período letivos do curso"
-                }
-            )
-
-        if hasattr(self.estagiario, "turno") and self.estagiario.turno == self.turno:
-            raise ValidationError(
-                {
-                    "turno": "O turno do estagiário e o turno do estágio devem ser diferentes."
-                }
-            )
-
-        if self.supervisor and self.empresa and self.supervisor.empresa != self.empresa:
-            raise ValidationError(
-                {
-                    "empresa": "O supervisor precisa estar vinculado à mesma empresa do estagiário."
-                }
-            )
-
-        if hasattr(self.estagiario, "ira") and (
-            self.estagiario.ira is None or self.estagiario.ira < 6.0
-        ):
-            raise ValidationError(
-                {
-                    "estagiario": "O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0"
-                }
-            )
+            
+       
 
     def __str__(self):
-        return f"Estágio: {self.estagiario.nome} em {self.empresa.empresa_nome} ({self.get_status_display()})"
+       return f"Estágio: {self.estagiario.nome_completo} em {self.empresa.empresa_nome} ({self.get_status_display()})"
+
 
 
 TIPOS_RELATORIO = [
@@ -360,3 +308,12 @@ class RelatorioEstagio(models.Model):
 
     def __str__(self):
         return f"{self.get_tipo_display()} - {self.estagio.estagiario}"
+
+
+class EstagiarioInvite(models.Model):
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    instituicao = models.ForeignKey('Instituicao', on_delete=models.CASCADE)
+    coordenador = models.ForeignKey('CoordenadorExtensao', on_delete=models.CASCADE)
+    email = models.EmailField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    used = models.BooleanField(default=False)

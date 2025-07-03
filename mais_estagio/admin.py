@@ -7,16 +7,11 @@ class EnderecoAdmin(admin.ModelAdmin):
     list_display = ("rua", "numero", "bairro", "cidade", "estado", "cep")
     search_fields = ("rua", "bairro", "cidade", "estado", "cep")
 
-@admin.register(models.Instituicao)
-class InstituicaoAdmin(admin.ModelAdmin):
-    list_display = ("nome", "cnpj", "email", "telefone", "endereco")
-    search_fields = ("nome", "cnpj", "email")
-    list_filter = ("endereco__cidade", "endereco__estado")
 
 @admin.register(models.Aluno)
 class AlunoAdmin(admin.ModelAdmin):
     list_display = (
-        "nome",
+        "nome_completo",
         "cpf",
         "matricula",
         "email",
@@ -31,6 +26,15 @@ class EmpresaAdmin(admin.ModelAdmin):
     list_display = ("empresa_nome", "cnpj", "razao_social", "email", "endereco")
     search_fields = ("empresa_nome", "cnpj", "razao_social")
     list_filter = ("endereco__cidade", "endereco__estado")
+
+
+@admin.register(models.Instituicao)
+class InstituicaoAdmin(admin.ModelAdmin):
+    list_display = ("nome", "cnpj", "email", "telefone", "endereco")
+    search_fields = ("nome", "cnpj", "email")
+    list_filter = ("endereco__cidade", "endereco__estado")
+
+
 
 @admin.register(models.CoordenadorExtensao)
 class CoordenadorExtensaoAdmin(admin.ModelAdmin):
@@ -76,7 +80,7 @@ class EstagioAdmin(admin.ModelAdmin):
     )
     search_fields = (
         "area",
-        "estagiario__nome",
+        "estagiario__nome_completo",
         "supervisor__nome_completo",
         "empresa__nome",
         "instituicao__nome",
@@ -105,7 +109,7 @@ class EstagioAdmin(admin.ModelAdmin):
     )
     search_fields = (
         "area",
-        "estagiario__nome",
+        "estagiario__nome_completo",
         "supervisor__nome_completo",
         "empresa__nome",
         "instituicao__nome",

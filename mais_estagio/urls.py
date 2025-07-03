@@ -20,7 +20,8 @@ from mais_estagio.views.estagios import (
     editar_estagio,
     add_estagios,
     complementar_estagio,
-    download_tceu
+    download_tceu,
+    importar_termo,
 )
 
 from home.utils import parse_sections, buscar_cep, validate_cnpj
@@ -88,9 +89,7 @@ urlpatterns = [
     path('editar_estagio/<int:estagio_id>', editar_estagio, name='editar_estagio'),   
 
 
-    path('importar-pdf', importar_pdf, name='importar_pdf'),
-    path('importar_termo', importar_termo, name='importar_termo'),
-     path('importar-termo/<int:estagio_id>/', importar_termo, name='importar_termo'),
+    path('estagio/<int:estagio_id>/importar-termo/', importar_termo, name='importar_termo'),
     path('parse-sections', parse_sections, name='parse_sections'),
     path('buscar-cep', buscar_cep, name='buscar_cep'),
     path('validate_cnpj', validate_cnpj, name='validate_cnpj'),
