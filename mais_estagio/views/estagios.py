@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 from home.utils import preencher_tceu
 from ..forms import EstagioCadastroForm
@@ -169,7 +170,7 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
         if form.is_valid():
             estagio_instance = form.save()
             
-            template_path = str(os.path.join(settings.BASE_DIR, "dashboard", "templates", "docs", "TceuTemplate.docx"))
+            template_path = str(os.path.join(settings.BASE_DIR, "mais_estagio", "templates", "docs", "TceuTemplate.docx"))
             
             output_pdf_path = preencher_tceu(estagio_instance, template_path)
             

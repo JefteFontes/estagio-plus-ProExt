@@ -129,13 +129,13 @@ def ativar_acesso_estagiario(request, estagiario_instance):
                 username=estagiario_instance.email, 
                 email=estagiario_instance.email,
                 first_name=(
-                    estagiario_instance.nome.split(" ")[0]
-                    if estagiario_instance.nome
+                    estagiario_instance.nome_completo.split(" ")[0]
+                    if estagiario_instance.nome_completo
                     else ""
                 ),
                 last_name=(
-                    " ".join(estagiario_instance.nome.split(" ")[1:])
-                    if estagiario_instance.nome
+                    " ".join(estagiario_instance.nome_completo.split(" ")[1:])
+                    if estagiario_instance.nome_completo
                     else ""
                 ),
                 is_active=True,
@@ -176,7 +176,7 @@ def ativar_acesso_estagiario(request, estagiario_instance):
 
 def preencher_tceu(estagio, template_path):
     safe_student_name = "".join(
-        [c for c in estagio.estagiario.nome if c.isalpha() or c.isdigit() or c == " "]
+        [c for c in estagio.estagiario.nome_completo if c.isalpha() or c.isdigit() or c == " "] 
     ).rstrip()
     base_filename = f'TCE_{safe_student_name.replace(" ", "_")}'
 
@@ -197,7 +197,7 @@ def preencher_tceu(estagio, template_path):
         endereco_empresa = empresa.endereco
 
         docxedit.replace_string(
-            document, old_string="NomeEstagiario", new_string=estagiario.nome
+            document, old_string="NomeEstagiario", new_string=estagiario.nome_completo
         )
         docxedit.replace_string(
             document, old_string="MatriculaEstagiario", new_string=estagiario.matricula
@@ -362,7 +362,7 @@ def preencher_tceu(estagio, template_path):
         )
 
         safe_student_name = "".join(
-            [c for c in estagiario.nome if c.isalpha() or c.isdigit() or c == " "]
+            [c for c in estagiario.nome_completo if c.isalpha() or c.isdigit() or c == " "]
         ).rstrip()
         output_filename = f'TCE_{safe_student_name.replace(" ", "_")}.docx'
         output_path = os.path.join(settings.MEDIA_ROOT, "temp_docs", output_filename)

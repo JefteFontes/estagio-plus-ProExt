@@ -4,6 +4,7 @@ from django.http import FileResponse, Http404, HttpResponse
 import os
 
 from mais_estagio.forms import CoordenadorCadastroForm
+from mais_estagio.views.estagiarios import AlunoCadastroForm
 from mais_estagio.models import Aluno
 from django.contrib import messages
 from django.utils.translation import gettext as _

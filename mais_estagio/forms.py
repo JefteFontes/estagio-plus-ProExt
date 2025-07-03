@@ -164,6 +164,7 @@ class EstagioCadastroForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         instituicao_logada = None
+        empresa_id = kwargs.get("empresa_id")
         if current_user and current_user.is_authenticated:
             coordenador_extensao = CoordenadorExtensao.objects.filter(user=current_user).first()
             if coordenador_extensao and coordenador_extensao.instituicao:

@@ -39,7 +39,7 @@ from mais_estagio.views.home import (
 from mais_estagio.views.user import editar_perfil
 from django.conf import settings
 from django.conf.urls.static import static
-from mais_estagio.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo
+from mais_estagio.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo_relatorio
 from mais_estagio.views.personalizados import dashboard_personalizados, relatorio_personalidizado
 
 

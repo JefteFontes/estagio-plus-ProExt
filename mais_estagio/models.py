@@ -283,11 +283,9 @@ def clean(self):
             'estagiario': 'O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0'
         })
 
-            
-       
 
     def __str__(self):
-       return f"Estágio: {self.estagiario.nome_completo} em {self.empresa.empresa_nome} ({self.get_status_display()})"
+        return f"Estágio: {self.estagiario.nome_completo} em {self.empresa.empresa_nome} ({self.get_status_display()})"
 
 
 

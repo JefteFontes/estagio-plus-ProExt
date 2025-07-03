@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const estagioId = btnImportar.getAttribute('data-estagio-id');
         const xhr = new XMLHttpRequest();
         
-        xhr.open('POST', `/accounts/profile/estagio/${estagioId}/importar-termo/`, true);
+        xhr.open('POST', `/mais-estagio/estagio/${estagioId}/importar-termo/`, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         
         // Acompanhar progresso

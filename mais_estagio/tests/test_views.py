@@ -119,7 +119,7 @@ class EstagiarioViewTests(TestCase):
         )
         self.url_cadastrar = reverse("cadastrar_estagiario")
         self.url_dashboard = reverse("dashboard_estagiario")
-        self.estagiario = Estagiario.objects.create(
+        self.estagiario = Aluno.objects.create(
             primeiro_nome="João",
             sobrenome="Silva",
             cpf="11122233344",
@@ -158,7 +158,7 @@ class EstagiarioViewTests(TestCase):
         response = self.client.post(self.url_cadastrar, data)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.url_dashboard)
-        self.assertTrue(Estagiario.objects.filter(cpf="98765432100").exists())
+        self.assertTrue(Aluno.objects.filter(cpf="98765432100").exists())
 
     def test_cadastrar_estagiario_post_invalido(self):
         self.client.login(username="coordenador", password="senha")
@@ -207,7 +207,7 @@ class EstagiarioViewTests(TestCase):
         self.assertContains(
             response, "O estagiario possui estagios vinculados e nao pode ser deletado."
         )
-        self.assertTrue(Estagiario.objects.filter(id=self.estagiario.id).exists())
+        self.assertTrue(Aluno.objects.filter(id=self.estagiario.id).exists())
 
     def test_deletar_estagiario_sem_estagio(self):
         self.client.login(username="coordenador", password="senha")
@@ -215,4 +215,4 @@ class EstagiarioViewTests(TestCase):
         response = self.client.post(url_deletar)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.url_dashboard)
-        self.assertFalse(Estagiario.objects.filter(id=self.estagiario.id).exists())
+        self.assertFalse(Aluno.objects.filter(id=self.estagiario.id).exists())

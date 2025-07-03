@@ -1,7 +1,7 @@
 import re
 from django import forms
 from django.contrib.auth.models import User
-from dashboard.models import CoordenadorExtensao, Instituicao, Endereco, Aluno, Cursos
+from mais_estagio.models import CoordenadorExtensao, Instituicao, Endereco, Aluno, Cursos
 from home.utils import validate_cpf
 from django.core.validators import MinValueValidator, MaxValueValidator
 
