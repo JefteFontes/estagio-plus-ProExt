@@ -20,7 +20,8 @@ from mais_estagio.views.estagios import (
     editar_estagio,
     add_estagios,
     complementar_estagio,
-    download_tceu
+    download_tceu,
+    importar_termo,
 )
 
 from home.utils import parse_sections, buscar_cep, validate_cnpj
@@ -38,7 +39,7 @@ from mais_estagio.views.home import (
 from mais_estagio.views.user import editar_perfil
 from django.conf import settings
 from django.conf.urls.static import static
-from mais_estagio.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo
+from mais_estagio.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo_relatorio
 from mais_estagio.views.personalizados import dashboard_personalizados, relatorio_personalidizado
 from mais_estagio.views.orientador import cadastro_orientador, dashboard_orientador , relatorios_orientador
 from mais_estagio.views.supervisor import cadastro_supervisor, dashboard_supervisor, relatorios_supervisor

@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from mais_estagio.models import (
     Empresa,
     Endereco,
+    Aluno,
     Estagio,
     StatusChoices,
     Supervisor,
@@ -15,7 +16,6 @@ from mais_estagio.models import (
     TipoChoices,
     TurnoChoices,
     CoordenadorExtensao,
-    Aluno,
 )
 from home.utils import parse_sections
 from mais_estagio.views.estagios import verificar_pendencias
@@ -52,7 +52,7 @@ def dashboard_cursos(request):
     if area:
         cursos = cursos.filter(area=area)
     if coordenador:
-        cursos = cursos.filter(coordenador__icontains=coordenador)
+        cursos = cursos.filter(coordenador__icontains=coordenador) 
 
     areas = Cursos.objects.values_list("area", flat=True).distinct()
     context = {
@@ -87,16 +87,14 @@ def dashboard_empresa(request):
 
 
 @login_required
-@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
+@user_passes_test(lambda u: hasattr(u, 'coordenadorextensao') and u.coordenadorextensao)
 def dashboard_estagiario(request):
     try:
         coordenador = CoordenadorExtensao.objects.get(user=request.user)
         instituicao = coordenador.instituicao
     except CoordenadorExtensao.DoesNotExist:
-        messages.error(
-            request, "Você não está associado a nenhuma instituição como coordenador."
-        )
-        return redirect("alguma_pagina_de_erro_ou_dashboard_padrao")
+        messages.error(request, "Você não está associado a nenhuma instituição como coordenador.")
+        return redirect('alguma_pagina_de_erro_ou_dashboard_padrao') 
 
     search_query = request.GET.get("search", "")
     search_matricula = request.GET.get("search-matricula", "")
@@ -106,9 +104,9 @@ def dashboard_estagiario(request):
 
     if search_query:
         estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
-            Q(nome_completo__icontains=search_query)
-            | Q(email__icontains=search_query)
-            | Q(cpf__icontains=search_query)
+            Q(nome_completo__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(cpf__icontains=search_query)
         )
     if curso_filter:
         estagiarios_da_instituicao = estagiarios_da_instituicao.filter(
@@ -119,28 +117,20 @@ def dashboard_estagiario(request):
             matricula__startswith=search_matricula
         )
 
-    alunos_cadastrados = estagiarios_da_instituicao.filter(status=True).order_by(
-        "nome"
-    )
-    alunos_aguardando_confirmacao = estagiarios_da_instituicao.filter(
-        status=False
-    ).order_by("nome")
+    alunos_cadastrados = estagiarios_da_instituicao.filter(status=True).order_by('nome_completo')
+    alunos_aguardando_confirmacao = estagiarios_da_instituicao.filter(status=False).order_by('nome_completo')
 
-    total_estagiarios = (
-        alunos_cadastrados.count() + alunos_aguardando_confirmacao.count()
-    )
-    cursos_disponiveis = Cursos.objects.filter(instituicao=instituicao).order_by(
-        "nome_curso"
-    )
+    total_estagiarios = alunos_cadastrados.count() + alunos_aguardando_confirmacao.count()
+    cursos_disponiveis = Cursos.objects.filter(instituicao=instituicao).order_by('nome_curso')
 
     context = {
         "alunos_cadastrados": alunos_cadastrados,
         "alunos_aguardando_confirmacao": alunos_aguardando_confirmacao,
-        "cursos": cursos_disponiveis,
-        "search_query": search_query,
-        "search_matricula": search_matricula,
-        "curso_filter": curso_filter,
-        "total_estagiarios": total_estagiarios,
+        "cursos": cursos_disponiveis, 
+        "search_query": search_query, 
+        "search_matricula": search_matricula, 
+        "curso_filter": curso_filter, 
+        "total_estagiarios": total_estagiarios
     }
     return render(request, "dashboard_estagiario.html", context)
 
@@ -153,6 +143,10 @@ def dashboard_instituicao(request):
         coordenador = request.user.coordenadorextensao
         instituicao = coordenador.instituicao
         estagios = Estagio.objects.filter(instituicao=instituicao)
+    elif hasattr(request.user, 'estagiario'):
+        estagiario = request.user.estagiario
+        estagios = Estagio.objects.filter(estagiario=estagiario)
+        instituicao = estagiario.instituicao if hasattr(estagiario, 'instituicao') else None
     else:
         return HttpResponseForbidden("Acesso não autorizado. Esta página é exclusiva para Coordenadores de Extensão.")
 
@@ -211,7 +205,7 @@ def dashboard_instituicao(request):
             )
 
             estagiario = Aluno.objects.create(
-                nome=estagiario_data.get("nome", ""),
+                nome_completo=estagiario_data.get("nome_completo", ""),
                 cpf=estagiario_data.get("cpf", ""),
                 matricula=estagiario_data.get("matricula", ""),
                 curso=estagiario_data.get("curso", ""),
@@ -251,6 +245,7 @@ def dashboard_instituicao(request):
     status = request.GET.get("status", "")
     turno = request.GET.get("turno", "")
     tipo = request.GET.get("tipo_estagio", "")
+    estagios_num = Estagio.objects.filter(instituicao=instituicao).count()
 
     estagios = Estagio.objects.filter(instituicao=instituicao)
     if area:
@@ -273,7 +268,7 @@ def dashboard_instituicao(request):
         "status_choices": status_choices,
         "turnos": turnos,
         "estagios": estagios,
-        "estagios_ativos": len(estagios),
+        "estagios_ativos": estagios_num,
         "instituicao": instituicao,
         "errors": errors,
     }
@@ -316,7 +311,7 @@ def editar_curso(request, curso_id):
 
 def deletar_curso(request, curso_id):
     curso = get_object_or_404(Cursos, id=curso_id)
-    # mensagem de erro se tiver estagiario vinculado ao curso
+    # mensagem de erro se tiver aluno vinculado ao curso
     if Aluno.objects.filter(curso=curso).exists():
         messages.error(
             request, "O curso possui estagiarios vinculados e nao pode ser deletado."
@@ -325,7 +320,9 @@ def deletar_curso(request, curso_id):
     else:
         curso.delete()
         messages.success(request, "Curso deletado com sucesso!")
-        return redirect("dashboard_cursos")
+        return redirect(
+            "dashboard_cursos"
+        )  
     return render(request, "dashboard_cursos.html", {"cursos": cursos})
 
 
@@ -343,3 +340,4 @@ def detalhes_estagio(request, estagio_id):
 
 def relatorios(request):
     return render(request, "dashboard_relatorios.html")
+    

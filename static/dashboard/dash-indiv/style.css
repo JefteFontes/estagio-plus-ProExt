@@ -172,6 +172,7 @@
     border-radius: 4px;
     margin: 0 5px;
     transition: background-color 0.3s;
+    border: none;
 }
 
 .btn-action.edit {
@@ -190,6 +191,15 @@
 
 .btn-action.delete:hover {
     background-color: #ffcdd2;
+}
+
+.btn-action.confirm {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+    
+.btn-action.confirm:hover {
+    background-color: #bbdefb;
 }
 
 .empty-state {

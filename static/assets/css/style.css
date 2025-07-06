@@ -343,3 +343,22 @@ hr {
 .dashboard-container h2 {
     text-align: center;
 }
+
+#uploadProgress {
+    height: 25px;
+    transition: all 0.3s ease;
+}
+
+#uploadStatus {
+    transition: all 0.3s ease;
+}
+
+.alert {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 0;
+}
+
+.alert i {
+    margin-right: 8px;
+}

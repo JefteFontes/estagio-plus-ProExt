@@ -18,7 +18,7 @@ class InstituicaoAdmin(admin.ModelAdmin):
 @admin.register(models.Aluno)
 class AlunoAdmin(admin.ModelAdmin):
     list_display = (
-        "nome",
+        "nome_completo",
         "cpf",
         "matricula",
         "email",
@@ -86,7 +86,7 @@ class EstagioAdmin(admin.ModelAdmin):
     )
     search_fields = (
         "area",
-        "estagiario__nome",
+        "estagiario__nome_completo",
         "supervisor__nome_completo",
         "empresa__nome",
         "instituicao__nome",
@@ -115,7 +115,7 @@ class EstagioAdmin(admin.ModelAdmin):
     )
     search_fields = (
         "area",
-        "estagiario__nome",
+        "estagiario__nome_completo",
         "supervisor__nome_completo",
         "empresa__nome",
         "instituicao__nome",

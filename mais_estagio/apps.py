@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class DashboardConfig(AppConfig):
+class MaisEstagioConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "mais_estagio"

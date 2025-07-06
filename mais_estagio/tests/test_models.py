@@ -1,9 +1,11 @@
 from django.test import TestCase
 from mais_estagio.models import (
     Endereco,
+    Instituicao,
     CoordenadorExtensao,
     Empresa,
     Cursos,
+    Estagiario,
     Supervisor,
     Estagio,
     ImportTermoEstagio,
@@ -103,7 +105,7 @@ class TestModels(TestCase):
             coordenador="Coordenador Teste",
             email_coordenador="coordenador@test.com",
         )
-        estagiario = Aluno.objects.create(
+        estagiario = Estagiario.objects.create(
             primeiro_nome="Estagiário",
             sobrenome="Teste",
             cpf="12345678901",
@@ -163,7 +165,7 @@ class TestModels(TestCase):
             email="empresa@test.com",
             instituicao=instituicao,
         )
-        estagiario = Aluno.objects.create(
+        estagiario = Estagiario.objects.create(
             primeiro_nome="Estagiário",
             sobrenome="Teste",
             cpf="12345678901",
