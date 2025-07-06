@@ -48,15 +48,7 @@ class Instituicao(models.Model):
 
 class Empresa(models.Model):
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
-    convenio = models.CharField(
-        max_length=80,
-        null=True,
-        blank=True,
-        unique=True,
-        validators=[
-            RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")
-        ],
-    )
+    
     empresa_nome = models.CharField(
         max_length=250,
         validators=[
@@ -351,15 +343,15 @@ class Estagio(models.Model):
                 }
             )
 
-    if self.supervisor and self.empresa and self.supervisor.empresa != self.empresa:
-        raise ValidationError({
-            'empresa': 'O supervisor precisa estar vinculado à mesma empresa do estagiário.'
-        })
-    
-    if hasattr(self.estagiario, 'ira') and (self.estagiario.ira is None or self.estagiario.ira < 6.0):
-        raise ValidationError({
-            'estagiario': 'O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0'
-        })
+        if self.supervisor and self.empresa and self.supervisor.empresa != self.empresa:
+            raise ValidationError({
+                'empresa': 'O supervisor precisa estar vinculado à mesma empresa do estagiário.'
+            })
+        
+        if hasattr(self.estagiario, 'ira') and (self.estagiario.ira is None or self.estagiario.ira < 6.0):
+            raise ValidationError({
+                'estagiario': 'O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0'
+            })
 
 
     def __str__(self):

@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     "allauth.account",
     "mais_estagio",
     "home",
-    "base",
 ]
 
 SITE_ID = 1
