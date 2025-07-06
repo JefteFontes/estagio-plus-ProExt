@@ -133,8 +133,7 @@ class EstagioCadastroForm(forms.ModelForm):
         empty_label="--- Selecione a Empresa ---",
     )
     supervisor = forms.ModelChoiceField(
-        queryset=Supervisor.objects.all(),
-        required=False,
+        queryset=Supervisor.objects.none(),
         widget=forms.Select(attrs={"class": "form-select", "id": "supervisor-select"}),
         empty_label="--- Selecione o Supervisor (Opcional) ---",
     )
@@ -145,7 +144,6 @@ class EstagioCadastroForm(forms.ModelForm):
     )
     orientador = forms.ModelChoiceField(
         queryset=Orientador.objects.none(),
-        required=False,
         widget=forms.Select(attrs={"class": "form-select"}),
         empty_label="--- Selecione o Orientador ---",
         label="Orientador"
@@ -186,6 +184,17 @@ class EstagioCadastroForm(forms.ModelForm):
             ).first()
             if coordenador_extensao and coordenador_extensao.instituicao:
                 instituicao_logada = coordenador_extensao.instituicao
+
+        if 'empresa' in self.data:
+            try:
+                empresa_id = int(self.data.get('empresa'))
+                self.fields['supervisor'].queryset = Supervisor.objects.filter(empresa_id=empresa_id).order_by('nome_completo')
+            except (ValueError, TypeError):
+                self.fields['supervisor'].queryset = Supervisor.objects.none()
+        elif self.instance.pk and self.instance.empresa:
+            self.fields['supervisor'].queryset = Supervisor.objects.filter(empresa=self.instance.empresa)
+        else:
+            self.fields['supervisor'].queryset = Supervisor.objects.none()
 
         if instituicao_logada:
             self.fields["estagiario"].queryset = Aluno.objects.filter(

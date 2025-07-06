@@ -41,7 +41,10 @@
                 </div>
                 <div class="form-group compact-group">
                     <label for="{{ form.supervisor.id_for_label }}" class="form-label">Supervisor</label>
-                    {{ form.supervisor }}
+                    <select name="{{ form.supervisor.name }}" id="id_supervisor" class="form-select" disabled>
+                        <option value="">--- Selecione o Supervisor (Opcional) ---</option>
+                        {# As opções serão preenchidas via JS #}
+                    </select>
                 </div>
             </div>
             
@@ -151,25 +154,35 @@ $(document).ready(function () {
     // Máscara para valores monetários
     $('.money-input').mask('000.000.000.000.000,00', {reverse: true});
     
-    // Busca de supervisores ao selecionar empresa
+    // Sempre desabilita ao carregar
+    $("#id_supervisor").prop("disabled", true);
+
     $("#id_empresa").change(function () {
         var empresaId = $(this).val();
+        var supervisorSelect = $("#id_supervisor");
+        supervisorSelect.empty();
+        supervisorSelect.append('<option value="">--- Selecione o Supervisor (Opcional) ---</option>');
+        supervisorSelect.prop("disabled", true); // Desabilita antes de buscar
+
         if (empresaId) {
             $.ajax({
                 url: "{% url 'get_supervisores' %}",
                 data: { empresa_id: empresaId },
                 success: function (data) {
-                    var supervisorSelect = $("#id_supervisor");
-                    supervisorSelect.empty();
-                    supervisorSelect.append('<option value="">---------</option>');
-                    data.forEach(function (supervisor) {
-                        supervisorSelect.append(
-                            '<option value="' + supervisor.id + '">' + supervisor.primeiro_nome + ' ' + supervisor.sobrenome + '</option>'
-                        );
-                    });
-                },
+                    if (data.length > 0) {
+                        data.forEach(function (supervisor) {
+                            supervisorSelect.append(
+                                '<option value="' + supervisor.id + '">' + supervisor.nome_completo + '</option>'
+                            );
+                        });
+                        supervisorSelect.prop("disabled", false);
+                    } else {
+                        supervisorSelect.append('<option value="">Nenhum supervisor cadastrado para esta empresa</option>');
+                        supervisorSelect.prop("disabled", true);
+                    }
+                }
             });
-        } 
+        }
     });
     
     // Atualização automática do status

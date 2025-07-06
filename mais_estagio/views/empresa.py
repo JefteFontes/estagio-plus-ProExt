@@ -67,6 +67,7 @@ def editar_empresa(request, empresa_id):
     return render(request, "cadastrar_empresa.html", {"form": form, "empresa": empresa})
 
 
+@login_required
 def get_supervisores(request):
     empresa_id = request.GET.get("empresa_id")
     if empresa_id:
@@ -77,6 +78,7 @@ def get_supervisores(request):
     return JsonResponse([], safe=False)
 
 
+@login_required
 def deletar_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id=empresa_id)
     # conferir se der algum erro
