@@ -26,6 +26,10 @@
             <a href="{% url 'add_estagio' %}" class="button-add">
                 <i class="fas fa-plus"></i> Cadastrar Estágio
             </a>
+            <!-- Botão para cadastrar orientador -->
+            <a href="{% url 'cadastrar_orientador' %}" class="button-add" style="background: #4e73df;">
+                <i class="fas fa-user-plus"></i> Cadastrar Orientador
+            </a>
         </div>
     </div>
 
@@ -96,7 +100,7 @@
                     <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
                     <td>
                         <span class="status-badge {% if estagio.status == 'Concluído' %}completed{% else %}in-progress{% endif %}">
-                            {{ estagio.status }}
+                            {{ estagio.get_status_display }}
                         </span>
                     </td>
                     <td class="actions-cell">

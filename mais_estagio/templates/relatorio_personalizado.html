@@ -6,7 +6,9 @@
     <!-- Cabeçalho da Instituição -->
     {% if instituicao %}
         <div class="dashboard-header">
-            <img src = "{{instituicao.logo.url}}" alt="Logo da Instituição" class="institution-logo" style="width: 200px;"/>
+            {% if instituicao.logo %}
+                <img src="{{ instituicao.logo.url }}" alt="Logo da Instituição" class="institution-logo" style="width: 200px;"/>
+            {% endif %}
             <h1 class="institution-title">{{ instituicao.nome }}</h1>
             <p>CNPJ:{{ instituicao.cnpj}}<br/>
             Endereço: {{ instituicao.endereco }} - {{ instituicao.endereco.cidade }} - {{ instituicao.endereco.estado }}<br/>
@@ -75,7 +77,7 @@
                     <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
                     <td>
                         <span class="badge {% if estagio.status == 'Concluído' %}bg-success{% else %}bg-warning{% endif %}">
-                            {{ estagio.status }}
+                            {{ estagio.get_status_display }}
                         </span>
                     </td>
                     <td>

@@ -20,9 +20,9 @@
                 Faltam {{ tempo_falta }}
             </span>
             {% if estagio.status == 'Concluído' %}
-                <span class="status-badge completed">{{ estagio.status }}</span>
+                <span class="status-badge completed">{{ estagio.get_status_display }}</span>
             {% else %}
-                <span class="status-badge in-progress">{{ estagio.status }}</span>
+                <span class="status-badge in-progress">{{ estagio.get_status_display }}</span>
             {% endif %}
         </div>
     </div>

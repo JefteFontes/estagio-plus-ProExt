@@ -41,9 +41,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from mais_estagio.views.relatorios import  relatorios, verificar_relatorios_pendentes, importar_termo_relatorio
 from mais_estagio.views.personalizados import dashboard_personalizados, relatorio_personalidizado
-
-
-
+from mais_estagio.views.orientador import cadastro_orientador, dashboard_orientador , relatorios_orientador
+from mais_estagio.views.supervisor import cadastro_supervisor, dashboard_supervisor, relatorios_supervisor
 
 
 urlpatterns = [
@@ -82,6 +81,15 @@ urlpatterns = [
     path('editar_estagiario/<int:estagiario_id>', editar_estagiario, name='editar_estagiario'),
     path('deletar_estagiario/<int:estagiario_id>', deletar_estagiario, name='deletar_estagiario'),
     path('estagiario/cadastro/<uuid:token>/', estagiario_auto_cadastro, name='estagiario_auto_cadastro'),
+
+    path("cadastrar_orientador/", cadastro_orientador, name="cadastrar_orientador"),
+    path("dashboard_orientador/", dashboard_orientador, name="dashboard_orientador"),
+    path("relatorios_orientador/", relatorios_orientador, name="relatorios_orientador"),
+
+    path("cadastrar_supervisor/<int:empresa_id>/", cadastro_supervisor, name="cadastrar_supervisor"),
+    path("dashboard_supervisor/", dashboard_supervisor, name="dashboard_supervisor"),
+    path("relatorios_supervisor/", relatorios_supervisor, name="relatorios_supervisor"),
+    
 
     path('add-estagio', add_estagios, name='add_estagio'),
     path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),

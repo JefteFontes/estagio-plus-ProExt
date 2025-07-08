@@ -229,6 +229,7 @@ def verificar_pendencias(request):
     return redirect('dashboard_instituicao')
 
 
+@login_required
 def detalhes_estagio(request):
     selected = request.GET.get("selected")
     if not selected:
@@ -240,15 +241,26 @@ def detalhes_estagio(request):
     relatorios_pendentes = verificar_relatorios_pendentes(estagio)
     documento_path = None
     documento_url = None
-    if estagio.pdf_termo: 
+    if estagio.pdf_termo:
         documento_path = os.path.join(settings.MEDIA_ROOT, estagio.pdf_termo.name)
         documento_url = estagio.pdf_termo.url if hasattr(estagio.pdf_termo, 'url') else None
-    print("Documento Path:", documento_path)
-    print("Documento URL:", documento_url)
+
+    # Escolha do template base conforme o tipo de usuário
+    if hasattr(request.user, "coordenadorextensao") and request.user.coordenadorextensao:
+        template = "details.html"  # Usa base institucional
+    elif hasattr(request.user, "orientador") and request.user.orientador:
+        template = "orientador/detalhes_estagio_orientador.html"
+    elif hasattr(request.user, "supervisor") and request.user.supervisor:
+        template = "supervisor/detalhes_estagio_supervisor.html"
+    elif hasattr(request.user, "aluno") and request.user.aluno:
+        template = "aluno/detalhes_estagio_aluno.html"
+    else:
+        # fallback seguro
+        template = "details.html"
 
     return render(
         request,
-        "details.html",
+        template,
         {
             "estagio": estagio,
             "duracao": duracao,
@@ -269,6 +281,7 @@ def get_supervisores(request):
         )
         return JsonResponse(list(supervisores), safe=False)
     return JsonResponse([], safe=False)
+
 
 def download_tceu(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)

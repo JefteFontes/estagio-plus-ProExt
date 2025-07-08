@@ -1,0 +1,3 @@
+from .cadastro_orientador import cadastro_orientador
+from .dashboard_orientador import dashboard_orientador
+from .relatorios_orientador import relatorios_orientador

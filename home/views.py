@@ -212,6 +212,7 @@ def ativar_acesso_estagiario_view(request, estagiario_id):
         messages.error(request, "Requisição inválida para ativação de usuário.")
         return redirect("dashboard_estagiario")
 
+
 @login_required
 def profile_redirect(request):
     user = request.user
@@ -222,8 +223,14 @@ def profile_redirect(request):
     if hasattr(user, "aluno") and user.aluno:
         return redirect("estagios_aluno")
 
+    if hasattr(user, "orientador") and user.orientador:
+        return redirect("dashboard_orientador")
+
+    if hasattr(user, "supervisor") and user.supervisor:
+        return redirect("dashboard_supervisor")
+
     messages.warning(
         request,
         "Seu perfil não está associado a um tipo de usuário válido. Contate o Coordenador.",
     )
-    return redirect('/login/')
+    return redirect('login')

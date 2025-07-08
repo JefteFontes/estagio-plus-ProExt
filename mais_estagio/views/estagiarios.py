@@ -75,8 +75,8 @@ def estagiario_auto_cadastro(request, token):
         form = EstagiarioCadastroForm(initial={'email': invite.email}, instituicao=invite.instituicao)
     return render(request, "cadastrar_estagiario.html", {"form": form})
 
-class AlunoCadastroForm(forms.ModelForm):
 
+class AlunoCadastroForm(forms.ModelForm):
     rua = forms.CharField(
         max_length=255,
         widget=forms.TextInput(

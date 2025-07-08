@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Min
 from dateutil.relativedelta import relativedelta
 from django.core.validators import MinValueValidator, MaxValueValidator
+from allauth.account.forms import ResetPasswordForm
 
 from home.utils import validate_cpf
 from .models import (
@@ -21,6 +22,7 @@ from .models import (
     Cursos,
     CoordenadorExtensao,
     Instituicao,
+    Orientador
 )
 
 
@@ -137,12 +139,12 @@ class EstagioCadastroForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "form-select"}),
         empty_label=None
     )
-    orientador = forms.CharField(
-        max_length=100, 
-        required=False, 
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Orientador na Instituição de Ensino (Opcional)"}
-        ),
+    orientador = forms.ModelChoiceField(
+        queryset=Orientador.objects.none(),
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select"}),
+        empty_label="--- Selecione o Orientador ---",
+        label="Orientador"
     )
     tipo_estagio = forms.ChoiceField(
         choices=TipoChoices.choices,
@@ -175,13 +177,20 @@ class EstagioCadastroForm(forms.ModelForm):
             self.fields["empresa"].queryset = Empresa.objects.filter(instituicao=instituicao_logada).order_by('empresa_nome')
             self.fields["instituicao"].queryset = Instituicao.objects.filter(id=instituicao_logada.id)
             self.fields["instituicao"].initial = instituicao_logada
-            self.fields["instituicao"].disabled = True 
-            self.fields["supervisor"].queryset = Supervisor.objects.filter(empresa__instituicao=instituicao_logada).order_by('nome_completo')
+            self.fields["instituicao"].disabled = True
+            self.fields["supervisor"].queryset = Supervisor.objects.filter(
+                empresa__instituicao=instituicao_logada
+            ).order_by("nome_completo")
+            # Orientador: apenas da instituição logada
+            self.fields["orientador"].queryset = Orientador.objects.filter(
+                instituicao=instituicao_logada
+            ).order_by("nome_completo")
         else:
             self.fields["estagiario"].queryset = Aluno.objects.none()
             self.fields["empresa"].queryset = Empresa.objects.none()
             self.fields["instituicao"].queryset = Instituicao.objects.none()
             self.fields["supervisor"].queryset = Supervisor.objects.none()
+            self.fields["orientador"].queryset = Orientador.objects.none()
 
     def clean(self):
         cleaned_data = super().clean()
@@ -535,14 +544,12 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
 
 class EmpresaCadastroForm(forms.ModelForm):
-    # Campos para os dados do usuário
-    email = forms.EmailField(
-        widget=forms.EmailInput(
-            attrs={"class": "form-control", "placeholder": "exemplo@dominio.com"}
-        )
+    convenio = forms.CharField(
+        max_length=8,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Convênio"}
+        ),
     )
-
-    # Campos para os dados de endereço da empresa
     rua = forms.CharField(
         max_length=255,
         widget=forms.TextInput(
@@ -586,7 +593,6 @@ class EmpresaCadastroForm(forms.ModelForm):
             attrs={"class": "form-control", "placeholder": "Complemento"}
         ),
     )
-    # Campos para dados da empresa
     empresa_nome = forms.CharField(
         max_length=250,
         widget=forms.TextInput(
@@ -626,17 +632,65 @@ class EmpresaCadastroForm(forms.ModelForm):
         ),
     )
 
-    def clean_cpf(self):
-        cpf = self.cleaned_data["cpf"]
-        cpf = "".join(filter(str.isdigit, cpf))
-        if not validate_cpf(cpf):
-            print("CPF inválido")
-            raise forms.ValidationError("CPF inválido")
-        return cpf
+    class Meta:
+        model = Empresa
+        fields = [
+            "convenio",
+            "empresa_nome",
+            "empresa_cnpj",
+            "empresa_razao_social",
+            "empresa_atividades",
+            "rua",
+            "numero",
+            "bairro",
+            "cidade",
+            "estado",
+            "cep",
+            "complemento",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        self.coordenador = kwargs.pop("coordenador", None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        # Cria ou atualiza o endereço
+        endereco = Endereco.objects.create(
+            rua=self.cleaned_data["rua"],
+            numero=self.cleaned_data["numero"],
+            bairro=self.cleaned_data["bairro"],
+            cidade=self.cleaned_data["cidade"],
+            estado=self.cleaned_data["estado"],
+            cep=self.cleaned_data["cep"],
+            complemento=self.cleaned_data["complemento"],
+        )
+
+        empresa = super().save(commit=False)
+        empresa.endereco = endereco
+        if self.coordenador and self.coordenador.instituicao:
+            empresa.instituicao = self.coordenador.instituicao
+
+        if commit:
+            empresa.save()
+
+        return empresa
+
+
+class SupervisorCadastroForm(forms.ModelForm):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "exemplo@dominio.com"}
+        )
+    )
+    empresa = forms.ModelChoiceField(
+        queryset=Empresa.objects.none(),  # será definido na view
+        widget=forms.HiddenInput(),
+        required=False,
+    )
 
     class Meta:
         model = Supervisor
-        fields = ["nome_completo", "cpf", "cargo", "telefone"]
+        fields = ["nome_completo", "cpf", "cargo", "telefone", "email", "empresa"]
         widgets = {
             "nome_completo": forms.TextInput(
                 attrs={
@@ -661,59 +715,33 @@ class EmpresaCadastroForm(forms.ModelForm):
             ),
         }
 
-    def __init__(self, *args, **kwargs):
-        self.coordenador = kwargs.pop("coordenador", None)
-        super().__init__(*args, **kwargs)
+    def clean_cpf(self):
+        cpf = self.cleaned_data["cpf"]
+        cpf = "".join(filter(str.isdigit, cpf))
+        if not validate_cpf(cpf):
+            raise forms.ValidationError("CPF inválido")
+        return cpf
 
     def save(self, commit=True):
-        if self.instance.pk:
-            supervisor = self.instance
-            empresa = supervisor.empresa
-            endereco = empresa.endereco
-        else:
-            supervisor = super().save(commit=False)
-            endereco = Endereco()
-            empresa = Empresa()
+        user_data = {
+            "username": self.cleaned_data["nome_completo"],
+            "email": self.cleaned_data["email"],
+        }
+        if User.objects.filter(email=self.cleaned_data["email"]).exists():
+            raise forms.ValidationError("Já existe um usuário com este e-mail.")
 
-        # Atualizando os dados do endereço
-        endereco.rua = self.cleaned_data["rua"]
-        endereco.numero = self.cleaned_data["numero"]
-        endereco.bairro = self.cleaned_data["bairro"]
-        endereco.cidade = self.cleaned_data["cidade"]
-        endereco.estado = self.cleaned_data["estado"]
-        endereco.cep = self.cleaned_data["cep"]
-        endereco.complemento = self.cleaned_data["complemento"]
-        endereco.save()
+        password = self.clean_cpf()
+        user = User.objects.create_user(**user_data, password=password)
 
-        # Atualizando os dados da empresa
-        empresa.empresa_nome = self.cleaned_data["empresa_nome"]
-        empresa.cnpj = self.cleaned_data["empresa_cnpj"]
-        empresa.razao_social = self.cleaned_data["empresa_razao_social"]
-        empresa.endereco = endereco
-        empresa.email = self.cleaned_data["email"]
-        empresa.atividades = self.cleaned_data["empresa_atividades"]
-
-        if not self.instance.pk:  # Só cria uma nova empresa se não for edição
-            empresa = Empresa.objects.create(
-                empresa_nome=self.cleaned_data["empresa_nome"],
-                cnpj=self.cleaned_data["empresa_cnpj"],
-                razao_social=self.cleaned_data["empresa_razao_social"],
-                endereco=endereco,
-                email=self.cleaned_data["email"],
-                instituicao=self.coordenador.instituicao,
-            )
-        else:
-            empresa.save()  # Apenas salva se for uma edição
-
-        # Atualizando os dados do supervisor
-        supervisor.empresa = empresa
+        supervisor = super().save(commit=False)
         supervisor.email = self.cleaned_data["email"]
+        supervisor.user = user
 
         if commit:
+            user.save()
             supervisor.save()
 
-        return supervisor
-
+        return user, supervisor
 
 class CoordenadorEditForm(forms.ModelForm):
     # Fields for user data
@@ -934,3 +962,120 @@ class CoordenadorCadastroForm(forms.ModelForm):
 
         return user, coordenador
 
+
+class OrientadorCadastroForm(forms.ModelForm):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "exemplo@dominio.com"}
+        )
+    )
+    rua = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Rua das Flores"}
+        ),
+    )
+    numero = forms.CharField(
+        max_length=10,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Número (ex: 123)"}
+        ),
+    )
+    bairro = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Bairro (ex: Centro)"}
+        ),
+    )
+    cidade = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Cidade (ex: São Paulo)"}
+        ),
+    )
+    estado = forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Estado (ex: SP)"}
+        ),
+    )
+    cep = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "CEP (ex: 12345-678)"}
+        ),
+    )
+    complemento = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Complemento"}
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = Orientador  
+        fields = ["nome_completo", "cpf"]
+        widgets = {
+            "nome_completo": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Nome Completo (ex: João da Silva)",
+                }
+            ),
+            "cpf": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "CPF (ex: 12345678900)"}
+            ),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        self.coordenador = kwargs.pop("coordenador", None)
+        super().__init__(*args, **kwargs)
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data["cpf"]
+        cpf = re.sub(r"\D", "", cpf)  # Remove tudo que não for número
+
+        if not validate_cpf(cpf):  # Valida CPF depois de limpar
+            raise forms.ValidationError(
+                "CPF inválido. Use um CPF válido com 11 dígitos."
+            )
+
+        return cpf
+
+    def save(self, commit=True):
+        user_data = {
+            "username": f"{self.cleaned_data['nome_completo']}",
+            "email": self.cleaned_data["email"],
+        }
+
+        if User.objects.filter(email=self.cleaned_data["email"]).exists():
+            raise forms.ValidationError("Já existe um usuário com este e-mail.")
+
+        password = self.clean_cpf()
+
+        user = User.objects.create_user(**user_data, password=password)
+
+        endereco = Endereco.objects.create(
+            rua=self.cleaned_data["rua"],
+            numero=self.cleaned_data["numero"],
+            bairro=self.cleaned_data["bairro"],
+            cidade=self.cleaned_data["cidade"],
+            estado=self.cleaned_data["estado"],
+            cep=self.cleaned_data["cep"],
+            complemento=self.cleaned_data["complemento"],
+        )
+
+        orientador = super().save(commit=False)
+        if not self.coordenador or not self.coordenador.instituicao:
+            raise forms.ValidationError("Instituição do coordenador não encontrada.")
+        orientador.instituicao = self.coordenador.instituicao
+        orientador.email = self.cleaned_data["email"]
+        orientador.endereco = endereco
+        orientador.user = user
+
+        if commit:
+            user.save()
+            orientador.save()
+
+        return user, orientador

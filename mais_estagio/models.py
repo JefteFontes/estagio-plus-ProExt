@@ -13,6 +13,7 @@ class TurnoChoices(models.TextChoices):
     TARDE = "Tarde"
     NOITE = "Noite"
 
+
 class Endereco(models.Model):
     rua = models.CharField(max_length=255)
     numero = models.CharField(max_length=10)
@@ -53,13 +54,13 @@ class Empresa(models.Model):
         blank=True,
         unique=True,
         validators=[
-            RegexValidator(regex=r"^[0-9]{4}/[0-9]{4}$", message="Use apenas números.")
+            RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")
         ],
     )
     empresa_nome = models.CharField(
         max_length=250,
         validators=[
-            RegexValidator(regex=r"^[a-zA-Z ]+$", message="Use apenas letras.")
+            RegexValidator(regex=r"^[a-zA-Z0-9áàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s\-\.&]+$", message="Use apenas letras e números.")
         ],
     )
     cnpj = models.CharField(
@@ -84,13 +85,13 @@ class Empresa(models.Model):
 
 
 class Areachoices(models.TextChoices):
-    saude = "Saúde"
-    tecnologia = "Tecnologia"
-    gestao_e_negocios = "Gestão e Negócios"
-    engenharia_e_construcao = "Engenharia e Construção"
-    eletronica_e_automacao = "Eletrônica e Automação"
-    educacao = "Educação"
-    outros = "Outros"
+    SAUDE = "saude", "Saúde"
+    TECNOLOGIA = "tecnologia", "Tecnologia"
+    GESTAO_E_NEGOCIOS = "gestao_e_negocios", "Gestão e Negócios"
+    ENGENHARIA_E_CONSTRUCAO = "engenharia_e_construcao", "Engenharia e Construção"
+    ELETRONICA_E_AUTOMACAO = "eletronica_e_automacao", "Eletrônica e Automação"
+    EDUCACAO = "educacao", "Educação"
+    OUTROS = "outros", "Outros"
 
 
 class Cursos(models.Model):
@@ -101,23 +102,42 @@ class Cursos(models.Model):
         unique=True,
         validators=[
             RegexValidator(
-                regex=r"^[a-zA-ZáéíóúÁÉÍÓÚãõÃÕçÇ\s]+$", message="Use apenas letras."
+                regex=r"^[a-zA-ZáàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s]+$", message="Use apenas letras."
             )
         ],
     )
     descricao = models.CharField(max_length=250)
     area = models.CharField(
-        max_length=50, choices=Areachoices.choices, default=Areachoices.tecnologia
+        max_length=50,
+        choices=Areachoices.choices,
+        default=Areachoices.TECNOLOGIA,
+        null=False,
     )
-    coordenador = models.CharField(max_length=50)
-    email_coordenador = models.EmailField(max_length=254)
+    coordenador = models.CharField(
+        max_length=50,
+        null=False,
+        validators=[
+            RegexValidator(
+                regex=r"^[a-zA-ZáàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s]+$", message="Use apenas letras."
+            )
+        ],
+    )
+    email_coordenador = models.EmailField(
+        max_length=254,
+        unique=True,
+        null=False,
+        validators=[
+            RegexValidator(
+                regex=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                message="Use um e-mail valido.",
+            )
+        ],
+    )
 
     def __str__(self):
         return f"{self.nome_curso}"
 
 
-
-    
 class Aluno(models.Model):
     user = models.OneToOneField(
         User,
@@ -169,7 +189,6 @@ class Aluno(models.Model):
         Endereco, on_delete=models.PROTECT, null=True, blank=True
     )
 
-
     def __str__(self):
         return f"{self.nome_completo}"
 
@@ -178,14 +197,29 @@ class CoordenadorExtensao(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.PROTECT,
+        null=True,
+        blank=True,
     )
     cpf = models.CharField(
         max_length=15,
         unique=True,
         validators=[RegexValidator(regex="^[0-9]+$", message="Use apenas números.")],
     )
-    email = models.EmailField(unique=True)
-    nome_completo = models.CharField(max_length=150)
+    email = models.EmailField(
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                message="Use um e-mail valido.",
+            )
+        ],
+    )
+    nome_completo = models.CharField(
+        max_length=150,
+        validators=[
+            RegexValidator(regex=r"^[a-zA-ZáàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s]+$", message="Use apenas letras.")
+        ],
+    )
     instituicao = models.ForeignKey(
         Instituicao, on_delete=models.PROTECT, null=True, blank=True
     )
@@ -195,6 +229,12 @@ class CoordenadorExtensao(models.Model):
 
 
 class Supervisor(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     cpf = models.CharField(
         max_length=14,
         unique=True,
@@ -212,15 +252,44 @@ class Supervisor(models.Model):
         return f"{self.nome_completo}"
 
 
+class Orientador(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    cpf = models.CharField(
+        max_length=14,
+        unique=True,
+        validators=[RegexValidator(regex=r"^[0-9]+$", message="Use apenas números.")],
+    )
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(
+        max_length=20,
+    )
+    nome_completo = models.CharField(
+        max_length=150,
+    )
+    cargo = models.CharField(
+        max_length=254,
+    )
+    instituicao = models.ForeignKey(
+        Instituicao, on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    def __str__(self):
+        return f"{self.nome_completo}"
+
 
 class StatusChoices(models.TextChoices):
-    em_andamento = "Em andamento"
-    concluido = "Concluído"
+    em_andamento = "em_andamento", "Em andamento"
+    concluido = "concluido", "Concluído"
 
 
 class TipoChoices(models.TextChoices):
-    nao_obrigatorio = "Não obrigatório"
-    obrigatorio = "Obrigatório"
+    nao_obrigatorio = "nao_obrigatorio", "Não obrigatório"
+    obrigatorio = "obrigatorio", "Obrigatório"
 
 
 class Estagio(models.Model):
@@ -249,29 +318,38 @@ class Estagio(models.Model):
     instituicao = models.ForeignKey(
         Instituicao, on_delete=models.PROTECT, null=True, blank=True
     )
-    orientador = models.TextField(max_length=100, null=True, blank=True)
-    pdf_termo = models.FileField(upload_to='temp_docs/', null=True, blank=True)
-def clean(self):
-    super().clean()
-    
-    if not self.estagiario:
-        raise ValidationError({'estagiario': 'Selecione um estagiário'})
-    
-    if self.data_inicio and self.data_fim:
-        if self.data_fim < self.data_inicio:
-            raise ValidationError({
-                'data_fim': 'A data de término não pode ser anterior à data de início (validação do modelo).'
-            })
-    
-    if hasattr(self.estagiario, 'periodo') and self.estagiario.periodo < 4:
-        raise ValidationError({
-            'estagiario': 'O estudante precisa estar cursando e concluído no mínimo 03 (três) período letivos do curso'
-        })
-    
-    if hasattr(self.estagiario, 'turno') and self.estagiario.turno == self.turno:
-        raise ValidationError({
-            'turno': 'O turno do estagiário e o turno do estágio devem ser diferentes.'
-        })
+    orientador = models.ForeignKey(
+        Orientador, on_delete=models.PROTECT, null=True, blank=True
+    )
+    pdf_termo = models.FileField(upload_to="termos/", null=True, blank=True)
+
+    def clean(self):
+        super().clean()
+
+        if not self.estagiario:
+            raise ValidationError({"estagiario": "Selecione um estagiário"})
+
+        if self.data_inicio and self.data_fim:
+            if self.data_fim < self.data_inicio:
+                raise ValidationError(
+                    {
+                        "data_fim": "A data de término não pode ser anterior à data de início (validação do modelo)."
+                    }
+                )
+
+        if hasattr(self.estagiario, "periodo") and self.estagiario.periodo < 4:
+            raise ValidationError(
+                {
+                    "estagiario": "O estudante precisa estar cursando e concluído no mínimo 03 (três) período letivos do curso"
+                }
+            )
+
+        if hasattr(self.estagiario, "turno") and self.estagiario.turno == self.turno:
+            raise ValidationError(
+                {
+                    "turno": "O turno do estagiário e o turno do estágio devem ser diferentes."
+                }
+            )
 
     if self.supervisor and self.empresa and self.supervisor.empresa != self.empresa:
         raise ValidationError({

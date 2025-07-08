@@ -24,7 +24,6 @@ from django.db.models import Q
 from django.http import HttpResponseForbidden
 
 
-
 def home(request):
     if request.user.is_authenticated:
         return redirect("/dashboard/")
@@ -274,6 +273,7 @@ def dashboard_instituicao(request):
         "errors": errors,
     }
     return render(request, "dashboard_instituicao.html", context)
+
 
 def cadastrar_cursos(request):
     coordenador_extensao = CoordenadorExtensao.objects.get(user=request.user)

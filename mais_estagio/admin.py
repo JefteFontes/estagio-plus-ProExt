@@ -8,6 +8,13 @@ class EnderecoAdmin(admin.ModelAdmin):
     search_fields = ("rua", "bairro", "cidade", "estado", "cep")
 
 
+@admin.register(models.Instituicao)
+class InstituicaoAdmin(admin.ModelAdmin):
+    list_display = ("nome", "cnpj", "email", "telefone", "endereco")
+    search_fields = ("nome", "cnpj", "email")
+    list_filter = ("endereco__cidade", "endereco__estado")
+
+
 @admin.register(models.Aluno)
 class AlunoAdmin(admin.ModelAdmin):
     list_display = (
@@ -28,14 +35,6 @@ class EmpresaAdmin(admin.ModelAdmin):
     list_filter = ("endereco__cidade", "endereco__estado")
 
 
-@admin.register(models.Instituicao)
-class InstituicaoAdmin(admin.ModelAdmin):
-    list_display = ("nome", "cnpj", "email", "telefone", "endereco")
-    search_fields = ("nome", "cnpj", "email")
-    list_filter = ("endereco__cidade", "endereco__estado")
-
-
-
 @admin.register(models.CoordenadorExtensao)
 class CoordenadorExtensaoAdmin(admin.ModelAdmin):
     list_display = ("nome_completo", "cpf", "email", "instituicao")
@@ -48,6 +47,13 @@ class SupervisorAdmin(admin.ModelAdmin):
     list_display = ("nome_completo", "cpf", "email", "cargo", "empresa")
     search_fields = ("nome_completo", "cpf", "email", "cargo")
     list_filter = ("empresa",)
+
+
+@admin.register(models.Orientador)
+class OrientadorAdmin(admin.ModelAdmin):
+    list_display = ("nome_completo", "email", "telefone", "cargo", "instituicao")
+    search_fields = ("nome_completo", "email", "telefone", "cargo")
+    list_filter = ("instituicao",)
 
 
 @admin.register(models.Cursos)

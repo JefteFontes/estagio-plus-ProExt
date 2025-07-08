@@ -1,0 +1,3 @@
+from .cadastro_supervisor import cadastro_supervisor
+from .dashboard_supervisor import dashboard_supervisor
+from .relatorios_supervisor import relatorios_supervisor
