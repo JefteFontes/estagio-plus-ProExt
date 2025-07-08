@@ -193,6 +193,7 @@ def preencher_tceu(estagio, template_path):
         estagiario = estagio.estagiario
         empresa = estagio.empresa
         supervisor = estagio.supervisor
+        orientador = estagio.orientador
         endereco_estagiario = estagiario.endereco
         endereco_empresa = empresa.endereco
 
@@ -203,7 +204,16 @@ def preencher_tceu(estagio, template_path):
             document, old_string="MatriculaEstagiario", new_string=estagiario.matricula
         )
         docxedit.replace_string(
+            document, old_string="IdEstagiario", new_string=estagiario.cpf
+        )
+        docxedit.replace_string(
+            document, old_string="OrgaoEstagiario", new_string="SSP"
+        )
+        docxedit.replace_string(
             document, old_string="CPFEstagiario", new_string=estagiario.cpf
+        )
+        docxedit.replace_string(
+            document, old_string="NaturalidadeEstagiario", new_string="Brasileiro(a)"
         )
         docxedit.replace_string(
             document,
@@ -225,7 +235,7 @@ def preencher_tceu(estagio, template_path):
             new_string=endereco_estagiario.rua,
         )
         docxedit.replace_string(
-            document, old_string="NEstagiario", new_string=endereco_estagiario.numero
+            document, old_string="NumCasa", new_string=endereco_estagiario.numero
         )
         docxedit.replace_string(
             document,
@@ -234,29 +244,27 @@ def preencher_tceu(estagio, template_path):
         )
         docxedit.replace_string(
             document,
-            old_string="CidadeEstagiario",
+            old_string="EstagiCi",
             new_string=endereco_estagiario.cidade,
         )
         docxedit.replace_string(
-            document, old_string="CEPEstagiario", new_string=endereco_estagiario.cep
+            document, old_string="EstagiCeP", new_string=endereco_estagiario.cep
         )
         docxedit.replace_string(
             document, old_string="UFEstagiario", new_string=endereco_estagiario.estado
+        )
+        docxedit.replace_string(
+            document, old_string="EstadoEstagiario", new_string=endereco_estagiario.estado
         )
 
         docxedit.replace_string(
             document, old_string="RazaoEmpresa", new_string=empresa.empresa_nome
         )
         docxedit.replace_string(
-            document,
-            old_string="Razão social/Nome:",
-            new_string=f"Razão social/Nome: {empresa.empresa_nome}",
+            document, old_string="RamoEmpresa", new_string=empresa.atividades
         )
         docxedit.replace_string(
             document, old_string="CNPJEmpresa", new_string=empresa.cnpj
-        )
-        docxedit.replace_string(
-            document, old_string="CNPJ/CPF:", new_string=f"CNPJ/CPF: {empresa.cnpj}"
         )
         docxedit.replace_string(
             document,
@@ -276,7 +284,7 @@ def preencher_tceu(estagio, template_path):
         )
         docxedit.replace_string(
             document,
-            old_string="NEstagiarioEmpresa",
+            old_string="NEmpresa",
             new_string=endereco_empresa.numero,
         )
         docxedit.replace_string(
@@ -284,15 +292,15 @@ def preencher_tceu(estagio, template_path):
         )
         docxedit.replace_string(
             document,
-            old_string="CidadeEstagiarioEmpresa",
+            old_string="CidadeEmpresa",
             new_string=endereco_empresa.cidade,
         )
         docxedit.replace_string(
-            document, old_string="CEPEstagiarioEmpresa", new_string=endereco_empresa.cep
+            document, old_string="CEPEmpresa", new_string=endereco_empresa.cep
         )
         docxedit.replace_string(
             document,
-            old_string="UFEstagiarioEmpresa",
+            old_string="UFEmpresa",
             new_string=endereco_empresa.estado,
         )
         docxedit.replace_string(
@@ -306,13 +314,28 @@ def preencher_tceu(estagio, template_path):
                 new_string=supervisor.nome_completo,
             )
             docxedit.replace_string(
+                document, old_string="RepresentanteEmpresa", new_string=supervisor.nome_completo
+            )
+            docxedit.replace_string(
+                document, old_string="CPFEmpresaRepresentante", new_string=supervisor.cpf
+            )
+            docxedit.replace_string(
                 document, old_string="CPFSupervisor", new_string=supervisor.cpf
             )
+            docxedit.replace_string(
+                document,
+                old_string="CargoEmpresaRepresentante",
+                new_string=supervisor.cargo,
+            )
+            docxedit.replace_string(document, old_string="EmailSupervisor", new_string=supervisor.email)
             docxedit.replace_string(
                 document,
                 old_string="Nome do Supervisor/Preceptor:",
                 new_string=f"Nome do Supervisor/Preceptor: {supervisor.nome_completo}",
             )
+        
+        if orientador:
+            docxedit.replace_string(document, old_string="ProfessorOrientador", new_string=orientador.nome_completo)
 
         docxedit.replace_string(
             document,
@@ -330,13 +353,13 @@ def preencher_tceu(estagio, template_path):
 
         docxedit.replace_string(
             document,
-            old_string="Carga horária diária: __ horas",
-            new_string=f"Carga horária diária: {carga_horaria_diaria} horas",
+            old_string="Cg",
+            new_string=f"{carga_horaria_diaria} horas",
         )
         docxedit.replace_string(
             document,
-            old_string="semanal de ___ horas",
-            new_string=f"semanal de {carga_horaria_semanal} horas",
+            old_string="CgSem",
+            new_string=f"{carga_horaria_semanal} horas",
         )
 
         bolsa_valor = estagio.bolsa_estagio or 0
@@ -354,11 +377,12 @@ def preencher_tceu(estagio, template_path):
             old_string="R$___ (__)",
             new_string=f"R${auxilio_valor:.2f} ({auxilio_extenso})",
         )
+        docxedit.replace_string(document, old_string="_/_/_ a _/_/_ ", new_string=f"{estagio.data_inicio.strftime('%d/%m/%Y')} a {estagio.data_fim.strftime('%d/%m/%Y')}")
 
         docxedit.replace_string(
             document,
-            old_string="Atividades a serem desenvolvidas pelo(a) estagiário(a):,",
-            new_string=f"Atividades a serem desenvolvidas pelo(a) estagiário(a): {estagio.descricao}",
+            old_string="AtividadesEstag",
+            new_string=estagio.descricao or "Atividades não especificadas",
         )
 
         safe_student_name = "".join(

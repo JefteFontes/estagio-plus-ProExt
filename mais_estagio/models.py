@@ -351,15 +351,15 @@ class Estagio(models.Model):
                 }
             )
 
-    if self.supervisor and self.empresa and self.supervisor.empresa != self.empresa:
-        raise ValidationError({
-            'empresa': 'O supervisor precisa estar vinculado à mesma empresa do estagiário.'
-        })
-    
-    if hasattr(self.estagiario, 'ira') and (self.estagiario.ira is None or self.estagiario.ira < 6.0):
-        raise ValidationError({
-            'estagiario': 'O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0'
-        })
+        if self.supervisor and self.empresa and self.supervisor.empresa != self.empresa:
+            raise ValidationError({
+                'empresa': 'O supervisor precisa estar vinculado à mesma empresa do estagiário.'
+            })
+        
+        if hasattr(self.estagiario, 'ira') and (self.estagiario.ira is None or self.estagiario.ira < 6.0):
+            raise ValidationError({
+                'estagiario': 'O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0'
+            })
 
 
     def __str__(self):
