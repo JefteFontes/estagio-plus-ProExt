@@ -22,7 +22,6 @@ from .models import (
     Cursos,
     CoordenadorExtensao,
     Instituicao,
-    Aluno,
     Orientador
 )
 
@@ -550,6 +549,12 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
 
 class EmpresaCadastroForm(forms.ModelForm):
+    convenio = forms.CharField(
+        max_length=8,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Convênio"}
+        ),
+    )
     rua = forms.CharField(
         max_length=255,
         widget=forms.TextInput(
