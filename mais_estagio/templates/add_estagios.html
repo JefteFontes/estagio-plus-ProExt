@@ -202,8 +202,7 @@ $(document).ready(function () {
     // Função para verificar e mostrar/esconder a seção de remuneração
     function toggleRemuneracaoSection() {
         var tipoEstagio = $('#id_tipo_estagio').val();
-        
-        if (tipoEstagio === 'Não obrigatório' || tipoEstagio === 'Nao obrigatorio') {
+        if (tipoEstagio === 'nao_obrigatorio') {
             $('#remuneracao-section').show();
         } else {
             $('#remuneracao-section').hide();
@@ -219,7 +218,5 @@ $(document).ready(function () {
         toggleRemuneracaoSection();
     });
 });
-
-
 </script>
 {% endblock %}
