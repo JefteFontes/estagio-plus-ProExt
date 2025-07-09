@@ -33,7 +33,7 @@ def relatorio_personalidizado(request):
     status = request.GET.get("status")
     tipo_estagio = request.GET.get("tipo_estagio")
     turno = request.GET.get("turno")
-    empresa = request.GET.get("empresa.empresa_nome")
+    empresa = request.GET.get("empresa.nome")
     supervisor = request.GET.get("supervisor.nome_completo")
     data_inicio_de = parse_date(request.GET.get("data_inicio_de"))
     data_inicio_ate = parse_date(request.GET.get("data_inicio_ate"))

@@ -364,7 +364,7 @@ class Estagio(models.Model):
 
 
     def __str__(self):
-        return f"Estágio: {self.estagiario.nome_completo} em {self.empresa.empresa_nome} ({self.get_status_display()})"
+        return f"Estágio: {self.estagiario.nome_completo} em {self.empresa.nome} ({self.get_status_display()})"
 
 
 

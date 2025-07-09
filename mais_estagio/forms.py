@@ -172,7 +172,7 @@ class EstagioCadastroForm(forms.ModelForm):
 
         if instituicao_logada:
             self.fields["estagiario"].queryset = Aluno.objects.filter(instituicao=instituicao_logada).order_by('nome_completo')
-            self.fields["empresa"].queryset = Empresa.objects.filter(instituicao=instituicao_logada).order_by('empresa_nome')
+            self.fields["empresa"].queryset = Empresa.objects.filter(instituicao=instituicao_logada).order_by('nome')
             self.fields["instituicao"].queryset = Instituicao.objects.filter(id=instituicao_logada.id)
             self.fields["instituicao"].initial = instituicao_logada
             self.fields["instituicao"].disabled = True
@@ -235,7 +235,7 @@ class EstagioCadastroForm(forms.ModelForm):
             
         if query_conflito_turno.exists():
             estagio_conflitante = query_conflito_turno.first()
-            nome_empresa_conflitante = estagio_conflitante.empresa.empresa_nome if estagio_conflitante.empresa else "Empresa não informada"
+            nome_empresa_conflitante = estagio_conflitante.empresa.nome if estagio_conflitante.empresa else "Empresa não informada"
             self.add_error(None, ValidationError(
                 f"Este estagiário já possui um estágio 'Em andamento' (Empresa: {nome_empresa_conflitante}, "
                 f"Período: {estagio_conflitante.data_inicio.strftime('%d/%m/%Y')} - {estagio_conflitante.data_fim.strftime('%d/%m/%Y')}) "
@@ -267,7 +267,7 @@ class EstagioCadastroForm(forms.ModelForm):
                 "data_fim", 
                 ValidationError(
                     f"A data de término ({data_fim_proposta.strftime('%d/%m/%Y')}) excede o limite total de 2 anos "
-                    f"de estágio para {estagiario_selecionado.nome_completo} na empresa {empresa_selecionada.empresa_nome}. "
+                    f"de estágio para {estagiario_selecionado.nome_completo} na empresa {empresa_selecionada.nome}. "
                     f"O período de estágio nesta empresa iniciou-se em {primeira_data_inicio_geral_na_empresa.strftime('%d/%m/%Y')}, "
                     f"portanto, o estágio deve ser concluído até {data_limite_cumulativa.strftime('%d/%m/%Y')}.",
                     code="limite_cumulativo_2_anos"
@@ -1130,7 +1130,7 @@ class AlunoCadastroEstagioForm(EstagioCadastroForm):
             if self.aluno_logado.instituicao:
                 self.fields["empresa"].queryset = Empresa.objects.filter(
                     instituicao=self.aluno_logado.instituicao
-                ).order_by("empresa_nome")
+                ).order_by("nome")
                 self.fields["orientador"].queryset = Orientador.objects.filter(
                     instituicao=self.aluno_logado.instituicao
                 ).order_by("nome_completo")

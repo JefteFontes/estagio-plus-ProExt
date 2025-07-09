@@ -47,7 +47,7 @@ class ViewsIntegrationTestCase(TestCase):
 
         self.empresa = Empresa.objects.create(
             instituicao=self.instituicao,
-            empresa_nome="Empresa Teste",
+            nome="Empresa Teste",
             cnpj="98765432109876",
             razao_social="Empresa Teste Ltda",
             email="empresa@example.com",
@@ -149,7 +149,7 @@ class IntegracaoModelsTestCase(TestCase):
 
         self.empresa = Empresa.objects.create(
             instituicao=self.instituicao,
-            empresa_nome="Empresa Teste",
+            nome="Empresa Teste",
             cnpj="98765432109876",
             razao_social="Empresa Teste Ltda",
             email="empresa@example.com",
@@ -214,7 +214,7 @@ class IntegracaoModelsTestCase(TestCase):
         self.assertEqual(self.coordenador.nome_completo, "João da Silva")
 
     def test_criacao_empresa(self):
-        self.assertEqual(self.empresa.empresa_nome, "Empresa Teste")
+        self.assertEqual(self.empresa.nome, "Empresa Teste")
 
     def test_criacao_curso(self):
         self.assertEqual(self.curso.nome_curso, "Ciência da Computação")
