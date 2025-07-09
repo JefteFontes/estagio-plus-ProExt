@@ -63,7 +63,7 @@
         <select name="empresa" class="form-select">
             <option value="">Todas as empresas</option>
             {% for empresa in empresas %}
-                <option value="{{ empresa.empresa_nome }}">{{ empresa.empresa_nome }}</option>
+                <option value="{{ empresa.nome }}">{{ empresa.nome }}</option>
             {% endfor %}
         </select>
     </div>

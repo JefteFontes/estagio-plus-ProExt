@@ -190,7 +190,7 @@ class TestCadastrodeEmpresa():
         time.sleep(0.5)
         self.driver.find_element(By.ID, "id_empresa_cnpj").send_keys("38199480000134")
         time.sleep(0.5)
-        self.driver.find_element(By.ID, "id_empresa_nome").click()
+        self.driver.find_element(By.ID, "id_nome").click()
         time.sleep(0.5)
         self.driver.find_element(By.CSS_SELECTOR, ".form-endereco").click()
         time.sleep(0.5)

@@ -6,7 +6,7 @@ Segue o resumo dos relatórios de estágio pendentes:
 
 {% for estagio, relatorios in relatorios_por_estagiario.items %}
 Estagiário: {{ estagio.estagiario.nome_completo }}
-Empresa: {{ estagio.empresa.empresa_nome }}
+Empresa: {{ estagio.empresa.nome }}
 Relatórios pendentes:
 {% for report in relatorios %}
 - {{ report.tipo }} (Vencimento: {{ report.data_prevista|date:"SHORT_DATE_FORMAT" }})

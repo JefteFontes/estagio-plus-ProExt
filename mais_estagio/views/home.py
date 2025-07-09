@@ -72,7 +72,7 @@ def dashboard_empresa(request):
     empresas = Empresa.objects.filter(instituicao=instituicao)
 
     if search:
-        empresas = empresas.filter(empresa_nome__icontains=search) | empresas.filter(
+        empresas = empresas.filter(nome__icontains=search) | empresas.filter(
             cnpj__icontains=search
         )
     if cidade:
