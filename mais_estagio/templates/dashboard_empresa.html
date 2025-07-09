@@ -78,8 +78,8 @@
         {% for empresa in empresas %}
         <div class="company-card">
             <div class="card-header">
-                <span class="initials">{{ empresa.empresa_nome|slice:":2"|upper }}</span>
-                <h3 class="company-name">{{ empresa.empresa_nome }}</h3>
+                <span class="initials">{{ empresa.nome|slice:":2"|upper }}</span>
+                <h3 class="company-name">{{ empresa.nome }}</h3>
             </div>
             <div class="card-body">
                 <div class="info-row">
@@ -99,11 +99,11 @@
                 <a href="{% url 'editar_empresa' empresa.id %}" class="btn-action edit">
                     <i class="fas fa-edit"></i> Editar
                 </a>
+                <a href="{% url 'cadastrar_supervisor' empresa.id %}" class="btn-action edit">
+                    <i class="fas fa-user-plus"></i> Cadastrar Supervisor
+                </a>
                 <a href="{% url 'deletar_empresa' empresa.id %}" class="btn-action delete">
                     <i class="fas fa-trash"></i> Excluir
-                </a>
-                <a href="{% url 'cadastrar_supervisor' empresa.id %}" class="btn-action add">
-                    <i class="fas fa-user-plus"></i> Cadastrar Supervisor
                 </a>
             </div>
         </div>

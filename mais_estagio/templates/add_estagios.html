@@ -151,25 +151,30 @@ $(document).ready(function () {
     // Máscara para valores monetários
     $('.money-input').mask('000.000.000.000.000,00', {reverse: true});
     
-    // Busca de supervisores ao selecionar empresa
+
     $("#id_empresa").change(function () {
         var empresaId = $(this).val();
+        var supervisorSelect = $("#id_supervisor");
+        supervisorSelect.empty(); // Remove todas as opções
+        supervisorSelect.append('<option value="">--- Selecione o Supervisor ---</option>');
+
         if (empresaId) {
             $.ajax({
                 url: "{% url 'get_supervisores' %}",
                 data: { empresa_id: empresaId },
                 success: function (data) {
-                    var supervisorSelect = $("#id_supervisor");
-                    supervisorSelect.empty();
-                    supervisorSelect.append('<option value="">---------</option>');
-                    data.forEach(function (supervisor) {
-                        supervisorSelect.append(
-                            '<option value="' + supervisor.id + '">' + supervisor.primeiro_nome + ' ' + supervisor.sobrenome + '</option>'
-                        );
-                    });
-                },
+                    if (data.length > 0) {
+                        data.forEach(function (supervisor) {
+                            supervisorSelect.append(
+                                '<option value="' + supervisor.id + '">' + supervisor.nome_completo + '</option>'
+                            );
+                        });
+                    } else {
+                        supervisorSelect.append('<option value="">Nenhum supervisor cadastrado para esta empresa</option>');
+                    }
+                }
             });
-        } 
+        }
     });
     
     // Atualização automática do status
@@ -197,8 +202,7 @@ $(document).ready(function () {
     // Função para verificar e mostrar/esconder a seção de remuneração
     function toggleRemuneracaoSection() {
         var tipoEstagio = $('#id_tipo_estagio').val();
-        
-        if (tipoEstagio === 'Não obrigatório' || tipoEstagio === 'Nao obrigatorio') {
+        if (tipoEstagio === 'nao_obrigatorio') {
             $('#remuneracao-section').show();
         } else {
             $('#remuneracao-section').hide();
@@ -214,7 +218,5 @@ $(document).ready(function () {
         toggleRemuneracaoSection();
     });
 });
-
-
 </script>
 {% endblock %}

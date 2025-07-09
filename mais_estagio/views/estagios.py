@@ -273,13 +273,14 @@ def detalhes_estagio(request):
     )
 
 
+@login_required
 def get_supervisores(request):
     empresa_id = request.GET.get("empresa_id")
     if empresa_id:
-        supervisores = Supervisor.objects.filter(empresa_id=empresa_id).values(
-            "id", "nome_completo"
-        )
-        return JsonResponse(list(supervisores), safe=False)
+        supervisores = Supervisor.objects.filter(empresa_id=empresa_id).order_by("nome_completo")
+        print("DEBUG supervisores:", list(supervisores))
+        data = [{"id": s.id, "nome_completo": s.nome_completo} for s in supervisores]
+        return JsonResponse(data, safe=False)
     return JsonResponse([], safe=False)
 
 

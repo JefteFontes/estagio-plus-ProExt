@@ -125,14 +125,13 @@ class EstagioCadastroForm(forms.ModelForm):
     )
     empresa = forms.ModelChoiceField(
         queryset=Empresa.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select", "id": "empresa-select"}),
+        widget=forms.Select(attrs={"class": "form-select", "id": "id_empresa"}),
         empty_label="--- Selecione a Empresa ---"
     )
     supervisor = forms.ModelChoiceField(
-        queryset=Supervisor.objects.all(),
-        required=False,
-        widget=forms.Select(attrs={"class": "form-select", "id": "supervisor-select"}),
-        empty_label="--- Selecione o Supervisor (Opcional) ---"
+        queryset=Supervisor.objects.none(),
+        widget=forms.Select(attrs={"class": "form-select", "id": "id_supervisor"}),
+        empty_label="--- Selecione o Supervisor ---"
     )
     instituicao = forms.ModelChoiceField(
         queryset=Instituicao.objects.all(), 
@@ -141,7 +140,6 @@ class EstagioCadastroForm(forms.ModelForm):
     )
     orientador = forms.ModelChoiceField(
         queryset=Orientador.objects.none(),
-        required=False,
         widget=forms.Select(attrs={"class": "form-select"}),
         empty_label="--- Selecione o Orientador ---",
         label="Orientador"
@@ -166,22 +164,18 @@ class EstagioCadastroForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         instituicao_logada = None
-        empresa_id = kwargs.get("empresa_id")
         if current_user and current_user.is_authenticated:
             coordenador_extensao = CoordenadorExtensao.objects.filter(user=current_user).first()
             if coordenador_extensao and coordenador_extensao.instituicao:
                 instituicao_logada = coordenador_extensao.instituicao
 
+        # Sempre filtre estagiário, empresa, orientador pela instituição logada
         if instituicao_logada:
             self.fields["estagiario"].queryset = Aluno.objects.filter(instituicao=instituicao_logada).order_by('nome_completo')
             self.fields["empresa"].queryset = Empresa.objects.filter(instituicao=instituicao_logada).order_by('empresa_nome')
             self.fields["instituicao"].queryset = Instituicao.objects.filter(id=instituicao_logada.id)
             self.fields["instituicao"].initial = instituicao_logada
             self.fields["instituicao"].disabled = True
-            self.fields["supervisor"].queryset = Supervisor.objects.filter(
-                empresa__instituicao=instituicao_logada
-            ).order_by("nome_completo")
-            # Orientador: apenas da instituição logada
             self.fields["orientador"].queryset = Orientador.objects.filter(
                 instituicao=instituicao_logada
             ).order_by("nome_completo")
@@ -189,8 +183,19 @@ class EstagioCadastroForm(forms.ModelForm):
             self.fields["estagiario"].queryset = Aluno.objects.none()
             self.fields["empresa"].queryset = Empresa.objects.none()
             self.fields["instituicao"].queryset = Instituicao.objects.none()
-            self.fields["supervisor"].queryset = Supervisor.objects.none()
             self.fields["orientador"].queryset = Orientador.objects.none()
+
+        # Supervisor: só mostra os da empresa selecionada
+        if 'empresa' in self.data:
+            try:
+                empresa_id = int(self.data.get('empresa'))
+                self.fields['supervisor'].queryset = Supervisor.objects.filter(empresa_id=empresa_id).order_by('nome_completo')
+            except (ValueError, TypeError):
+                self.fields['supervisor'].queryset = Supervisor.objects.none()
+        elif self.instance.pk and self.instance.empresa:
+            self.fields['supervisor'].queryset = Supervisor.objects.filter(empresa=self.instance.empresa)
+        else:
+            self.fields['supervisor'].queryset = Supervisor.objects.none()
 
     def clean(self):
         cleaned_data = super().clean()
@@ -363,6 +368,7 @@ class EstagioCadastroForm(forms.ModelForm):
         
         return estagio
 
+
 class EstagiarioCadastroForm(forms.ModelForm):
     
     rua = forms.CharField(
@@ -409,7 +415,6 @@ class EstagiarioCadastroForm(forms.ModelForm):
         ),
     )
 
-        
     ira = forms.FloatField(
         required=False,
         widget=forms.NumberInput(
@@ -546,6 +551,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
 class EmpresaCadastroForm(forms.ModelForm):
     convenio = forms.CharField(
         max_length=8,
+        required=True,
         widget=forms.TextInput(
             attrs={"class": "form-control", "placeholder": "Convênio"}
         ),
@@ -593,7 +599,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             attrs={"class": "form-control", "placeholder": "Complemento"}
         ),
     )
-    empresa_nome = forms.CharField(
+    nome = forms.CharField(
         max_length=250,
         widget=forms.TextInput(
             attrs={
@@ -602,7 +608,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             }
         ),
     )
-    empresa_cnpj = forms.CharField(
+    cnpj = forms.CharField(
         max_length=20,
         widget=forms.TextInput(
             attrs={
@@ -611,7 +617,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             }
         ),
     )
-    empresa_razao_social = forms.CharField(
+    razao_social = forms.CharField(
         max_length=250,
         widget=forms.TextInput(
             attrs={
@@ -620,7 +626,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             }
         ),
     )
-    empresa_atividades = forms.CharField(
+    atividades = forms.CharField(
         max_length=500,
         widget=forms.Textarea(
             attrs={
@@ -635,11 +641,10 @@ class EmpresaCadastroForm(forms.ModelForm):
     class Meta:
         model = Empresa
         fields = [
-            "convenio",
-            "empresa_nome",
-            "empresa_cnpj",
-            "empresa_razao_social",
-            "empresa_atividades",
+            "nome",
+            "cnpj",
+            "razao_social",
+            "atividades",
             "rua",
             "numero",
             "bairro",
@@ -647,6 +652,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             "estado",
             "cep",
             "complemento",
+            "convenio",
         ]
 
     def __init__(self, *args, **kwargs):

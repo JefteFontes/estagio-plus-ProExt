@@ -3,7 +3,6 @@ from mais_estagio.views.empresa import (
     cadastrar_empresa,
     editar_empresa,
     deletar_empresa,
-    get_supervisores,
 )
 from .views import cadastrar_instituicao
 from mais_estagio.views.estagiarios import (
@@ -101,9 +100,6 @@ urlpatterns = [
     path('parse-sections', parse_sections, name='parse_sections'),
     path('buscar-cep', buscar_cep, name='buscar_cep'),
     path('validate_cnpj', validate_cnpj, name='validate_cnpj'),
-
-
-    path('get-supervisores/', get_supervisores, name='get_supervisores'),
 
 
     path('editar-perfil/', editar_perfil, name='editar_perfil'),
