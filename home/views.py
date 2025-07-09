@@ -141,19 +141,6 @@ def editar_instituicao(request, instituicao):
         {"form": form, "instituicao": instituicao},
     )
 
-
-def visualizar_termo(request, pdf_nome):
-    caminho_arquivo = os.path.join(settings.MEDIA_ROOT, pdf_nome)
-
-    if os.path.exists(caminho_arquivo):
-        try:
-            arquivo = open(caminho_arquivo, "rb")
-            return FileResponse(arquivo, content_type="application/pdf")
-        except Exception as e:
-            raise Http404(f"Erro ao abrir o arquivo: {str(e)}")
-    else:
-        raise Http404("Arquivo não encontrado")
-
 @login_required
 @user_passes_test(lambda u: u.is_staff or hasattr(u, 'coordenadorextensao'))
 def ativar_acesso_estagiario_view(request, estagiario_id):
