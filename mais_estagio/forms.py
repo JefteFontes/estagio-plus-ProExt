@@ -309,6 +309,107 @@ class EstagioCadastroForm(forms.ModelForm):
                             "Parágrafo único: Estudantes de Medicina em estágio obrigatório (internato) "
                             "não podem ter estágios não obrigatórios ativos simultaneamente."
                         )
+            # Parágrafo único - Verificação de internato (estágio obrigatório)
+                if tipo_estagio == TipoChoices.obrigatorio:
+                    # Verifica se já tem estágio não obrigatório ativo
+                    estagio_nao_obrigatorio = Estagio.objects.filter(
+                        estagiario=estagiario_selecionado,
+                        tipo_estagio=TipoChoices.nao_obrigatorio,
+                        status=StatusChoices.em_andamento,
+                    ).exists()
+
+                    if estagio_nao_obrigatorio:
+                        self.add_error(
+                            None,
+                            "Parágrafo único: Estudantes de Medicina em estágio obrigatório (internato) "
+                            "não podem ter estágios não obrigatórios ativos simultaneamente.",
+                        )
+            # Biologia
+            elif "biologia" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 6 or periodo > 8:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Biologia só é permitido do 6º ao 8º período.",
+                    )
+
+            # Biomedicina
+            elif "biomedicina" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 8 or periodo > 9:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Biomedicina só é permitido do 8º ao 9º período.",
+                    )
+
+            # Fisioterapia
+            elif "fisioterapia" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 6 or periodo > 10:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Fisioterapia só é permitido do 6º ao 10º período.",
+                    )
+
+            # Psicologia
+            elif "psicologia" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 8 or periodo > 10:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Psicologia só é permitido do 8º ao 10º período.",
+                    )
+
+            # Administração
+            elif "administração" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 7 or periodo > 8:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Administração só é permitido do 7º ao 8º período.",
+                    )
+
+            # Ciências Contábeis
+            elif "ciências contábeis" in curso_nome or "contabilidade" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 7 or periodo > 8:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Ciências Contábeis só é permitido do 7º ao 8º período.",
+                    )
+
+            # Economia
+            elif "economia" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                self.add_error(
+                    None,
+                    "Não há estágio obrigatório para o curso de Economia.",
+                )
+
+            # Turismo
+            elif "turismo" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 7 or periodo > 8:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Turismo só é permitido do 7º ao 8º período.",
+                    )
+
+            # Pedagogia
+            elif "pedagogia" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 6 or periodo > 9:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Pedagogia só é permitido do 6º ao 9º período.",
+                    )
+
+            # Matemática
+            elif "matemática" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 5 or periodo > 8:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Matemática só é permitido do 5º ao 8º período.",
+                    )
+
+            # Engenharia de Pesca
+            elif "engenharia de pesca" in curso_nome and tipo_estagio == TipoChoices.obrigatorio:
+                if periodo < 7 or periodo > 10:
+                    self.add_error(
+                        None,
+                        "Estágio supervisionado de Engenharia de Pesca só é permitido do 7º ao 10º período.",
+                    )
 
         if not self.errors:
             try:
