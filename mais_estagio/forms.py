@@ -21,8 +21,6 @@ from .models import (
     Areachoices,
     Cursos,
     CoordenadorExtensao,
-    Instituicao,
-    Aluno,
     Orientador
 )
 
@@ -53,7 +51,7 @@ class CursosCadastroForm(forms.ModelForm):
 
     def save(self, commit=True):
         cursos = super().save(commit=False)
-       
+        
         if self.coordenador_extensao:
             cursos.instituicao = self.coordenador_extensao.instituicao
 
@@ -159,6 +157,7 @@ class EstagioCadastroForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
+        _ = kwargs.pop("aluno_logado", None) # Consome aluno_logado AQUI também
         current_user = kwargs.pop("user", None)
         kwargs.pop("empresa_id", None)
         kwargs.pop("instituicao_id", None)
@@ -170,7 +169,6 @@ class EstagioCadastroForm(forms.ModelForm):
             if coordenador_extensao and coordenador_extensao.instituicao:
                 instituicao_logada = coordenador_extensao.instituicao
 
-        # Sempre filtre estagiário, empresa, orientador pela instituição logada
         if instituicao_logada:
             self.fields["estagiario"].queryset = Aluno.objects.filter(instituicao=instituicao_logada).order_by('nome_completo')
             self.fields["empresa"].queryset = Empresa.objects.filter(instituicao=instituicao_logada).order_by('empresa_nome')
@@ -186,7 +184,6 @@ class EstagioCadastroForm(forms.ModelForm):
             self.fields["instituicao"].queryset = Instituicao.objects.none()
             self.fields["orientador"].queryset = Orientador.objects.none()
 
-        # Supervisor: só mostra os da empresa selecionada
         if 'empresa' in self.data:
             try:
                 empresa_id = int(self.data.get('empresa'))
@@ -210,34 +207,26 @@ class EstagioCadastroForm(forms.ModelForm):
         tipo_estagio = cleaned_data.get("tipo_estagio")
 
         if not all([estagiario_selecionado, empresa_selecionada, turno_estagio_proposto,
-                    data_inicio_proposta, data_fim_proposta, status_proposto]):
+                     data_inicio_proposta, data_fim_proposta, status_proposto]):
             return cleaned_data
 
-        # 1. Turno do estagiário e turno do estágio proposto devem ser diferentes
         if estagiario_selecionado.turno == turno_estagio_proposto:
             self.add_error("turno", "O turno do estágio não pode ser o mesmo do curso regular do estagiário.")
 
-        # # 2. Data de inicio do estágio proposto deve ser posterior a data de inicio do estagiário
-        # if data_inicio_proposta < estagiario_selecionado.data_inicio:
-        #     self.add_error("data_inicio", "A data de início do estágio deve ser posterior ou igual a data de início do estudante.")
-
-        # 3. Data de fim do estágio proposto deve ser posterior a data de inicio do estágio
         if data_fim_proposta < data_inicio_proposta:
             self.add_error("data_fim", "A data de término do estágio deve ser posterior à data de início.")
 
-        # 4. Período mínimo do estagiário para iniciar um estágio
-        if estagiario_selecionado.periodo < 4: # Exemplo: Mínimo 3 períodos concluídos (estar no 4º)
+        if estagiario_selecionado.periodo < 4:
             self.add_error("estagiario", "O estudante precisa ter concluído no mínimo 03 (três) períodos letivos do curso para iniciar um estágio.")
 
-        # 5. Conflito de turno/data com outro estágio ATIVO do mesmo estagiário
         query_conflito_turno = Estagio.objects.filter(
             estagiario=estagiario_selecionado,
             turno=turno_estagio_proposto,
             status=StatusChoices.em_andamento
         ).exclude( 
-            data_fim__lt=data_inicio_proposta  
+            data_fim__lt=data_inicio_proposta 
         ).exclude(
-            data_inicio__gt=data_fim_proposta  
+            data_inicio__gt=data_fim_proposta 
         )
 
         if self.instance and self.instance.pk: 
@@ -252,14 +241,12 @@ class EstagioCadastroForm(forms.ModelForm):
                 f"que conflita com o turno e as datas propostas.", code="conflito_estagio_ativo"
             ))
 
-        # 6. Verificar se o estagiário tem IRA >= 6.0
         if estagiario_selecionado and (estagiario_selecionado.ira is None or estagiario_selecionado.ira < 6.0):
             self.add_error(
                 "estagiario",
                 "O estagiário precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0."
             )
 
-        # 7. Limite cumulativo de 2 anos de estágio na mesma empresa
         db_earliest_start_agg = Estagio.objects.filter(
             estagiario=estagiario_selecionado,
             empresa=empresa_selecionada
@@ -286,7 +273,6 @@ class EstagioCadastroForm(forms.ModelForm):
                 )
             )
 
-        # 8. Validações específicas para edição de um estágio existente (prorrogação/alteração)
         if self.instance and self.instance.pk:
             try:
                 estagio_original_db = Estagio.objects.get(pk=self.instance.pk)
@@ -297,13 +283,11 @@ class EstagioCadastroForm(forms.ModelForm):
             except Estagio.DoesNotExist:
                 pass 
 
-        # 9. Validações específicas para o curso de Medicina (Art. 9º)
         if estagiario_selecionado and estagiario_selecionado.curso:
             curso_nome = estagiario_selecionado.curso.nome_curso.lower()
             if 'medicina' in curso_nome:
                 periodo = estagiario_selecionado.periodo
                 
-                # Artigo 9º - Limite de períodos para estágio não obrigatório
                 if tipo_estagio == TipoChoices.nao_obrigatorio and periodo > 8:
                     self.add_error(
                         None,
@@ -311,9 +295,7 @@ class EstagioCadastroForm(forms.ModelForm):
                         "realizar estágios não obrigatórios."
                     )
                 
-                # Parágrafo único - Verificação de internato (estágio obrigatório)
                 if tipo_estagio == TipoChoices.obrigatorio:
-                    # Verifica se já tem estágio não obrigatório ativo
                     estagio_nao_obrigatorio = Estagio.objects.filter(
                         estagiario=estagiario_selecionado,
                         tipo_estagio=TipoChoices.nao_obrigatorio,
@@ -487,10 +469,9 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.coordenador = kwargs.pop("coordenador", None)
-        self.instituicao = kwargs.pop("instituicao", None)
+        self.instituicao = kwargs.pop("instituicao", None) 
         super().__init__(*args, **kwargs)
 
-        # Preenche os campos de endereço, caso o estagiário já tenha um endereço associado
         if self.instance and self.instance.pk and self.instance.endereco:
             endereco = self.instance.endereco
             self.fields["rua"].initial = endereco.rua
@@ -501,7 +482,6 @@ class EstagiarioCadastroForm(forms.ModelForm):
             self.fields["cep"].initial = endereco.cep
             self.fields["complemento"].initial = endereco.complemento
 
-        # Use coordenador.instituicao or fallback to self.instituicao
         instituicao = None
         if self.coordenador and self.coordenador.instituicao:
             instituicao = self.coordenador.instituicao
@@ -516,7 +496,6 @@ class EstagiarioCadastroForm(forms.ModelForm):
             self.fields["curso"].queryset = Cursos.objects.none()
 
     def save(self, commit=True):
-        # Salva ou atualiza o endereço
         endereco_data = {
             "rua": self.cleaned_data["rua"],
             "numero": self.cleaned_data["numero"],
@@ -528,13 +507,11 @@ class EstagiarioCadastroForm(forms.ModelForm):
         }
 
         if self.instance and self.instance.pk and self.instance.endereco:
-            # Atualiza o endereço existente
             Endereco.objects.filter(pk=self.instance.endereco.pk).update(
                 **endereco_data
             )
             endereco = self.instance.endereco
         else:
-            # Cria um novo endereço
             endereco = Endereco.objects.create(**endereco_data)
 
         estagiario = super().save(commit=False)
@@ -542,6 +519,8 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
         if self.coordenador:
             estagiario.instituicao = self.coordenador.instituicao
+        elif self.instituicao:
+            estagiario.instituicao = self.instituicao
 
         if commit:
             estagiario.save()
@@ -571,13 +550,13 @@ class EmpresaCadastroForm(forms.ModelForm):
     cidade = forms.CharField(
         max_length=100,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Cidade (ex: Parnaíba)"}
+            attrs={"class": "form-control", "placeholder": "Cidade (ex: São Paulo)"}
         ),
     )
     estado = forms.CharField(
         max_length=50,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Estado (ex: PI)"}
+            attrs={"class": "form-control", "placeholder": "Estado (ex: SP)"}
         ),
     )
     cep = forms.CharField(
@@ -653,7 +632,6 @@ class EmpresaCadastroForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
-        # Cria ou atualiza o endereço
         endereco = Endereco.objects.create(
             rua=self.cleaned_data["rua"],
             numero=self.cleaned_data["numero"],
@@ -743,7 +721,6 @@ class SupervisorCadastroForm(forms.ModelForm):
         return user, supervisor
 
 class CoordenadorEditForm(forms.ModelForm):
-    # Fields for user data
     email = forms.EmailField(
         label="E-mail", widget=forms.EmailInput(attrs={"class": "form-control"})
     )
@@ -753,7 +730,6 @@ class CoordenadorEditForm(forms.ModelForm):
     cpf = forms.CharField(
         label="CPF", widget=forms.TextInput(attrs={"class": "form-control"})
     )
-    # Fields for institution data
     instituicao_nome = forms.CharField(
         label="Nome da instituição",
         max_length=250,
@@ -777,10 +753,8 @@ class CoordenadorEditForm(forms.ModelForm):
         fields = ["nome_completo", "cpf", "email"]
 
     def __init__(self, *args, **kwargs):
-        # Extract the 'coordenador' argument if provided
         coordenador = kwargs.pop("coordenador", None)
         super().__init__(*args, **kwargs)
-        # Prepopulate institution fields if 'coordenador' is provided
         if coordenador and coordenador.instituicao:
             self.fields["instituicao_nome"].initial = coordenador.instituicao.nome
             self.fields["instituicao_telefone"].initial = (
@@ -789,14 +763,11 @@ class CoordenadorEditForm(forms.ModelForm):
             self.fields["instituicao_logo"].initial = coordenador.instituicao.logo
 
     def save(self, commit=True):
-        # Update the related User model
         coordenador = super().save(commit=False)
-        user = coordenador.user  # Access the related User model
-        # Update user fields
+        user = coordenador.user 
         user.username = f"{self.cleaned_data['nome_completo']}"
         user.email = self.cleaned_data["email"]
         user.save()
-        # Update institution fields
         if coordenador.instituicao:
             coordenador.instituicao.nome = self.cleaned_data["instituicao_nome"]
             coordenador.instituicao.telefone = self.cleaned_data["instituicao_telefone"]
@@ -909,9 +880,9 @@ class CoordenadorCadastroForm(forms.ModelForm):
 
     def clean_cpf(self):
         cpf = self.cleaned_data["cpf"]
-        cpf = re.sub(r"\D", "", cpf)  # Remove tudo que não for número
+        cpf = re.sub(r"\D", "", cpf) 
 
-        if not validate_cpf(cpf):  # Valida CPF depois de limpar
+        if not validate_cpf(cpf):
             raise forms.ValidationError(
                 "CPF inválido. Use um CPF válido com 11 dígitos."
             )
@@ -953,7 +924,7 @@ class CoordenadorCadastroForm(forms.ModelForm):
         coordenador = super().save(commit=False)
         coordenador.instituicao = instituicao
         coordenador.email = self.cleaned_data["email"]
-        coordenador.user = user  
+        coordenador.user = user 
 
         if commit:
             user.save()
@@ -1033,9 +1004,9 @@ class OrientadorCadastroForm(forms.ModelForm):
 
     def clean_cpf(self):
         cpf = self.cleaned_data["cpf"]
-        cpf = re.sub(r"\D", "", cpf)  # Remove tudo que não for número
+        cpf = re.sub(r"\D", "", cpf) 
 
-        if not validate_cpf(cpf):  # Valida CPF depois de limpar
+        if not validate_cpf(cpf):
             raise forms.ValidationError(
                 "CPF inválido. Use um CPF válido com 11 dígitos."
             )
@@ -1078,3 +1049,126 @@ class OrientadorCadastroForm(forms.ModelForm):
             orientador.save()
 
         return user, orientador
+
+class AlunoCadastroEstagioForm(EstagioCadastroForm):
+
+    estagiario = forms.ModelChoiceField(
+        queryset=Aluno.objects.all(),  
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+                "readonly": "readonly",
+                "disabled": "disabled",
+            }
+        ),
+        required=False,  
+        label="Estagiário",
+    )
+
+    instituicao = forms.ModelChoiceField(
+        queryset=Instituicao.objects.all(),  
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+                "readonly": "readonly",
+                "disabled": "disabled",
+            }
+        ),
+        required=False, 
+        label="Instituição",
+    )
+
+    class Meta(EstagioCadastroForm.Meta):
+        pass  
+
+    def __init__(self, *args, **kwargs):
+        # A CORREÇÃO ESTÁ AQUI: aluno_logado deve ser removido DESTE __init__
+        aluno_logado = kwargs.pop("aluno_logado", None) 
+        current_user = kwargs.pop("user", None) 
+        # Remova os outros kwargs também para que não sejam passados para super().__init__
+        kwargs.pop("empresa_id", None)
+        kwargs.pop("instituicao_id", None)
+        kwargs.pop("coordenador", None) 
+        
+        super().__init__(*args, **kwargs) # Chama o __init__ do pai (EstagioCadastroForm)
+
+        self.aluno_logado = aluno_logado
+
+        if self.aluno_logado:
+            self.fields["estagiario"].queryset = Aluno.objects.filter(
+                id=self.aluno_logado.id
+            )
+            self.fields["estagiario"].initial = self.aluno_logado.id
+            self.fields["estagiario"].widget.attrs["disabled"] = "disabled"
+            self.fields["estagiario"].widget.attrs["readonly"] = "readonly"
+            self.fields["estagiario"].required = (
+                False  
+            )
+
+            
+            if self.aluno_logado.instituicao:
+                self.fields["instituicao"].queryset = Instituicao.objects.filter(
+                    id=self.aluno_logado.instituicao.id
+                )
+                self.fields["instituicao"].initial = self.aluno_logado.instituicao.id
+                self.fields["instituicao"].widget.attrs["disabled"] = "disabled"
+                self.fields["instituicao"].widget.attrs["readonly"] = "readonly"
+                self.fields["instituicao"].required = (
+                    False  
+                )
+
+            
+            if self.aluno_logado.instituicao:
+                self.fields["empresa"].queryset = Empresa.objects.filter(
+                    instituicao=self.aluno_logado.instituicao
+                ).order_by("empresa_nome")
+                self.fields["orientador"].queryset = Orientador.objects.filter(
+                    instituicao=self.aluno_logado.instituicao
+                ).order_by("nome_completo")
+        
+        if "empresa" in self.data:  
+            try:
+                empresa_id = int(self.data.get("empresa"))
+                self.fields["supervisor"].queryset = Supervisor.objects.filter(
+                    empresa_id=empresa_id
+                ).order_by("nome_completo")
+            except (ValueError, TypeError):
+                self.fields["supervisor"].queryset = Supervisor.objects.none()
+        elif (
+            self.instance.pk and self.instance.empresa
+        ):  
+            self.fields["supervisor"].queryset = Supervisor.objects.filter(
+                empresa=self.instance.empresa
+            ).order_by("nome_completo")
+        else:  
+            self.fields["supervisor"].queryset = Supervisor.objects.none()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.aluno_logado:
+            cleaned_data["estagiario"] = self.aluno_logado
+        else:
+            self.add_error(
+                None, "Erro interno: Aluno não identificado para cadastro de estágio."
+            )
+
+        if self.aluno_logado and self.aluno_logado.instituicao:
+            cleaned_data["instituicao"] = self.aluno_logado.instituicao
+        else:
+            self.add_error(None, "Erro interno: Instituição do aluno não identificada.")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        
+        estagio = super().save(commit=False)
+
+        if self.aluno_logado:
+            estagio.estagiario = self.aluno_logado
+            if self.aluno_logado.instituicao:
+                estagio.instituicao = self.aluno_logado.instituicao
+
+        if commit:
+            estagio.save()
+
+        return estagio

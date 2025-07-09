@@ -8,10 +8,8 @@ from home.views import ativar_acesso_estagiario_view, profile_redirect
 
 urlpatterns = [
     path('', profile_redirect, name='profile_redirect'),
-    # path('', views.home, name='home'),
     path('pre-cadastro', views.pre_cadastro, name='pre_cadastro'),
-    path('cadastro-instituicao', views.cadastrar_instituicao, name='cadastro_instituicao'),
-    path('cadastro-aluno', views.cadastro_aluno, name='cadastro_aluno'),
+    # path('cadastro-aluno', views.cadastro_aluno, name='cadastro_aluno'),
     path('ajax/load-cursos/', views.load_cursos, name='load_cursos'),
     path('validate_cnpj/', validate_cnpj, name='validate_cnpj'),
     path('validate_cpf/', validate_cpf, name='validate_cpf'),

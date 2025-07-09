@@ -4,9 +4,11 @@ from django.contrib import messages
 from mais_estagio.forms import CoordenadorEditForm
 from mais_estagio.models import CoordenadorExtensao
 
-
 @login_required
 def editar_perfil(request):
+    if hasattr(request.user, 'aluno') and request.user.aluno:
+        return redirect('editar_estagiario', estagiario_id=request.user.aluno.id)
+
     coordenador = get_object_or_404(CoordenadorExtensao, user=request.user)
 
     if request.method == "POST":
@@ -18,7 +20,7 @@ def editar_perfil(request):
             messages.success(request, "Seu perfil foi atualizado com sucesso!")
             return redirect(
                 "dashboard_instituicao"
-            )  # Redirect to the dashboard or another page
+            )
         else:
             messages.error(request, "Por favor, corrija os erros abaixo.")
     else:

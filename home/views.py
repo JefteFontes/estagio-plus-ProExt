@@ -1,15 +1,13 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.conf import settings
-from django.http import FileResponse, Http404, HttpResponse
+from django.http import FileResponse, Http404
 import os
 
 from mais_estagio.forms import CoordenadorCadastroForm
-from mais_estagio.views.estagiarios import AlunoCadastroForm
 from mais_estagio.models import Aluno
 from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from allauth.account.forms import ResetPasswordForm
 from mais_estagio.models import Cursos,Aluno
 from django.http import JsonResponse
@@ -156,46 +154,6 @@ def visualizar_termo(request, pdf_nome):
     else:
         raise Http404("Arquivo não encontrado")
 
-
-def cadastro_aluno(request):
-    if request.method == "POST":
-        try:
-            form = AlunoCadastroForm(request.POST)
-            if form.is_valid():
-                estagiario = form.save()
-                messages.success(
-                    request,
-                    "Cadastro do aluno realizado com sucesso! Aguarde a validação do coordenador para obter o acesso ao sistema.",
-                )
-                return redirect("/login/")
-            else:
-                print("Formulário inválido:")
-                print(form.errors)
-                messages.error(
-                    request,
-                    "Houve erros no preenchimento do formulário. Por favor, corrija-os.",
-                )
-                return render(request, "cadastro/cadastro_aluno.html", {"form": form})
-        except Exception as e:
-            print("Erro ao processar o formulário POST:")
-            traceback.print_exc()
-            messages.error(
-                request, f"Ocorreu um erro inesperado ao cadastrar o aluno: {str(e)}"
-            )
-            return render(request, "cadastro/cadastro_aluno.html", {"form": form})
-    else:
-        try:
-            form = AlunoCadastroForm()
-        except Exception as e:
-            print("Erro ao instanciar o formulário GET:")
-            traceback.print_exc()
-            form = None
-            messages.error(
-                request, f"Erro ao carregar o formulário de cadastro: {str(e)}"
-            )
-
-    return render(request, "cadastro/cadastro_aluno.html", {"form": form})
-
 @login_required
 @user_passes_test(lambda u: u.is_staff or hasattr(u, 'coordenadorextensao'))
 def ativar_acesso_estagiario_view(request, estagiario_id):
@@ -221,7 +179,7 @@ def profile_redirect(request):
         return redirect("dashboard_instituicao")
 
     if hasattr(user, "aluno") and user.aluno:
-        return redirect("estagios_aluno")
+        return redirect("estagio_andamento")
 
     if hasattr(user, "orientador") and user.orientador:
         return redirect("dashboard_orientador")

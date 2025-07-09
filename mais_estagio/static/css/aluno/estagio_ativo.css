@@ -1,0 +1,206 @@
+/* static/css/aluno_dashboard.css */
+
+/* Global Dashboard Styles */
+.dashboard-wrapper {
+    padding: 30px 20px;
+    background-color: #f8f9fa; /* Light background for the overall page */
+    min-height: calc(100vh - 100px); /* Adjust based on your header/footer height */
+}
+
+.welcome-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #495057;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* Message Styles */
+.message-container {
+    max-width: 800px;
+    margin: 0 auto 20px auto;
+}
+
+/* Active Internship Card Styles */
+.active-internship-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #ffffff;
+    max-width: 900px; /* Max width for the details card */
+    margin: 0 auto; /* Center the card */
+}
+
+.active-internship-card .card-header {
+    background-color: #e9ecef !important; /* Light grey header */
+    border-bottom: 1px solid #dee2e6;
+    color: #343a40;
+}
+
+.active-internship-card .card-header h4 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.info-block {
+    margin-bottom: 20px;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.info-value {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 0;
+}
+
+.status-badge {
+    padding: 0.5em 1em;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for badge */
+}
+
+.status-badge.completed {
+    background-color: #d4edda; /* Light green */
+    color: #155724; /* Dark green text */
+}
+
+.status-badge.in-progress {
+    background-color: #cce5ff; /* Light blue */
+    color: #004085; /* Dark blue text */
+}
+
+.status-badge.pending {
+    background-color: #fff3cd; /* Light yellow */
+    color: #856404; /* Dark yellow text */
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+/* Document/Report Buttons */
+.download-btn, .view-btn {
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.view-btn:hover {
+    background-color: #0056b3 !important; /* Darker blue on hover */
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.list-item-custom {
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background-color: #f0f2f5; /* Slightly different background for list items */
+    border: 1px solid #e0e4e8;
+    padding: 12px 20px;
+    transition: all 0.2s ease;
+}
+.list-group-item:hover {
+    background-color: #e5e7ea;
+    transform: translateX(3px);
+}
+
+/* Empty State Styles */
+.empty-state-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e4e8;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    padding: 60px 30px;
+    max-width: 700px;
+    margin: 50px auto;
+}
+
+.empty-icon {
+    color: #adb5bd;
+    font-size: 4.5rem; /* Larger icon */
+    animation: pulse 2s infinite ease-in-out; /* Simple animation */
+}
+
+.empty-state-title {
+    color: #495057;
+    font-weight: 600;
+    font-size: 1.8rem;
+}
+
+.custom-button {
+    background-color: #28a745; /* Green for "Cadastrar" */
+    border-color: #28a745;
+    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.custom-button:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Progress bar (Bootstrap classes applied in HTML, custom adjustments here) */
+.progress {
+    background-color: #e9ecef; /* Lighter background for the progress container */
+    border-radius: 5px;
+    overflow: hidden; /* Ensure progress bar stays within rounded corners */
+}
+.progress-bar {
+    border-radius: 5px; /* Apply border-radius to the bar itself if needed, or let parent clip */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767.98px) {
+    .welcome-title {
+        font-size: 1.8rem;
+    }
+    .active-internship-card .card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    .active-internship-card .card-header .d-flex {
+        width: 100%;
+        justify-content: flex-start !important;
+        margin-top: 10px;
+    }
+    .status-badge, .badge {
+        font-size: 0.8em;
+    }
+}
