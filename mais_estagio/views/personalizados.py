@@ -19,7 +19,7 @@ def dashboard_personalizados(request):
         "turnos": Estagio._meta.get_field("turno").choices,
         "empresas": Empresa.objects.all(),
         "supervisores": Supervisor.objects.all(),
-        "estagiarios": Estagiario.objects.all()
+        "estagiarios": Aluno.objects.all()
         
     }
     return render(request, 'dashboard_personalizados.html', context)
