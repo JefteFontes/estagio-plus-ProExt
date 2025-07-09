@@ -30,11 +30,10 @@ def editar_empresa(request, empresa_id):
     empresa = get_object_or_404(
         Empresa, id=empresa_id, instituicao=coordenador.instituicao
     )
-    supervisor = get_object_or_404(Supervisor, empresa=empresa)
 
     if request.method == "POST":
         form = EmpresaCadastroForm(
-            coordenador=coordenador, instance=supervisor, data=request.POST
+            coordenador=coordenador, instance=empresa, data=request.POST
         )
         if form.is_valid():
             form.save()
@@ -47,20 +46,20 @@ def editar_empresa(request, empresa_id):
         # Preenchendo o formulário com os dados existentes
         form = EmpresaCadastroForm(
             coordenador=coordenador,
-            instance=supervisor,
+            instance=empresa,
             initial={
-                "email": empresa.email,
-                "rua": empresa.endereco.rua,
-                "numero": empresa.endereco.numero,
-                "bairro": empresa.endereco.bairro,
-                "cidade": empresa.endereco.cidade,
-                "estado": empresa.endereco.estado,
-                "cep": empresa.endereco.cep,
-                "complemento": empresa.endereco.complemento,
-                "empresa_nome": empresa.empresa_nome,
-                "empresa_cnpj": empresa.cnpj,
-                "empresa_razao_social": empresa.razao_social,
-                "empresa_atividades": empresa.atividades,
+                "rua": empresa.endereco.rua if empresa.endereco else "",
+                "numero": empresa.endereco.numero if empresa.endereco else "",
+                "bairro": empresa.endereco.bairro if empresa.endereco else "",
+                "cidade": empresa.endereco.cidade if empresa.endereco else "",
+                "estado": empresa.endereco.estado if empresa.endereco else "",
+                "cep": empresa.endereco.cep if empresa.endereco else "",
+                "complemento": empresa.endereco.complemento if empresa.endereco else "",
+                "nome": empresa.nome,
+                "cnpj": empresa.cnpj,
+                "razao_social": empresa.razao_social,
+                "atividades": empresa.atividades,
+                "convenio": empresa.convenio,
             },
         )
 

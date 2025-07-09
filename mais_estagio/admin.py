@@ -28,10 +28,11 @@ class AlunoAdmin(admin.ModelAdmin):
     search_fields = ("nome", "cpf", "matricula", "email")
     list_filter = ("instituicao", "status", "endereco__cidade")
 
+
 @admin.register(models.Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
-    list_display = ("empresa_nome", "cnpj", "razao_social", "email", "endereco")
-    search_fields = ("empresa_nome", "cnpj", "razao_social")
+    list_display = ("nome", "cnpj", "razao_social", "convenio", "endereco")
+    search_fields = ("nome", "cnpj", "razao_social")
     list_filter = ("endereco__cidade", "endereco__estado")
 
 

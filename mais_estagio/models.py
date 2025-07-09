@@ -46,17 +46,27 @@ class Instituicao(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Empresa(models.Model):
     instituicao = models.ForeignKey(Instituicao, on_delete=models.PROTECT)
     
-    empresa_nome = models.CharField(
+    nome = models.CharField(
         max_length=250,
         validators=[
             RegexValidator(regex=r"^[a-zA-Z0-9áàâãäéèêëíìîïóòôõöúùûüçñÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇÑ\s\-\.&]+$", message="Use apenas letras e números.")
         ],
     )
+    convenio = models.CharField(
+        max_length=8,
+        null=True,
+        blank=True,
+        unique=True,
+        validators=[
+            RegexValidator(regex="^[0-9]+$", message="Use apenas números.")
+            ],
+    )
     cnpj = models.CharField(
-        max_length=250,
+        max_length=25,
         unique=True,
         validators=[
             RegexValidator(
@@ -66,14 +76,13 @@ class Empresa(models.Model):
         ],
     )
     razao_social = models.CharField(max_length=250)
-    email = models.EmailField(unique=True)
     atividades = models.TextField(max_length=500, null=True)
     endereco = models.ForeignKey(
         Endereco, on_delete=models.PROTECT, null=True, blank=True
     )
 
     def __str__(self):
-        return self.empresa_nome
+        return self.nome
 
 
 class Areachoices(models.TextChoices):
