@@ -136,15 +136,20 @@ urlpatterns = [
     ),
     path("dashboard_supervisor/", dashboard_supervisor, name="dashboard_supervisor"),
     path("relatorios_supervisor/", relatorios_supervisor, name="relatorios_supervisor"),
-    path("add-estagio", add_estagios, name="add_estagio"),
-    path("detalhes-estagio", detalhes_estagio, name="detalhes_estagio"),
-    path("complementar-estagio", complementar_estagio, name="complementar_estagio"),
-    path("editar_estagio/<int:estagio_id>", editar_estagio, name="editar_estagio"),
-    path("importar-pdf", importar_pdf, name="importar_pdf"),
-    path("importar_termo", importar_termo, name="importar_termo"),
-    path("importar-termo/<int:estagio_id>/", importar_termo, name="importar_termo"),
-    path("parse-sections", parse_sections, name="parse_sections"),
-    path("buscar-cep", buscar_cep, name="buscar_cep"),
-    path("validate_cnpj", validate_cnpj, name="validate_cnpj"),
-    path("editar-perfil/", editar_perfil, name="editar_perfil"),
+    
+
+    path('add-estagio', add_estagios, name='add_estagio'),
+    path('detalhes-estagio', detalhes_estagio, name='detalhes_estagio'),
+    path('complementar-estagio', complementar_estagio, name='complementar_estagio'), 
+    path('editar_estagio/<int:estagio_id>', editar_estagio, name='editar_estagio'),   
+
+
+    path('estagio/<int:estagio_id>/importar-termo/', importar_termo, name='importar_termo'),
+    path('parse-sections', parse_sections, name='parse_sections'),
+    path('buscar-cep', buscar_cep, name='buscar_cep'),
+    path('validate_cnpj', validate_cnpj, name='validate_cnpj'),
+
+
+    path('editar-perfil/', editar_perfil, name='editar_perfil'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

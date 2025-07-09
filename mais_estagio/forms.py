@@ -21,6 +21,7 @@ from .models import (
     Areachoices,
     Cursos,
     CoordenadorExtensao,
+    Instituicao,
     Orientador
 )
 
@@ -529,6 +530,13 @@ class EstagiarioCadastroForm(forms.ModelForm):
 
 
 class EmpresaCadastroForm(forms.ModelForm):
+    convenio = forms.CharField(
+        max_length=8,
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Convênio"}
+        ),
+    )
     rua = forms.CharField(
         max_length=255,
         widget=forms.TextInput(
@@ -572,7 +580,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             attrs={"class": "form-control", "placeholder": "Complemento"}
         ),
     )
-    empresa_nome = forms.CharField(
+    nome = forms.CharField(
         max_length=250,
         widget=forms.TextInput(
             attrs={
@@ -581,7 +589,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             }
         ),
     )
-    empresa_cnpj = forms.CharField(
+    cnpj = forms.CharField(
         max_length=20,
         widget=forms.TextInput(
             attrs={
@@ -590,7 +598,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             }
         ),
     )
-    empresa_razao_social = forms.CharField(
+    razao_social = forms.CharField(
         max_length=250,
         widget=forms.TextInput(
             attrs={
@@ -599,7 +607,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             }
         ),
     )
-    empresa_atividades = forms.CharField(
+    atividades = forms.CharField(
         max_length=500,
         widget=forms.Textarea(
             attrs={
@@ -614,10 +622,10 @@ class EmpresaCadastroForm(forms.ModelForm):
     class Meta:
         model = Empresa
         fields = [
-            "empresa_nome",
-            "empresa_cnpj",
-            "empresa_razao_social",
-            "empresa_atividades",
+            "nome",
+            "cnpj",
+            "razao_social",
+            "atividades",
             "rua",
             "numero",
             "bairro",
@@ -625,6 +633,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             "estado",
             "cep",
             "complemento",
+            "convenio",
         ]
 
     def __init__(self, *args, **kwargs):
