@@ -137,6 +137,11 @@ class Cursos(models.Model):
     def __str__(self):
         return f"{self.nome_curso}"
 
+class SexoChoices(models.TextChoices):
+    MASCULINO = 'M', 'Masculino'
+    FEMININO = 'F', 'Feminino'
+    OUTRO = 'O', 'Outro'
+    NAO_INFORMAR = 'N', 'Prefiro não informar'
 
 class Aluno(models.Model):
     user = models.OneToOneField(
@@ -146,6 +151,29 @@ class Aluno(models.Model):
         blank=True,
     )
     nome_completo = models.CharField(max_length=100)
+    sexo = models.CharField(
+        max_length=1,
+        choices=SexoChoices.choices,
+        default=SexoChoices.NAO_INFORMAR,
+        verbose_name="Sexo",
+        null=True,
+        blank=True
+    )
+    data_nascimento = models.DateField(
+        verbose_name="Data de Nascimento",
+        null=True,
+        blank=True,
+        validators=[
+            MinValueValidator(
+                limit_value=date.today() - timedelta(days=365*100),  
+                message="Data de nascimento não pode ser superior a 100 anos atrás"
+            ),
+            MaxValueValidator(
+                limit_value=date.today() - timedelta(days=365*14), 
+                message="O aluno deve ter pelo menos 14 anos de idade"
+            )
+        ]
+    )
     cpf = models.CharField(
         max_length=14,
         unique=True,
@@ -165,8 +193,8 @@ class Aluno(models.Model):
         default=4,
         validators=[
             RegexValidator(regex=r"^[0-9]+$", message="Use apenas números."),
-            MaxValueValidator(12, message="O valor não pode ser maior que 12"),
-            MinValueValidator(1, message="O valor não pode ser menor que 1"),
+            MaxValueValidator(12, message="O periodo não pode ser maior que 12"),
+            MinValueValidator(1, message="O periodo não pode ser menor que 1"),
         ],
     )
     status = models.BooleanField(default=False)

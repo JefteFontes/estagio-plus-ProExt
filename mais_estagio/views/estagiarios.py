@@ -4,9 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from mais_estagio.models import Cursos, Endereco, Instituicao, Aluno
+from mais_estagio.models import Cursos, Endereco, Instituicao, Aluno, SexoChoices
 from home.utils import validate_cpf
 
+from django.utils import timezone
+from datetime import date, timedelta
 
 
 from mais_estagio.models import CoordenadorExtensao, Estagio
@@ -143,6 +145,26 @@ class AlunoCadastroForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "form-control", "id": "id_instituicao"}),
         empty_label="Selecione a instituição",
     )
+    data_nascimento = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control",
+                "type": "date",
+                "max": (date.today() - timedelta(days=365*14)).strftime("%Y-%m-%d"),  # 14 anos atrás
+                "min": date(1900, 1, 1).strftime("%Y-%m-%d")  # Data mínima
+            }
+        ),
+        validators=[
+            MinValueValidator(
+                limit_value=date(1900, 1, 1),
+                message="Data de nascimento não pode ser anterior a 01/01/1900"
+            ),
+            MaxValueValidator(
+                limit_value=date.today() - timedelta(days=365*14),
+                message="O aluno deve ter pelo menos 14 anos de idade"
+            )
+        ]
+    )
 
     class Meta:
         model = Aluno
@@ -152,6 +174,8 @@ class AlunoCadastroForm(forms.ModelForm):
             "matricula",
             "telefone",
             "email",
+            "sexo",
+            "data_nascimento",
             "curso",
             "periodo",
             "turno",
@@ -159,8 +183,8 @@ class AlunoCadastroForm(forms.ModelForm):
             "instituicao",
         ]
         widgets = {
-            "nome": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Nome completo"}
+            "nome_completo": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Nome Completo (ex: João da Silva)"}
             ),
             "cpf": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "CPF"}
@@ -173,6 +197,15 @@ class AlunoCadastroForm(forms.ModelForm):
             ),
             "email": forms.EmailInput(
                 attrs={"class": "form-control", "placeholder": "Email"}
+            ),
+            "sexo": forms.Select(attrs={"class": "form-control"}),
+            "data_nascimento": forms.DateInput(
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                    "max": (date.today() - timedelta(days=365*14)).strftime("%Y-%m-%d"),
+                    "min": date(1900, 1, 1).strftime("%Y-%m-%d")
+                }
             ),
             "curso": forms.Select(attrs={"class": "form-control", "id": "id_curso"}),
             "periodo": forms.NumberInput(

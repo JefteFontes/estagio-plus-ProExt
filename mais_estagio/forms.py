@@ -22,7 +22,8 @@ from .models import (
     Cursos,
     CoordenadorExtensao,
     Instituicao,
-    Orientador
+    Orientador,
+    SexoChoices
 )
 
 
@@ -427,6 +428,14 @@ class EstagiarioCadastroForm(forms.ModelForm):
         ]
     )
 
+    sexo = forms.ChoiceField(
+        choices=SexoChoices.choices,
+        initial=SexoChoices.NAO_INFORMAR,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False,
+        label="Sexo"
+    )
+
     def clean_cpf(self):
         cpf = self.cleaned_data["cpf"]
         cpf = "".join(filter(str.isdigit, cpf))
@@ -442,6 +451,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
             "matricula",
             "telefone",
             "curso",
+            "sexo",
             "status",
             "email",
             "periodo",
@@ -473,6 +483,7 @@ class EstagiarioCadastroForm(forms.ModelForm):
                 }
             ),
             "curso": forms.Select(attrs={"class": "form-control"}),
+            "sexo": forms.Select(attrs={"class": "form-control"}),
             "status": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "email": forms.EmailInput(
                 attrs={"class": "form-control", "placeholder": "exemplo@dominio.com"}
@@ -632,6 +643,15 @@ class EmpresaCadastroForm(forms.ModelForm):
         ),
     )
 
+    empresa_email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Email (ex: contato@empresa.com)",
+            }
+        ),
+    )
+
     class Meta:
         model = Empresa
         fields = [
@@ -639,6 +659,7 @@ class EmpresaCadastroForm(forms.ModelForm):
             "empresa_nome",
             "empresa_cnpj",
             "empresa_razao_social",
+            "empresa_email",
             "empresa_atividades",
             "rua",
             "numero",
@@ -667,6 +688,12 @@ class EmpresaCadastroForm(forms.ModelForm):
 
         empresa = super().save(commit=False)
         empresa.endereco = endereco
+        empresa.email = self.cleaned_data["empresa_email"]
+        empresa.empresa_nome = self.cleaned_data["empresa_nome"]
+        empresa.cnpj = self.cleaned_data["empresa_cnpj"]
+        empresa.razao_social = self.cleaned_data["empresa_razao_social"]
+        empresa.atividades = self.cleaned_data["empresa_atividades"]
+
         if self.coordenador and self.coordenador.instituicao:
             empresa.instituicao = self.coordenador.instituicao
 

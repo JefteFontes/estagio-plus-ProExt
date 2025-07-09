@@ -2,6 +2,19 @@
 {% load static %}
 
 {% block content %}
+
+{% if form.errors %}
+    <div class="message-container">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ error }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
 <div class="container-login">
     <!-- Área do Formulário -->
     <div class="login-form">
@@ -32,11 +45,19 @@
             {% csrf_token %}
             
             <div class="form-step" id="step1">
-                <div class="form-group">
-                    <label for="{{ form.nome_completo.id_for_label }}">Nome Completo:</label>
-                    {{ form.nome_completo }}
-                    <span id="nome-error" class="error-message"></span>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.nome_completo.id_for_label }}">Nome Completo:</label>
+                        {{ form.nome_completo }}
+                        <span id="nome-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento:</label>
+                        {{ form.data_nascimento }}
+                        <span id="data-error" class="error-message"></span>
+                    </div>
                 </div>
+                
 
                 <div class="form-row">
                     <div class="form-group">
@@ -45,16 +66,23 @@
                         <span id="cpf-error" class="error-message"></span>
                     </div>
                     <div class="form-group">
+                        <label for="{{ form.sexo.id_for_label }}">Sexo:</label>
+                        {{ form.sexo }}
+                        <span id="sexo-error" class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
                         <label for="{{ form.telefone.id_for_label }}">Telefone:</label>
                         {{ form.telefone }}
                         <span id="telefone-error" class="error-message"></span>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}">Email:</label>
-                    {{ form.email }}
-                    <span id="email-error" class="error-message"></span>
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}">Email:</label>
+                        {{ form.email }}
+                        <span id="email-error" class="error-message"></span>
+                    </div>
                 </div>
 
                 <div class="form-navigation">
@@ -169,7 +197,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
-    
+
     $(document).ready(function() {
         $('#id_telefone').mask('(00) 00000-0000');
         $('#id_cpf').mask('000.000.000-00');
@@ -206,6 +234,7 @@
             if($('#id_nome_completo').val().trim() === '') {
                 showError('#id_nome_completo', 'O nome completo é obrigatório.');
                 isValid = false;
+                
             } else {
                 clearError('#id_nome_completo');
             }
@@ -232,6 +261,36 @@
                 isValid = false;
             } else {
                 clearError('#id_email');
+            }
+
+            const dataNascimento = $('#id_data_nascimento').val();
+            console.log(`Data de Nascimento: ${dataNascimento}`);
+            if(dataNascimento === '') {
+                showError('#id_data_nascimento', 'A data de nascimento é obrigatória.');
+                isValid = false;
+            } else {
+                const dataNasc = new Date(dataNascimento);
+                const hoje = new Date();
+                const idadeMinima = new Date(hoje.getFullYear() - 14, hoje.getMonth(), hoje.getDate());
+                const idadeMaxima = new Date(hoje.getFullYear() - 100, hoje.getMonth(), hoje.getDate());
+                
+                // Verifica se a data é no futuro
+                if(dataNasc > hoje) {
+                    showError('#id_data_nascimento', 'Data de nascimento não pode ser no futuro!');
+                    isValid = false;
+                } 
+                // Verifica se é muito nova (menos de 14 anos)
+                else if(dataNasc > idadeMinima) {
+                    showError('#id_data_nascimento', 'O aluno deve ter pelo menos 14 anos de idade.');
+                    isValid = false;
+                } 
+                // Verifica se é muito antiga (mais de 100 anos)
+                else if(dataNasc < idadeMaxima) {
+                    showError('#id_data_nascimento', 'Data de nascimento inválida (muito antiga).');
+                    isValid = false;
+                } else {
+                    clearError('#id_data_nascimento');
+                }
             }
         }
         

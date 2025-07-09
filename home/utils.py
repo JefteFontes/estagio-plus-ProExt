@@ -74,12 +74,14 @@ def validate_cnpj(request):
         data = response.json()
         if "error" in data:
             return JsonResponse({"error": "CNPJ não encontrado"}, status=404)
-
+        emails = data.get("emails", [])
+        email = emails[0].get("address", "") if emails and isinstance(emails, list) and len(emails) > 0 else ""
         return JsonResponse(
             {
                 "name": data.get("alias", "")
                 or data.get("company", {}).get("name", ""),
                 "razao_social": data.get("company", {}).get("name", ""),
+                "email": email,
                 "cep": data.get("address", {}).get("zip", ""),
                 "numero": data.get("address", {}).get("number", ""),
                 "atividades": data.get("mainActivity", {}).get("text", ""),
@@ -210,11 +212,22 @@ def preencher_tceu(estagio, template_path):
             document, old_string="OrgaoEstagiario", new_string="SSP"
         )
         docxedit.replace_string(
+            document, old_string="DataEstagiario", new_string=estagiario.data_nascimento.strftime("%d/%m/%Y")
+        )
+        docxedit.replace_string(
             document, old_string="CPFEstagiario", new_string=estagiario.cpf
         )
         docxedit.replace_string(
             document, old_string="NaturalidadeEstagiario", new_string="Brasileiro(a)"
         )
+        if estagiario.sexo == "M":
+            docxedit.replace_string(
+                document, old_string="MascEstagiario", new_string="X"
+            )
+        elif estagiario.sexo == "F":
+            docxedit.replace_string(
+                document, old_string="FemEstagiario", new_string="X"
+            )
         docxedit.replace_string(
             document,
             old_string="CursoEstagiario",

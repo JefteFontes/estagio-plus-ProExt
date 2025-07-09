@@ -37,6 +37,17 @@
                     {{ form.nome_completo }}
                     <span id="nome-error" class="error-message"></span>
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento:</label>
+                        {{ form.data_nascimento }}
+                        <span id="data-nascimento-error" class="error-message"></span>
+                    </div>
+                <div class="form-group">
+                    <label for="{{ form.sexo.id_for_label }}">Sexo:</label>
+                    {{ form.sexo }}
+                    <span id="sexo-error" class="error-message"></span>
+                </div>
 
                 <div class="form-row">
                     <div class="form-group">
