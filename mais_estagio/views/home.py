@@ -38,6 +38,8 @@ def dashboard(request):
     return render(request, "dashboard.html")
 
 
+@login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def dashboard_cursos(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     instituicao = coordenador.instituicao
@@ -54,7 +56,8 @@ def dashboard_cursos(request):
     if coordenador:
         cursos = cursos.filter(coordenador__icontains=coordenador) 
 
-    areas = Cursos.objects.values_list("area", flat=True).distinct()
+    areas = Cursos._meta.get_field('area').choices
+
     context = {
         "cursos": cursos,
         "areas": areas,
@@ -62,7 +65,8 @@ def dashboard_cursos(request):
     }
     return render(request, "dashboard_cursos.html", context)
 
-
+@login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def dashboard_empresa(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     instituicao = coordenador.instituicao
@@ -136,6 +140,7 @@ def dashboard_estagiario(request):
 
 
 @login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def dashboard_instituicao(request):
     errors = []
 
@@ -274,7 +279,8 @@ def dashboard_instituicao(request):
     }
     return render(request, "dashboard_instituicao.html", context)
 
-
+@login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def cadastrar_cursos(request):
     coordenador_extensao = CoordenadorExtensao.objects.get(user=request.user)
 
@@ -295,7 +301,8 @@ def cadastrar_cursos(request):
         {"form": form},
     )
 
-
+@login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def editar_curso(request, curso_id):
     curso = get_object_or_404(Cursos, id=curso_id)
 
@@ -308,7 +315,8 @@ def editar_curso(request, curso_id):
         form = CursosCadastroForm(instance=curso)
     return render(request, "cadastrar_cursos.html", {"form": form, "curso": curso})
 
-
+@login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def deletar_curso(request, curso_id):
     curso = get_object_or_404(Cursos, id=curso_id)
     # mensagem de erro se tiver aluno vinculado ao curso
@@ -325,7 +333,7 @@ def deletar_curso(request, curso_id):
         )  
     return render(request, "dashboard_cursos.html", {"cursos": cursos})
 
-
+@login_required
 def detalhes_estagio(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)
 

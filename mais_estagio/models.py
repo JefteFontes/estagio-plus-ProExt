@@ -9,9 +9,9 @@ import uuid
 
 
 class TurnoChoices(models.TextChoices):
-    MANHA = "Manhã"
-    TARDE = "Tarde"
-    NOITE = "Noite"
+    MANHA = "manha", "Manhã"
+    TARDE = "tarde", "Tarde"
+    NOITE = "noite", "Noite"
 
 
 class Endereco(models.Model):

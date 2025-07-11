@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from ..forms import EmpresaCadastroForm
 from ..models import CoordenadorExtensao, Empresa, Endereco, Estagio, Supervisor
 
 
 @login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def cadastrar_empresa(request):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     if request.method == "POST":
@@ -25,6 +26,7 @@ def cadastrar_empresa(request):
 
 
 @login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def editar_empresa(request, empresa_id):
     coordenador = CoordenadorExtensao.objects.get(user=request.user)
     empresa = get_object_or_404(
@@ -67,6 +69,7 @@ def editar_empresa(request, empresa_id):
 
 
 @login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def get_supervisores(request):
     empresa_id = request.GET.get("empresa_id")
     if empresa_id:
@@ -77,6 +80,7 @@ def get_supervisores(request):
 
 
 @login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def deletar_empresa(request, empresa_id):
     empresa = get_object_or_404(Empresa, id=empresa_id)
     # conferir se der algum erro

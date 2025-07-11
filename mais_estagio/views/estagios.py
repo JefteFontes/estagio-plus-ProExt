@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 
 from home.utils import preencher_tceu
@@ -70,31 +70,31 @@ def verificar_relatorios_pendentes(estagio):
 def verificar_relatorios_atrasados(request):
     hoje = datetime.date.today()
     relatorios_por_estagiario = {}  
-    
+
     coordenador = request.user.coordenadorextensao
     instituicao = coordenador.instituicao
     estagios = Estagio.objects.filter(instituicao=instituicao)
-    
+
     for estagio in estagios:
         relatorios_pendentes = verificar_relatorios_pendentes(estagio)
         relatorios_proximos_vencimento = []
-        
+
         for relatorio in relatorios_pendentes:
             data_prevista = relatorio['data_prevista']
             dias_para_vencer = (data_prevista - hoje).days
-            
+
             if dias_para_vencer <= 30: 
                 relatorios_proximos_vencimento.append({
                     'tipo': relatorio['tipo'],
                     'data_prevista': data_prevista
                 })
-        
+
         if relatorios_proximos_vencimento:
             relatorios_por_estagiario[estagio] = relatorios_proximos_vencimento
-    
+
     if not relatorios_por_estagiario:
         return False
-    
+
     context = {
         'user_name': request.user.get_full_name() or request.user.username,
         'relatorios_por_estagiario': relatorios_por_estagiario,
@@ -119,26 +119,26 @@ def verificar_relatorios_atrasados(request):
 def notificar_estagiarios_relatorios_pendentes(request):
     hoje = datetime.date.today()
     estagios_com_pendencias = []
-    
+
     coordenador = request.user.coordenadorextensao
     instituicao = coordenador.instituicao
     estagios = Estagio.objects.filter(instituicao=instituicao)
-    
+
     for estagio in estagios:
         relatorios_pendentes = verificar_relatorios_pendentes(estagio)
         relatorios_proximos_vencimento = []
-        
+
         for relatorio in relatorios_pendentes:
             data_prevista = relatorio['data_prevista']
             dias_para_vencer = (data_prevista - hoje).days
-            
+
             if dias_para_vencer <= 30:  
                 relatorios_proximos_vencimento.append({
                     'tipo': relatorio['tipo'],
                     'data_prevista': data_prevista,
                     'dias_atraso': max(0, (hoje - data_prevista).days) if hoje > data_prevista else 0
                 })
-        
+
         if relatorios_proximos_vencimento:
             context = {
                 'estagiario_nome': estagio.estagiario.nome_completo,
@@ -158,9 +158,9 @@ def notificar_estagiarios_relatorios_pendentes(request):
                 recipient_list=[estagio.estagiario.email],
                 fail_silently=False,
             )
-            
+
             estagios_com_pendencias.append(estagio)
-    
+
     return len(estagios_com_pendencias) > 0
 
 
@@ -169,13 +169,13 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
         form = EstagioCadastroForm(request.POST, instance=estagio, user=request.user)
         if form.is_valid():
             estagio_instance = form.save()
-            
+
             template_path = str(os.path.join(settings.BASE_DIR, "mais_estagio", "templates", "docs", "TceuTemplate.docx"))
-            
+
             output_pdf_path = preencher_tceu(estagio_instance, template_path)
-            
+
             if output_pdf_path and os.path.exists(str(output_pdf_path)): 
-                
+
                 relative_path = str(output_pdf_path).replace(str(settings.MEDIA_ROOT), '').lstrip('/')
                 estagio_instance.pdf_termo.name = relative_path
                 estagio_instance.save()
@@ -184,7 +184,7 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
                     response = HttpResponse(fh.read(), content_type="application/pdf")
                     filename = os.path.basename(str(output_pdf_path))   
                     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-                    
+
                     messages.success(request, "Estágio salvo com sucesso!")
                     return redirect('dashboard_instituicao')
             else:
@@ -199,11 +199,13 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
 
 
 @login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def add_estagios(request):
     return processar_form_estagio(request)
 
 
 @login_required
+@user_passes_test(lambda u: hasattr(u, "coordenadorextensao") and u.coordenadorextensao)
 def editar_estagio(request, estagio_id):
     estagio = get_object_or_404(Estagio, id=estagio_id)
     return processar_form_estagio(request, estagio)
@@ -215,6 +217,7 @@ def complementar_estagio(request, estagio_id):
     return processar_form_estagio(
         request, estagio, template="complementar_estagio.html"
     )
+
 
 @login_required
 def verificar_pendencias(request):
@@ -299,7 +302,8 @@ def download_tceu(request, estagio_id):
             return response
     else:
         raise Http404("Documento não encontrado.")
-    
+
+
 def importar_termo(request, estagio_id):
     estagio = get_object_or_404(Estagio, pk=estagio_id)
     
@@ -319,30 +323,30 @@ def importar_termo(request, estagio_id):
                 'status': 'error',
                 'message': f'Arquivo muito grande (máximo {settings.MAX_UPLOAD_SIZE/1024/1024}MB)'
             }, status=400)
-        
+
         if not arquivo.name.lower().endswith('.pdf'):
             return JsonResponse({'status': 'error', 'message': 'Apenas arquivos PDF são permitidos'}, status=400)
-        
+
         try:
             # Remove o arquivo antigo se existir
             if estagio.pdf_termo:
                 estagio.pdf_termo = None
                 estagio.save() # Usando delete() que é mais seguro
-            
+
             # Salva o novo arquivo
             estagio.pdf_termo.save(arquivo.name, arquivo)
-            
+
             return JsonResponse({
                 'status': 'success',
                 'message': 'Documento importado com sucesso',
                 'file_url': estagio.pdf_termo.url
             })
-        
+
         except Exception as e:
             logger.error(f"Erro ao importar documento: {str(e)}", exc_info=True)
             return JsonResponse({
                 'status': 'error',
                 'message': 'Erro interno ao processar o documento'
             }, status=500)
-    
+
     return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
