@@ -192,7 +192,6 @@ def dashboard_instituicao(request):
                     cnpj=empresa_data.get("cnpj", ""),
                     razao_social=empresa_data.get("razao_social", ""),
                     endereco=endereco_empresa,
-                    email=empresa_data.get("email", ""),
                 )
 
             estagiario_data = sections.get("estagiário", {})

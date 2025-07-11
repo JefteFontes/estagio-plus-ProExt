@@ -303,9 +303,6 @@ def preencher_tceu(estagio, template_path):
             old_string="UFEmpresa",
             new_string=endereco_empresa.estado,
         )
-        docxedit.replace_string(
-            document, old_string="EmailEmpresa", new_string=empresa.email
-        )
 
         if supervisor:
             docxedit.replace_string(

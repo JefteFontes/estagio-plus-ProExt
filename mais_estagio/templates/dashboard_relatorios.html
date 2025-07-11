@@ -46,7 +46,7 @@
                 <div class="d-flex flex-column align-items-start gap-2 mt-2">
                   {% if relatorio.tipo == 'Termo de Compromisso' %}
                       {% if grupo.estagio.pdf_termo %}
-                          <a href="{% url 'visualizar_termo' pdf_nome=grupo.estagio.pdf_termo %}" target="_blank" class="btn btn-primary">
+                          <a href="{{ grupo.estagio.pdf_termo.url }}" target="_blank" class="btn btn-primary">
                               Visualizar TCE
                           </a>
                           

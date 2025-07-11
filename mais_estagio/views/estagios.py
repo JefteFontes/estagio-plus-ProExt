@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 
 from home.utils import preencher_tceu
+from mais_estagio.forms import AlunoCadastroEstagioForm
 from ..forms import EstagioCadastroForm
 from ..models import Empresa, Estagio, Supervisor, RelatorioEstagio
 from django.core.mail import send_mail
@@ -164,9 +165,18 @@ def notificar_estagiarios_relatorios_pendentes(request):
     return len(estagios_com_pendencias) > 0
 
 
-def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
+def processar_form_estagio(request, estagio=None):
+    template_to_render = "add_estagios.html"
+    form_class = EstagioCadastroForm 
+    form_kwargs = {'instance': estagio, 'user': request.user} 
+
+    if hasattr(request.user, "aluno") and request.user.aluno:
+        template_to_render = "aluno/cadastrar_estagio.html"
+        form_class = AlunoCadastroEstagioForm 
+        form_kwargs = {'instance': estagio, 'user': request.user, 'aluno_logado': request.user.aluno} 
+
     if request.method == "POST":
-        form = EstagioCadastroForm(request.POST, instance=estagio, user=request.user)
+        form = form_class(request.POST, **form_kwargs) 
         if form.is_valid():
             estagio_instance = form.save()
 
@@ -180,22 +190,25 @@ def processar_form_estagio(request, estagio=None, template="add_estagios.html"):
                 estagio_instance.pdf_termo.name = relative_path
                 estagio_instance.save()
 
-                with open(str(output_pdf_path), 'rb') as fh:  
+                with open(str(output_pdf_path), 'rb') as fh: 
                     response = HttpResponse(fh.read(), content_type="application/pdf")
-                    filename = os.path.basename(str(output_pdf_path))   
+                    filename = os.path.basename(str(output_pdf_path)) 
                     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
                     messages.success(request, "Estágio salvo com sucesso!")
-                    return redirect('dashboard_instituicao')
+                    if hasattr(request.user, "aluno") and request.user.aluno:
+                        return redirect('estagio_andamento')
+                    else:
+                        return redirect('dashboard_instituicao')
             else:
                 messages.error(request, "O documento PDF não pôde ser gerado.")
                 raise Http404("O documento PDF não pôde ser gerado.")
         else:
             messages.error(request, "Erro ao salvar estágio.")
     else:
-        form = EstagioCadastroForm(instance=estagio, user=request.user)
+        form = form_class(**form_kwargs) 
 
-    return render(request, template, {"form": form, "estagio": estagio})
+    return render(request, template_to_render, {"form": form, "estagio": estagio})
 
 
 @login_required
