@@ -30,21 +30,45 @@ def cadastrar_estagiario(request):
     return render(request, "cadastrar_estagiario.html", {"form": form})
 
 @login_required
+@login_required
 def editar_estagiario(request, estagiario_id):
-    estagiario = get_object_or_404(Aluno, id=estagiario_id)
-    coordenador = CoordenadorExtensao.objects.get(user=request.user)
+    estagiario_instance = get_object_or_404(Aluno, id=estagiario_id)
+    
+    template_name = "cadastrar_estagiario.html"
+
+    if hasattr(request.user, "aluno") and request.user.aluno:
+        if estagiario_instance != request.user.aluno:
+            messages.error(request, "Você não tem permissão para editar este perfil.")
+            return redirect('estagio_andamento')
+        else:
+            template_name = "aluno/editar_perfil.html"
+            form_kwargs = {'instance': estagiario_instance}
+    else:
+        if not (hasattr(request.user, "coordenadorextensao") and request.user.coordenadorextensao):
+            messages.error(request, "Você não tem permissão para acessar esta página.")
+            return redirect('home')
+
+        coordenador = request.user.coordenadorextensao
+        form_kwargs = {'instance': estagiario_instance, 'coordenador': coordenador}
+
 
     if request.method == "POST":
-        form = EstagiarioCadastroForm(
-            request.POST, instance=estagiario, coordenador=coordenador
-        )
+        form = EstagiarioCadastroForm(request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
-            return redirect("dashboard_estagiario")
+            messages.success(request, "Dados atualizados com sucesso!")
+            
+            if hasattr(request.user, "aluno") and request.user.aluno and estagiario_instance == request.user.aluno:
+                return redirect("estagio_andamento")
+            else:
+                return redirect("dashboard_instituicao")
+        else:
+            messages.error(request, "Erro ao atualizar dados. Verifique o formulário.")
 
-    form = EstagiarioCadastroForm(instance=estagiario, coordenador=coordenador)
+    form = EstagiarioCadastroForm(**form_kwargs)
+    
     return render(
-        request, "cadastrar_estagiario.html", {"form": form, "estagiario": estagiario}
+        request, template_name, {"form": form, "estagiario": estagiario_instance}
     )
 
 @login_required

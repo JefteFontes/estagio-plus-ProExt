@@ -77,8 +77,6 @@ def verificar_relatorios_pendentes(estagio):
     return relatorios
 
 
-
-
 def importar_termo_relatorio(request, estagio_id):
     if request.method != 'POST':
         messages.error(request, 'Método inválido.')

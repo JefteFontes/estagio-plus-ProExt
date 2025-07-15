@@ -64,13 +64,13 @@ class TestModels(TestCase):
             endereco=endereco,
         )
         empresa = Empresa.objects.create(
-            empresa_nome="Empresa Teste",
+            nome="Empresa Teste",
             cnpj="12345678000199",
             razao_social="Razão Social Teste",
             email="empresa@test.com",
             instituicao=instituicao,
         )
-        self.assertEqual(empresa.empresa_nome, "Empresa Teste")
+        self.assertEqual(empresa.nome, "Empresa Teste")
         self.assertEqual(empresa.cnpj, "12345678000199")
 
     def test_criar_cursos(self):
@@ -134,7 +134,7 @@ class TestModels(TestCase):
             endereco=endereco,
         )
         empresa = Empresa.objects.create(
-            empresa_nome="Empresa Teste",
+            nome="Empresa Teste",
             cnpj="12345678000199",
             razao_social="Razão Social Teste",
             email="empresa@test.com",
@@ -159,7 +159,7 @@ class TestModels(TestCase):
             telefone="1234567890",
         )
         empresa = Empresa.objects.create(
-            empresa_nome="Empresa Teste",
+            nome="Empresa Teste",
             cnpj="12345678000199",
             razao_social="Razão Social Teste",
             email="empresa@test.com",

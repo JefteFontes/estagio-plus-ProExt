@@ -1,54 +1,84 @@
-{% extends "dashboard/base.html" %}
+{% extends "aluno/base_aluno.html" %}
 
 {% block content %}
 <div class="cadastro-container-dashboard">
-    <h2>Cadastro de Empresa</h2>
-    <p class="form-header">Preencha os dados da empresa</p>
+    <h2>Cadastro de Estagiário</h2>
+    <p class="form-header">Informe os dados do estagiário no formulário abaixo</p>
     
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                <strong>{{ message }}</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
     {% endif %}
     
     <form method="post">
         {% csrf_token %}
         
         <div class="form-section">
-            <h3 class="section-title">Dados da Empresa</h3>
+            <h3 class="section-title">Dados pessoais</h3>
             <div class="form-row">
                 <div class="form-group compact-group">
-                    <label for="{{ form.empresa_cnpj.id_for_label }}" class="form-label">CNPJ</label>
-                    {{ form.empresa_cnpj }}
-                </div>
-                <div class="form-group compact-group">
-                    <label for="{{ form.empresa_nome.id_for_label }}" class="form-label">Nome Fantasia</label>
-                    {{ form.empresa_nome }}
+                    <label for="{{ form.nome_completo.id_for_label }}" class="form-label">Nome Completo</label>
+                    {{ form.nome_completo }}
                 </div>
             </div>
             
             <div class="form-row">
                 <div class="form-group compact-group">
-                    <label for="{{ form.razao_social.id_for_label }}" class="form-label">Razão Social</label>
-                    {{ form.razao_social }}
+                    <label for="{{ form.cpf.id_for_label }}" class="form-label">CPF</label>
+                    {{ form.cpf }}
                 </div>
                 <div class="form-group compact-group">
-                    <label for="{{ form.empresa_atividades.id_for_label }}" class="form-label">Atividades</label>
-                    {{ form.empresa_atividades }}
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ form.email }}
+                    <p class="input-hint">ex: nome@exemplo.com</p>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.matricula.id_for_label }}" class="form-label">Matrícula</label>
+                    {{ form.matricula }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.telefone.id_for_label }}" class="form-label">Telefone</label>
+                    {{ form.telefone }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.curso.id_for_label }}" class="form-label">Curso</label>
+                    {{ form.curso }}
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group compact-group">
-                    <label for="{{ form.empresa_email.id_for_label }}" class="form-label">Email</label>
-                    {{ form.empresa_email}}
+                    <label for="{{ form.periodo.id_for_label }}" class="form-label">Período</label>
+                    {{ form.periodo }}
+                    {% if form.periodo.errors %}
+                        {% for error in form.periodo.errors %}
+                            <span class="help-block error-text" style="color: red; font-size: 0.9em;">{{ error }}</span><br>
+                        {% endfor %}
+                    {% endif %}
                 </div>
                 <div class="form-group compact-group">
-                    <label for="{{ form.convenio.id_for_label }}" class="form-label">Convênio</label>
-                    {{ form.convenio }}
+                    <label for="{{ form.turno.id_for_label }}" class="form-label">Turno</label>
+                    {{ form.turno }}
+                </div>
+                <div class="form-group compact-group">
+                    <label for="{{ form.ira.id_for_label }}" class="form-label">IRA</label>
+                    {{ form.ira }}
+                    <p class="input-hint">Índice de Rendimento Acadêmico (0.0 a 10.0)</p>
+                    {% if form.ira.errors %}
+                        {% for error in form.ira.errors %}
+                            <span class="help-block error-text" style="color: red; font-size: 0.9em;">{{ error }}</span><br>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -63,21 +93,21 @@
             </div>
             
             <div class="form-row">
-                <div class="form-group" style="flex: 2;">
+                <div class="form-group compact-group" style="flex: 2;">
                     <label for="{{ form.rua.id_for_label }}" class="form-label">Rua</label>
                     {{ form.rua }}
                 </div>
-                <div class="form-group compact-group">
+                <div class="form-group compact-group" style="flex: 1;">
                     <label for="{{ form.numero.id_for_label }}" class="form-label">Número</label>
                     {{ form.numero }}
-                </div>
-                <div class="form-group compact-group">
-                    <label for="{{ form.bairro.id_for_label }}" class="form-label">Bairro</label>
-                    {{ form.bairro }}
                 </div>
             </div>
             
             <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.bairro.id_for_label }}" class="form-label">Bairro</label>
+                    {{ form.bairro }}
+                </div>
                 <div class="form-group compact-group">
                     <label for="{{ form.cidade.id_for_label }}" class="form-label">Cidade</label>
                     {{ form.cidade }}
@@ -86,16 +116,26 @@
                     <label for="{{ form.estado.id_for_label }}" class="form-label">Estado</label>
                     {{ form.estado }}
                 </div>
+            </div>
+            
+            <div class="form-row">
                 <div class="form-group compact-group">
                     <label for="{{ form.complemento.id_for_label }}" class="form-label">Complemento</label>
                     {{ form.complemento }}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group compact-group">
+                    <label for="{{ form.status.id_for_label }}" class="form-label">Observações</label>
+                    {{ form.status }}
                 </div>
             </div>
         </div>
         
         <div class="form-actions">
             <button type="submit" class="btn-user-signup">Salvar</button>
-            <a href="{% url 'dashboard_empresa' %}" class="btn-cancel">Cancelar</a>
+            <a href="{% url 'dashboard_estagiario' %}" class="btn-cancel">Cancelar</a>
         </div>
     </form>
 </div>
@@ -106,7 +146,6 @@
 $(document).ready(function() {
     $('#id_telefone').mask('(00) 00000-0000');
     $('#id_cpf').mask('000.000.000-00');
-    $('#id_cnpj').mask('00.000.000/0000-00');
     $('#id_cep').mask('00000-000');
     
     $('#id_cep').on('blur', function() {
@@ -127,30 +166,8 @@ $(document).ready(function() {
                     alert(xhr.responseJSON.error || 'Erro ao buscar o CEP.');
                 }
             });
-        }
-    });
-    
-    $('#id_cnpj').on('blur', function() {
-        let cnpj = $(this).val().replace(/\D/g, '');
-        
-        if (cnpj.length === 14) {
-            $.ajax({
-                url: "{% url 'validate_cnpj' %}",
-                method: "GET",
-                data: { cnpj: cnpj },
-                success: function(data) {
-                    $('#id_empresa_nome').val(data.name);
-                    $('#id_empresa_razao_social').val(data.razao_social);
-                    $('#id_empresa_email').val(data.email);
-                    $('#id_cep').val(data.cep);
-                    $('#id_numero').val(data.numero);
-                    $('#id_atividades').val(data.atividades);
-                    $('#id_complemento').val(data.complemento);
-                },
-                error: function(xhr) {
-                    alert(xhr.responseJSON.error || 'Erro ao buscar o CNPJ.');
-                }
-            });
+        } else {
+            alert('CEP inválido! Digite 8 números.');
         }
     });
 });

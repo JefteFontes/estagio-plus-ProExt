@@ -271,7 +271,7 @@ def preencher_tceu(estagio, template_path):
         )
 
         docxedit.replace_string(
-            document, old_string="RazaoEmpresa", new_string=empresa.empresa_nome
+            document, old_string="RazaoEmpresa", new_string=empresa.nome
         )
         docxedit.replace_string(
             document, old_string="RamoEmpresa", new_string=empresa.atividades
@@ -315,9 +315,6 @@ def preencher_tceu(estagio, template_path):
             document,
             old_string="UFEmpresa",
             new_string=endereco_empresa.estado,
-        )
-        docxedit.replace_string(
-            document, old_string="EmailEmpresa", new_string=empresa.email
         )
 
         if supervisor:

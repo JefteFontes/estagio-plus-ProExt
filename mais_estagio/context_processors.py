@@ -29,7 +29,7 @@ def relatorios_pendentes(request):
                 estagiario_info = {
                     'nome': estagio.estagiario.nome_completo,
                     'curso': curso,
-                    'empresa': estagio.empresa.empresa_nome if estagio.empresa else 'Empresa não informada',
+                    'empresa': estagio.empresa.nome if estagio.empresa else 'Empresa não informada',
                     'relatorios': []
                 }
                 
