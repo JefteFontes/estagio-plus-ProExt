@@ -2,6 +2,20 @@
 {% load static %}
 
 {% block content %}
+
+{% if form.errors %}
+    <div class="message-container">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ error }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="container-login">
     <!-- Área do Formulário -->
     <div class="login-form">
@@ -32,61 +46,65 @@
             {% csrf_token %}
             
             <div class="form-step" id="step1">
-                <div class="form-group">
-                    <label for="{{ form.nome_completo.id_for_label }}">Nome Completo:</label>
-                    {{ form.nome_completo }}
-                    <span id="nome-error" class="error-message"></span>
-                </div>
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group required-field2">
+                        <label for="{{ form.nome_completo.id_for_label }}">Nome Completo:</label>
+                        {{ form.nome_completo }}
+                        <span id="nome-error" class="error-message"></span>
+                    </div>
+                    <div class="form-group required-field2">
                         <label for="{{ form.data_nascimento.id_for_label }}">Data de Nascimento:</label>
                         {{ form.data_nascimento }}
-                        <span id="data-nascimento-error" class="error-message"></span>
+                        <span id="data-error" class="error-message"></span>
                     </div>
-                <div class="form-group">
-                    <label for="{{ form.sexo.id_for_label }}">Sexo:</label>
-                    {{ form.sexo }}
-                    <span id="sexo-error" class="error-message"></span>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group required-field2">
                         <label for="{{ form.cpf.id_for_label }}">CPF:</label>
                         {{ form.cpf }}
                         <span id="cpf-error" class="error-message"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group required-field2">
+                        <label for="{{ form.sexo.id_for_label }}">Sexo:</label>
+                        {{ form.sexo }}
+                        <span id="sexo-error" class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group required-field2">
                         <label for="{{ form.telefone.id_for_label }}">Telefone:</label>
                         {{ form.telefone }}
                         <span id="telefone-error" class="error-message"></span>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}">Email:</label>
-                    {{ form.email }}
-                    <span id="email-error" class="error-message"></span>
+                    <div class="form-group required-field2">
+                        <label for="{{ form.email.id_for_label }}">Email:</label>
+                        {{ form.email }}
+                        <span id="email-error" class="error-message"></span>
+                    </div>
                 </div>
 
                 <div class="form-navigation">
+                    <a class="btn-prev" href="{% url 'pre_cadastro' %}">Voltar</a>
                     <button type="button" class="btn-next" onclick="nextStep(1)">Próximo</button>
                 </div>
             </div>
 
             <div class="form-step d-none" id="step2">
-                <div class="form-group">
+                <div class="form-group required-field2">
                     <label for="{{ form.cep.id_for_label }}">CEP:</label>
                     {{ form.cep }}
                     <span id="cep-error" class="error-message"></span>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-8">
+                    <div class="form-group col-md-8 required-field2">
                         <label for="{{ form.rua.id_for_label }}">Rua:</label>
                         {{ form.rua }}
                         <span id="rua-error" class="error-message"></span>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-4 required-field2">
                         <label for="{{ form.numero.id_for_label }}">Número:</label>
                         {{ form.numero }}
                         <span id="numero-error" class="error-message"></span>
@@ -94,7 +112,7 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-8">
+                    <div class="form-group col-md-8 required-field2">
                         <label for="{{ form.bairro.id_for_label }}">Bairro:</label>
                         {{ form.bairro }}
                         <span id="bairro-error" class="error-message"></span>
@@ -106,12 +124,12 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-8">
+                    <div class="form-group col-md-8 required-field2">
                         <label for="{{ form.cidade.id_for_label }}">Cidade:</label>
                         {{ form.cidade }}
                         <span id="cidade-error" class="error-message"></span>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-4 required-field2">
                         <label for="{{ form.estado.id_for_label }}">Estado:</label>
                         {{ form.estado }}
                         <span id="estado-error" class="error-message"></span>
@@ -125,36 +143,46 @@
             </div>
 
             <div class="form-step d-none" id="step3">
-                <div class="form-group">
+                <div class="form-group required-field2">
                     <label for="{{ form.instituicao.id_for_label }}">Instituição:</label>
                     {{ form.instituicao }}
                     <span id="instituicao-error" class="error-message"></span>
+                    {% if form.instituicao.errors %}
+                        {% for error in form.instituicao.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group required-field2">
                         <label for="{{ form.matricula.id_for_label }}">Matrícula:</label>
                         {{ form.matricula }}
                         <span id="matricula-error" class="error-message"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group required-field2">
                         <label for="{{ form.curso.id_for_label }}">Curso:</label>
                         {{ form.curso }}
                         <span id="curso-error" class="error-message"></span>
+                        {% if form.instituicao.errors %}
+                            {% for error in form.instituicao.errors %}
+                                <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group required-field2">
                         <label for="{{ form.periodo.id_for_label }}">Período:</label>
                         {{ form.periodo }}
                         <span id="periodo-error" class="error-message"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group required-field2">
                         <label for="{{ form.turno.id_for_label }}">Turno:</label>
                         {{ form.turno }}
                         <span id="turno-error" class="error-message"></span>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group required-field2">
                         <label for="{{ form.ira.id_for_label }}">IRA:</label>
                         {{ form.ira }}
                         <span id="ira-error" class="error-message"></span>
@@ -208,6 +236,36 @@
         $('#step' + currentStep).addClass('d-none');
         $('#step' + (currentStep - 1)).removeClass('d-none');
     }
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/\D/g, '');
+        
+        // Verifica se tem 11 dígitos e não é uma sequência de números repetidos
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
+            return false;
+        }
+        
+        // Calcula o primeiro dígito verificador
+        let soma = 0;
+        for (let i = 0; i < 9; i++) {
+            soma += parseInt(cpf.charAt(i)) * (10 - i);
+        }
+        let resto = 11 - (soma % 11);
+        let digitoVerificador1 = resto >= 10 ? 0 : resto;
+        
+        // Calcula o segundo dígito verificador
+        soma = 0;
+        for (let i = 0; i < 10; i++) {
+            soma += parseInt(cpf.charAt(i)) * (11 - i);
+        }
+        resto = 11 - (soma % 11);
+        let digitoVerificador2 = resto >= 10 ? 0 : resto;
+        
+        // Verifica se os dígitos calculados conferem com os informados
+        return (
+            parseInt(cpf.charAt(9)) === digitoVerificador1 &&
+            parseInt(cpf.charAt(10)) === digitoVerificador2
+        );
+    }
 
     function validateStep(step) {
         let isValid = true;
@@ -222,8 +280,11 @@
             }
             
             const cpf = $('#id_cpf').val().replace(/\D/g, '');
-            if(cpf.length !== 11) {
+            if (cpf.length !== 11) {
                 showError('#id_cpf', 'CPF inválido! Digite 11 números.');
+                isValid = false;
+            } else if (!validarCPF($('#id_cpf').val())) {
+                showError('#id_cpf', 'CPF inválido! Digite um CPF válido.');
                 isValid = false;
             } else {
                 clearError('#id_cpf');
@@ -243,6 +304,35 @@
                 isValid = false;
             } else {
                 clearError('#id_email');
+            }
+            const dataNascimento = $('#id_data_nascimento').val();
+            console.log(`Data de Nascimento: ${dataNascimento}`);
+            if(dataNascimento === '') {
+                showError('#id_data_nascimento', 'A data de nascimento é obrigatória.');
+                isValid = false;
+            } else {
+                const dataNasc = new Date(dataNascimento);
+                const hoje = new Date();
+                const idadeMinima = new Date(hoje.getFullYear() - 14, hoje.getMonth(), hoje.getDate());
+                const idadeMaxima = new Date(hoje.getFullYear() - 100, hoje.getMonth(), hoje.getDate());
+                
+                // Verifica se a data é no futuro
+                if(dataNasc > hoje) {
+                    showError('#id_data_nascimento', 'Data de nascimento não pode ser no futuro!');
+                    isValid = false;
+                } 
+                // Verifica se é muito nova (menos de 14 anos)
+                else if(dataNasc > idadeMinima) {
+                    showError('#id_data_nascimento', 'O aluno deve ter pelo menos 14 anos de idade.');
+                    isValid = false;
+                } 
+                // Verifica se é muito antiga (mais de 100 anos)
+                else if(dataNasc < idadeMaxima) {
+                    showError('#id_data_nascimento', 'Data de nascimento inválida (muito antiga).');
+                    isValid = false;
+                } else {
+                    clearError('#id_data_nascimento');
+                }
             }
         }
         
@@ -266,9 +356,58 @@
                 }
             });
         }
+        if(step === 3) {
+            // Validação do curso
+            if($('#id_curso').val() === '' || $('#id_curso').val() === null) {
+                showError('#id_curso', 'Selecione um curso válido para continuar.');
+                isValid = false;
+            } else {
+                clearError('#id_curso');
+            }
+
+            // Validação da instituição
+            if($('#id_instituicao').val() === '' || $('#id_instituicao').val() === null) {
+                showError('#id_instituicao', 'Selecione uma instituição válida.');
+                isValid = false;
+            } else {
+                clearError('#id_instituicao');
+            }
+
+            // Validação da matrícula
+            if($('#id_matricula').val().trim() === '') {
+                showError('#id_matricula', 'O número de matrícula é obrigatório.');
+                isValid = false;
+            } else {
+                clearError('#id_matricula');
+            }
+        }
         
         return isValid;
     }
+
+    $('#cadastroForm').on('submit', function(e) {
+        if(!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+            e.preventDefault();
+            
+            // Mostra o passo com erros
+            if(!validateStep(1)) {
+                $('.step').removeClass('active');
+                $('#step-indicator-1').addClass('active');
+                $('.form-step').addClass('d-none');
+                $('#step1').removeClass('d-none');
+            } else if(!validateStep(2)) {
+                $('.step').removeClass('active');
+                $('#step-indicator-2').addClass('active');
+                $('.form-step').addClass('d-none');
+                $('#step2').removeClass('d-none');
+            } else {
+                $('.step').removeClass('active');
+                $('#step-indicator-3').addClass('active');
+                $('.form-step').addClass('d-none');
+                $('#step3').removeClass('d-none');
+            }
+        }
+    });
 
     $('#id_cep').on('blur', function() {
         const cep = $(this).val().replace(/\D/g, '');
@@ -345,4 +484,12 @@
     });
 });
 </script>
+{% endblock %}
+{% block extra_css %}
+<style>
+    .required-field2 label:after {
+    content: " *";
+    color: red;
+}
+</style>
 {% endblock %}

@@ -1140,6 +1140,26 @@ select, #form-control{
 .notification-overlay.active {
     display: block;
 }
+.notification-section {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+.notification-section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    color: #555;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+
 
 .estagiario-group {
     margin-bottom: 20px;
@@ -1168,13 +1188,13 @@ select, #form-control{
     display: block;
 }
 
-.relatorio-list {
+.relatorio-list, .aluno-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.relatorio-item {
+.relatorio-item, .aluno-item {
     display: flex;
     padding: 10px;
     border-radius: 4px;
@@ -1188,29 +1208,29 @@ select, #form-control{
     border-left: 3px solid #dc3545;
 }
 
-.relatorio-icon {
+.relatorio-icon, .aluno-icon {
     color: #6c757d;
     font-size: 1rem;
 }
 
-.relatorio-details {
+.relatorio-details, .aluno-details {
     flex: 1;
 }
 
-.relatorio-title {
+.relatorio-title, .aluno-title {
     font-weight: 600;
     font-size: 0.9rem;
     color: #333;
     margin-bottom: 3px;
 }
 
-.relatorio-info {
+.relatorio-info, .aluno-info {
     display: flex;
     gap: 15px;
     font-size: 0.75rem;
 }
 
-.relatorio-date {
+.relatorio-date, .aluno-meta {
     color: #6c757d;
 }
 
@@ -1226,7 +1246,8 @@ select, #form-control{
     color: #fd7e14;
 }
 
-.relatorio-actions .btn-action {
+.relatorio-actions .btn-action, .aluno-actions .btn-action {
+    font-size: 0.8rem;
     color: #6c757d;
     background: none;
     border: none;

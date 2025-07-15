@@ -35,9 +35,9 @@ def estagio_andamento(request):
         
         if tempo_falta_bruto_str == "0 dias":
             if estagio.data_fim <= datetime.date.today():
-                 tempo_falta_display = f"Encerrado há {tempo_falta_bruto_str}"
+                tempo_falta_display = f"Encerrado há {tempo_falta_bruto_str}"
             else:
-                 tempo_falta_display = f"Faltam {tempo_falta_bruto_str}"
+                tempo_falta_display = f"Faltam {tempo_falta_bruto_str}"
         elif tempo_falta_bruto_str:
             if estagio.data_fim < datetime.date.today():
                 tempo_falta_display = f"Encerrado há {tempo_falta_bruto_str}"

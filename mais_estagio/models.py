@@ -76,6 +76,16 @@ class Empresa(models.Model):
         ],
     )
     razao_social = models.CharField(max_length=250)
+    email = models.EmailField(
+        max_length=254,
+        unique=True,
+        validators=[
+            RegexValidator(
+                regex=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                message="Use um e-mail valido.",
+            )
+        ],
+    )
     atividades = models.TextField(max_length=500, null=True)
     endereco = models.ForeignKey(
         Endereco, on_delete=models.PROTECT, null=True, blank=True

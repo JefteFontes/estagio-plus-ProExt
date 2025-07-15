@@ -76,12 +76,19 @@ def validate_cnpj(request):
             return JsonResponse({"error": "CNPJ não encontrado"}, status=404)
         emails = data.get("emails", [])
         email = emails[0].get("address", "") if emails and isinstance(emails, list) and len(emails) > 0 else ""
+
+        phones = data.get("phones", [])
+        phone_number = ""
+        if phones and isinstance(phones, list) and len(phones) > 0:
+            first_phone = phones[0]
+            phone_number = f"({first_phone.get('area', '')}) {first_phone.get('number', '')}"
         return JsonResponse(
             {
                 "name": data.get("alias", "")
                 or data.get("company", {}).get("name", ""),
                 "razao_social": data.get("company", {}).get("name", ""),
                 "email": email,
+                "telefone": phone_number,
                 "cep": data.get("address", {}).get("zip", ""),
                 "numero": data.get("address", {}).get("number", ""),
                 "atividades": data.get("mainActivity", {}).get("text", ""),

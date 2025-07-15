@@ -544,110 +544,76 @@ class EmpresaCadastroForm(forms.ModelForm):
     convenio = forms.CharField(
         max_length=8,
         required=True,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Convênio"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Convênio"}),
     )
     rua = forms.CharField(
         max_length=255,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Rua das Flores"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Rua das Flores"}),
     )
     numero = forms.CharField(
         max_length=10,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Número (ex: 123)"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Número (ex: 123)"}),
     )
     bairro = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Bairro (ex: Centro)"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Bairro (ex: Centro)"}),
     )
     cidade = forms.CharField(
         max_length=100,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Cidade (ex: São Paulo)"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Cidade (ex: São Paulo)"}),
     )
     estado = forms.CharField(
         max_length=50,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Estado (ex: SP)"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Estado (ex: SP)"}),
     )
     cep = forms.CharField(
         max_length=20,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "CEP (ex: 12345-678)"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "CEP (ex: 12345-678)"}),
     )
     complemento = forms.CharField(
         max_length=200,
         required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Complemento"}
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Complemento"}),
     )
-    nome = forms.CharField(
-        max_length=250,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Nome da Empresa (ex: Empresa XYZ)",
-            }
-        ),
-    )
-    cnpj = forms.CharField(
-        max_length=20,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "CNPJ (ex: 12.345.678/0001-90)",
-            }
-        ),
-    )
-    razao_social = forms.CharField(
-        max_length=250,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Razão Social (ex: XYZ Ltda)",
-            }
-        ),
-    )
-    atividades = forms.CharField(
-        max_length=500,
-        widget=forms.Textarea(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Atividade",
-                "rows": 4,
-                "cols": 50,
-            }
-        ),
+    email = forms.EmailField( 
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Email (ex: contato@empresa.com)"}),
     )
 
-    empresa_email = forms.EmailField(
-        widget=forms.EmailInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Email (ex: contato@empresa.com)",
-            }
-        ),
+    atividades = forms.CharField(
+        max_length=750,
+        required=False,
+        widget=forms.Textarea(attrs={
+            "class": "form-control", 
+            "placeholder": "Atividades (ex: Desenvolvimento de Software)",
+            "rows": 3 
+        }),
+    )
+
+    nome = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Nome"}), 
+    )
+
+    cnpj = forms.CharField(
+        max_length=25,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "CNPJ"}),
+    )
+    
+    razao_social = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Razão Social"}),
     )
 
     class Meta:
         model = Empresa
         fields = [
             "convenio",
-            "empresa_nome",
-            "empresa_cnpj",
-            "empresa_razao_social",
-            "empresa_email",
-            "empresa_atividades",
+            "nome",
+            "cnpj",
+            "razao_social",
+            "email",
+            "atividades",
             "rua",
             "numero",
             "bairro",
@@ -655,7 +621,6 @@ class EmpresaCadastroForm(forms.ModelForm):
             "estado",
             "cep",
             "complemento",
-            "convenio",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -675,12 +640,8 @@ class EmpresaCadastroForm(forms.ModelForm):
 
         empresa = super().save(commit=False)
         empresa.endereco = endereco
-        empresa.email = self.cleaned_data["empresa_email"]
-        empresa.empresa_nome = self.cleaned_data["empresa_nome"]
-        empresa.cnpj = self.cleaned_data["empresa_cnpj"]
-        empresa.razao_social = self.cleaned_data["empresa_razao_social"]
-        empresa.atividades = self.cleaned_data["empresa_atividades"]
-
+        
+        # Removido os prefixos "empresa_" pois os campos já estão mapeados corretamente
         if self.coordenador and self.coordenador.instituicao:
             empresa.instituicao = self.coordenador.instituicao
 
@@ -688,7 +649,6 @@ class EmpresaCadastroForm(forms.ModelForm):
             empresa.save()
 
         return empresa
-
 
 class SupervisorCadastroForm(forms.ModelForm):
     email = forms.EmailField(

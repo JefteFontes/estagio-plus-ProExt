@@ -8,6 +8,13 @@ def cadastro_aluno(request):
         try:
             form = AlunoCadastroForm(request.POST)
             if form.is_valid():
+                if not form.cleaned_data.get('curso'):
+                    form.add_error('curso', 'Selecione um curso válido')
+                    return render(request, 'cadastro_aluno.html', {'form': form})
+                if not form.cleaned_data.get('instituicao'):
+                    form.add_error('instituicao', 'Selecione uma instituição válida')
+                    return render(request, 'cadastro_aluno.html', {'form': form})
+                
                 aluno = form.save()
                 messages.success(
                     request,
