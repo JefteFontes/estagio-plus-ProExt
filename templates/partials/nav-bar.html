@@ -15,8 +15,8 @@
                 <div class="notif-item">
                     <button title="Notificação" class="notif-btn" id="notifDropdownButton" onclick="toggleNotifSidebar()">
                         <i class="fa-regular fa-bell"></i>
-                        {% if relatorios_pendentes_count > 0 %}
-                            <span class="notification-badge">{{ relatorios_pendentes_count }}</span>
+                        {% if total_pendencias > 0 %}
+                            <span class="notification-badge">{{ total_pendencias }}</span>
                         {% endif %}
                     </button>
                 </div>
@@ -62,8 +62,8 @@
             </h3>
         </div>
         <div class="notification-summary">
-            <span class="badge {% if relatorios_pendentes_count == 0 %}empty{% endif %}">
-                {{ relatorios_pendentes_count }} {{ relatorios_pendentes_count|pluralize:"pendência,pendências" }}
+            <span class="badge {% if total_pendencias == 0 %}empty{% endif %}">
+                {{ total_pendencias }} {{ total_pendencias|pluralize:"pendência,pendências" }}
             </span>
             {% if urgent_count > 0 %}
                 <span class="urgent-count">
@@ -74,56 +74,97 @@
     </div>
     
     <div class="notification-content">
-        {% if relatorios_pendentes_count > 0 %}
-            <div class="notification-list">
-                {% for estagiario in relatorios_list %}
-                    <div class="estagiario-group">
-                        <div class="estagiario-header">
-                            <h4>{{ estagiario.nome }}</h4>
-                            <span class="estagiario-meta">
-                                {{ estagiario.curso }} | {{ estagiario.empresa }}
-                            </span>
+        {% if total_pendencias > 0 %}
+            {% if alunos_pendentes_count > 0 %}
+                <div class="notification-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-user-clock"></i>
+                        Alunos para validação ({{ alunos_pendentes_count }})
+                    </h4>
+                    
+                    <div class="aluno-list">
+                        {% for aluno in alunos_pendentes_list %}
+                        <div class="aluno-item">
+                            <div class="aluno-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="aluno-details">
+                                <div class="aluno-title">{{ aluno.nome }}</div>
+                                <div class="aluno-info">
+                                    <span class="aluno-meta">
+                                        <i class="fas fa-id-card"></i> {{ aluno.matricula }}
+                                    </span>
+                                    <span class="aluno-meta">
+                                        <i class="fas fa-graduation-cap"></i> {{ aluno.curso }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="aluno-actions">
+                                <a href="{% url 'dashboard_estagiario' %}" class="btn-action" title="Validar cadastro">
+                                    <i class="fas fa-user-check"></i>
+                                </a>
+                            </div>
                         </div>
-                        
-                        <div class="relatorio-list">
-                            {% for relatorio in estagiario.relatorios %}
-                                <div class="relatorio-item {% if relatorio.urgente %}urgent{% endif %}">
-                                    <div class="relatorio-icon">
-                                        <i class="fas fa-file-alt"></i>
-                                    </div>
-                                    <div class="relatorio-details">
-                                        <div class="relatorio-title">{{ relatorio.tipo }}</div>
-                                        <div class="relatorio-info">
-                                            <span class="relatorio-date">
-                                                <i class="far fa-calendar-alt"></i> 
-                                                {{ relatorio.data_prevista }}
-                                            </span>
-                                            <span class="relatorio-status {{ relatorio.status }}">
-                                                {% if relatorio.status == 'atrasado' %}
-                                                    <i class="fas fa-clock"></i> Atrasado há {{ relatorio.dias_atraso }} dias
-                                                {% else %}
-                                                    <i class="far fa-clock"></i> A vencer
-                                                {% endif %}
-                                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if relatorios_pendentes_count > 0 %}
+            <div class="notification-section">
+                <h4 class="section-title">
+                    <i class="fas fa-file-alt"></i>
+                    Relatórios pendentes ({{ relatorios_pendentes_count }})
+                </h4>
+                <div class="notification-list">
+                    {% for estagiario in relatorios_list %}
+                        <div class="estagiario-group">
+                            <div class="estagiario-header">
+                                <h4>{{ estagiario.nome }}</h4>
+                                <span class="estagiario-meta">
+                                    {{ estagiario.curso }} | {{ estagiario.empresa }}
+                                </span>
+                            </div>
+                            
+                            <div class="relatorio-list">
+                                {% for relatorio in estagiario.relatorios %}
+                                    <div class="relatorio-item {% if relatorio.urgente %}urgent{% endif %}">
+                                        <div class="relatorio-icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div class="relatorio-details">
+                                            <div class="relatorio-title">{{ relatorio.tipo }}</div>
+                                            <div class="relatorio-info">
+                                                <span class="relatorio-date">
+                                                    <i class="far fa-calendar-alt"></i> 
+                                                    {{ relatorio.data_prevista }}
+                                                </span>
+                                                <span class="relatorio-status {{ relatorio.status }}">
+                                                    {% if relatorio.status == 'atrasado' %}
+                                                        <i class="fas fa-clock"></i> Atrasado há {{ relatorio.dias_atraso }} dias
+                                                    {% else %}
+                                                        <i class="far fa-clock"></i> A vencer
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="relatorio-actions">
+                                            <a href="{% url 'detalhes_estagio' %}?selected={{ relatorio.estagio_id }}" class="btn-action" title="Ver detalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
                                         </div>
                                     </div>
-                                    <div class="relatorio-actions">
-                                        <a href="{% url 'detalhes_estagio' %}?selected={{ relatorio.estagio_id }}" class="btn-action" title="Ver detalhes">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
+            {% endif %}
         {% else %}
             <div class="no-notifications">
                 <div class="empty-state">
                     <i class="far fa-check-circle"></i>
                     <h4>Tudo em dia!</h4>
-                    <p>Nenhum relatório pendente no momento.</p>
                 </div>
             </div>
         {% endif %}

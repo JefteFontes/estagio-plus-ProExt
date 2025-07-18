@@ -8,12 +8,25 @@
 {% endblock head_title %}
 
 {% block extra_head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     {{ block.super }}
 {% endblock extra_head %}
 
 {% block content %}
+
+{% if form.errors %}
+    <div class="message-container">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ error }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
+
     <div class="container-login">
         <div class="login-form">
             <img src="{% static 'img/logo.png' %}" alt="Logo +Estagio" class="logo">
@@ -24,18 +37,7 @@
                     <p>Gerencie e planeje seus estágios com facilidade</p>
                 </div>
                 
-                {% if form.errors %}
-                    <div class="message-container">
-                        {% for field, errors in form.errors.items %}
-                            {% for error in errors %}
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <strong>{{ error }}</strong>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                
 
                 {% if messages %}
                     <div class="message-container">

@@ -2,6 +2,19 @@
 {% load static %}
 
 {% block content %}
+{% if form.errors %}
+    <div class="message-container">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>{{ error }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="container-login">
     <!-- Área do Formulário -->
     <div class="login-form">
@@ -28,14 +41,6 @@
             </div>
         </div>
 
-        <!-- Mensagem de erro principal -->
-        <div id="error-alert" class="alert alert-danger d-none" role="alert">
-            <span id="error-text"></span>
-            <button type="button" class="close-alert" aria-label="Fechar">
-                &times;
-            </button>
-        </div>
-
         <form method="post" enctype="multipart/form-data" id="cadastroForm" novalidate>
             {% csrf_token %}
             {{ redirect_field }}
@@ -43,29 +48,31 @@
             <!-- Etapa 1 - Dados da Instituição -->
             <div class="form-step" id="step1">
                 <div class="form-group">
-                    <label for="{{ form.instituicao_cnpj.id_for_label }}">CNPJ:</label>
+                    <label for="{{ form.instituicao_cnpj.id_for_label }}">CNPJ<span class="required-field">*</span></label>
                     {{ form.instituicao_cnpj }}
                     <span id="cnpj-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.instituicao_nome.id_for_label }}">Nome da Instituição:</label>
+                    <label for="{{ form.instituicao_nome.id_for_label }}">Nome da Instituição<span class="required-field">*</span></label>
                     {{ form.instituicao_nome }}
                     <span id="nome-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.instituicao_telefone.id_for_label }}">Telefone:</label>
+                    <label for="{{ form.instituicao_telefone.id_for_label }}">Telefone<span class="required-field">*</span></label>
                     {{ form.instituicao_telefone }}
                     <span id="telefone-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.instituicao_logo.id_for_label }}">Logo da Instituição:</label>
+                    <label for="{{ form.instituicao_logo.id_for_label }}">Logo da Instituição</label>
                     {{ form.instituicao_logo }}
+                    <span id="logo-error" class="error-message"></span>
                 </div>
 
                 <div class="form-navigation">
+                    <a class="btn-prev" href="{% url 'pre_cadastro' %}">Voltar</a>
                     <button type="button" class="btn-next" onclick="nextStep(1)">Próximo</button>
                 </div>
             </div>
@@ -73,19 +80,19 @@
             <!-- Etapa 2 - Endereço -->
             <div class="form-step d-none" id="step2">
                 <div class="form-group">
-                    <label for="{{ form.cep.id_for_label }}">CEP:</label>
+                    <label for="{{ form.cep.id_for_label }}">CEP<span class="required-field">*</span></label>
                     {{ form.cep }}
                     <span id="cep-error" class="error-message"></span>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group col-md-8">
-                        <label for="{{ form.rua.id_for_label }}">Rua:</label>
+                        <label for="{{ form.rua.id_for_label }}">Rua<span class="required-field">*</span></label>
                         {{ form.rua }}
                         <span id="rua-error" class="error-message"></span>
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="{{ form.numero.id_for_label }}">Número:</label>
+                        <label for="{{ form.numero.id_for_label }}">Número<span class="required-field">*</span></label>
                         {{ form.numero }}
                         <span id="numero-error" class="error-message"></span>
                     </div>
@@ -93,24 +100,24 @@
 
                 <div class="form-row">
                     <div class="form-group col-md-8">
-                        <label for="{{ form.bairro.id_for_label }}">Bairro:</label>
+                        <label for="{{ form.bairro.id_for_label }}">Bairro<span class="required-field">*</span></label>
                         {{ form.bairro }}
                         <span id="bairro-error" class="error-message"></span>
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="{{ form.complemento.id_for_label }}">Complemento:</label>
+                        <label for="{{ form.complemento.id_for_label }}">Complemento</label>
                         {{ form.complemento }}
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group col-md-8">
-                        <label for="{{ form.cidade.id_for_label }}">Cidade:</label>
+                        <label for="{{ form.cidade.id_for_label }}">Cidade<span class="required-field">*</span></label>
                         {{ form.cidade }}
                         <span id="cidade-error" class="error-message"></span>
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="{{ form.estado.id_for_label }}">Estado:</label>
+                        <label for="{{ form.estado.id_for_label }}">Estado<span class="required-field">*</span></label>
                         {{ form.estado }}
                         <span id="estado-error" class="error-message"></span>
                     </div>
@@ -125,23 +132,22 @@
             <!-- Etapa 3 - Coordenador -->
             <div class="form-step d-none" id="step3">
                 <div class="form-group">
-                    <label for="{{ form.nome_completo.id_for_label }}">Nome Completo:</label>
+                    <label for="{{ form.nome_completo.id_for_label }}">Nome Completo<span class="required-field">*</span></label>
                     {{ form.nome_completo }}
-                    <span id="sobrenome-error" class="error-message"></span>
+                    <span id="nome_completo-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.cpf.id_for_label }}">CPF:</label>
+                    <label for="{{ form.cpf.id_for_label }}">CPF<span class="required-field">*</span></label>
                     {{ form.cpf }}
                     <span id="cpf-error" class="error-message"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}">Email:</label>
+                    <label for="{{ form.email.id_for_label }}">Email<span class="required-field">*</span></label>
                     {{ form.email }}
                     <span id="email-error" class="error-message"></span>
                 </div>
-
                 <div class="form-navigation">
                     <button type="button" class="btn-prev" onclick="prevStep(3)">Anterior</button>
                     <button type="submit" class="btn-submit">Finalizar Cadastro</button>
@@ -164,7 +170,7 @@
 <script>
     // Máscaras para os campos
     $(document).ready(function() {
-        $('#id_instituicao_telefone').mask('(00) 00000-0000');
+        $('#id_instituicao_telefone, #id_telefone_coordenador').mask('(00) 00000-0000');
         $('#id_cpf').mask('000.000.000-00');
         $('#id_instituicao_cnpj').mask('00.000.000/0000-00');
         $('#id_cep').mask('00000-000');
@@ -214,8 +220,12 @@
             }
             
             // Validação do nome da instituição
-            if($('#id_instituicao_nome').val().trim() === '') {
+            const nomeInstituicao = $('#id_instituicao_nome').val().trim();
+            if(nomeInstituicao === '') {
                 showError('#id_instituicao_nome', 'O nome da instituição é obrigatório.');
+                isValid = false;
+            } else if(nomeInstituicao.length < 5) {
+                showError('#id_instituicao_nome', 'O nome deve ter pelo menos 5 caracteres.');
                 isValid = false;
             } else {
                 clearError('#id_instituicao_nome');
@@ -223,11 +233,29 @@
             
             // Validação do telefone
             const telefone = $('#id_instituicao_telefone').val().replace(/\D/g, '');
-            if(telefone.length !== 11) {
-                showError('#id_instituicao_telefone', 'Telefone inválido! Digite 11 números.');
+            if(telefone.length < 10 || telefone.length > 11) {
+                showError('#id_instituicao_telefone', 'Telefone inválido! Digite 10 ou 11 números.');
                 isValid = false;
             } else {
                 clearError('#id_instituicao_telefone');
+            }
+            
+            // Validação do logo (se foi enviado)
+            const logoInput = $('#id_instituicao_logo')[0];
+            if(logoInput.files.length > 0) {
+                const file = logoInput.files[0];
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                const maxSize = 2 * 1024 * 1024; // 2MB
+                
+                if(!validTypes.includes(file.type)) {
+                    showError('#id_instituicao_logo', 'Formato de arquivo inválido. Use JPG, PNG ou GIF.');
+                    isValid = false;
+                } else if(file.size > maxSize) {
+                    showError('#id_instituicao_logo', 'O arquivo é muito grande. Tamanho máximo: 2MB.');
+                    isValid = false;
+                } else {
+                    clearError('#id_instituicao_logo');
+                }
             }
         }
         
@@ -242,16 +270,78 @@
             }
             
             // Validação dos demais campos de endereço
-            const requiredFields = ['#id_rua', '#id_numero', '#id_bairro', '#id_cidade', '#id_estado'];
+            const requiredFields = [
+                {id: '#id_rua', name: 'Rua', minLength: 3},
+                {id: '#id_numero', name: 'Número', minLength: 1},
+                {id: '#id_bairro', name: 'Bairro', minLength: 3},
+                {id: '#id_cidade', name: 'Cidade', minLength: 3},
+                {id: '#id_estado', name: 'Estado', minLength: 2}
+            ];
+            
             requiredFields.forEach(field => {
-                if($(field).val().trim() === '') {
-                    const fieldName = $(field).attr('name').replace('_', ' ');
-                    showError(field, `O campo ${fieldName} é obrigatório.`);
+                const value = $(field.id).val().trim();
+                if(value === '') {
+                    showError(field.id, `O campo ${field.name} é obrigatório.`);
+                    isValid = false;
+                } else if(value.length < field.minLength) {
+                    showError(field.id, `O campo ${field.name} deve ter pelo menos ${field.minLength} caracteres.`);
                     isValid = false;
                 } else {
-                    clearError(field);
+                    clearError(field.id);
                 }
             });
+            
+            // Validação específica para estado (UF)
+            const estado = $('#id_estado').val().trim();
+            if(estado.length !== 2) {
+                showError('#id_estado', 'O estado deve ser a sigla com 2 letras (ex: SP).');
+                isValid = false;
+            }
+        }
+        
+        if(step === 3) {
+            // Validação do nome completo
+            const nomeCompleto = $('#id_nome_completo').val().trim();
+            if(nomeCompleto === '') {
+                showError('#id_nome_completo', 'O nome completo é obrigatório.');
+                isValid = false;
+            } else if(nomeCompleto.split(' ').length < 2) {
+                showError('#id_nome_completo', 'Por favor, digite seu nome completo.');
+                isValid = false;
+            } else {
+                clearError('#id_nome_completo');
+            }
+            
+            // Validação do CPF
+            const cpf = $('#id_cpf').val().replace(/\D/g, '');
+            if(cpf.length !== 11) {
+                showError('#id_cpf', 'CPF inválido! Digite 11 números.');
+                isValid = false;
+            } else {
+                clearError('#id_cpf');
+            }
+            
+            // Validação do email
+            const email = $('#id_email').val().trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if(email === '') {
+                showError('#id_email', 'O email é obrigatório.');
+                isValid = false;
+            } else if(!emailRegex.test(email)) {
+                showError('#id_email', 'Por favor, digite um email válido.');
+                isValid = false;
+            } else {
+                clearError('#id_email');
+            }
+            
+            // Validação do telefone do coordenador
+            const telefoneCoordenador = $('#id_telefone_coordenador').val().replace(/\D/g, '');
+            if(telefoneCoordenador.length < 10 || telefoneCoordenador.length > 11) {
+                showError('#id_telefone_coordenador', 'Telefone inválido! Digite 10 ou 11 números.');
+                isValid = false;
+            } else {
+                clearError('#id_telefone_coordenador');
+            }
         }
         
         return isValid;
@@ -275,7 +365,7 @@
                     $('#id_cidade').val(data.cidade).prop('readonly', false);
                     $('#id_estado').val(data.estado).prop('readonly', false);
                     $('#id_complemento').val(data.complemento);
-                    clearError('#id_cep');4
+                    clearError('#id_cep');
                 },
                 error: function(xhr) {
                     showError('#id_cep', xhr.responseJSON.error || 'CEP não encontrado ou serviço indisponível.');
@@ -306,6 +396,7 @@
                     
                     if(!isCpf && data.name) {
                         $('#id_instituicao_nome').val(data.name);
+                        if(data.telefone) $('#id_instituicao_telefone').val(data.telefone);
                         if(data.cep) $('#id_cep').val(data.cep);
                         if(data.numero) $('#id_numero').val(data.numero);
                     }
@@ -330,11 +421,9 @@
             scrollTop: $(element).offset().top - 100
         }, 300);
         
-        // Mostra alerta geral se for o primeiro erro
-        if(isFirstError) {
-            $('#error-text').text(message);
-            $('#error-alert').removeClass('d-none');
-        }
+        // Mostra alerta geral
+        $('#error-text').text(message);
+        $('#error-alert').removeClass('d-none');
     }
 
     function clearError(element) {
@@ -346,6 +435,7 @@
     $('input').on('input', function() {
         if($(this).hasClass('field-error')) {
             clearError(this);
+            $('#error-alert').addClass('d-none');
         }
     });
 </script>

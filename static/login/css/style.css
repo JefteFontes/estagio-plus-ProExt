@@ -187,8 +187,3 @@
     from { opacity: 0; top: 0; }
     to { opacity: 1; top: 20px; }
 }
-
-.alert {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    margin-bottom: 10px;
-}

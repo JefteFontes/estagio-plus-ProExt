@@ -134,31 +134,21 @@
 
 .btn-prev, .btn-next, .btn-submit {
     padding: 12px 25px;
+    text-decoration: none;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     transition: all 0.3s;
-}
-
-.btn-prev {
-    background: #95a5a6;
-    color: white;
-}
-
-.btn-next, .btn-submit {
     background: #31afb4;
     color: white;
     box-shadow: 0 4px 10px rgba(49, 175, 180, 0.4);
 }
 
-.btn-prev:hover {
-    background: #7f8c8d;
-}
-
-.btn-next:hover, .btn-submit:hover {
+.btn-next:hover, .btn-submit:hover, .btn-prev:hover {
     background: #197faa;
     box-shadow: 0 4px 15px rgba(17, 85, 113, 0.6);
+    color: white;
 }
 
 /* Mensagens de erro */
@@ -209,6 +199,21 @@
 .incentive-message p {
     font-size: 16px;
     line-height: 1.5;
+}
+.message-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; top: 0; }
+    to { opacity: 1; top: 20px; }
 }
 
 .error-message {
@@ -273,70 +278,76 @@
 }
 
 /* Estilos para as opções de cadastro */
-    .registration-options {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
+.registration-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 
+.option-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.option-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    border-color: #31afb4;
+}
+
+.option-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.option-content {
+    flex-grow: 1;
+}
+
+.option-content h3 {
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.option-content p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.option-arrow {
+    color: #95a5a6;
+    margin-left: 15px;
+}
+
+@media (max-width: 768px) {
     .option-card {
-        display: flex;
-        align-items: center;
-        padding: 20px;
-        border-radius: 10px;
-        background: white;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 1px solid #e0e0e0;
+        padding: 15px;
     }
-
-    .option-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        border-color: #31afb4;
-    }
-
+    
     .option-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 20px;
-        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        margin-right: 15px;
     }
+}
 
-    .option-content {
-        flex-grow: 1;
-    }
-
-    .option-content h3 {
-        margin: 0 0 5px 0;
-        color: #2c3e50;
-        font-size: 1.1rem;
-    }
-
-    .option-content p {
-        margin: 0;
-        color: #7f8c8d;
-        font-size: 0.9rem;
-    }
-
-    .option-arrow {
-        color: #95a5a6;
-        margin-left: 15px;
-    }
-
-    @media (max-width: 768px) {
-        .option-card {
-            padding: 15px;
-        }
-        
-        .option-icon {
-            width: 40px;
-            height: 40px;
-            margin-right: 15px;
-        }
-    }
+.required-field {
+    color: #dc3545; /* Vermelho para destacar */
+    font-weight: bold;
+    margin-left: 3px;
+}
