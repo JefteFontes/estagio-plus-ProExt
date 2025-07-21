@@ -360,7 +360,6 @@ class EstagioCadastroForm(forms.ModelForm):
 
 
 class EstagiarioCadastroForm(forms.ModelForm):
-    
     rua = forms.CharField(
         max_length=255,
         widget=forms.TextInput(

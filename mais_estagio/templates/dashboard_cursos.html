@@ -42,8 +42,8 @@
                     <select name="area" id="area" class="form-select">
                         <option value="">Todas as Áreas</option>
                         {% for area in areas %}
-                            <option value="{{ area }}" {% if area == request.GET.area %}selected{% endif %}>
-                                {{ area }}
+                            <option value="{{ area.0 }}" {% if area.0 == request.GET.area %}selected{% endif %}>
+                                {{ area.1 }}
                             </option>
                         {% endfor %}
                     </select>
@@ -82,7 +82,7 @@
             <div class="card-body">
                 <div class="info-row">
                     <span class="info-label">Área:</span>
-                    <span class="info-value">{{ curso.area }}</span>
+                    <span class="info-value">{{ curso.get_area_display }}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Coordenador:</span>
