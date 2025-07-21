@@ -231,9 +231,15 @@ def preencher_tceu(estagio, template_path):
             docxedit.replace_string(
                 document, old_string="MascEstagiario", new_string="X"
             )
+            docxedit.replace_string(
+                document, old_string="FemEstagiario", new_string=""
+            )
         elif estagiario.sexo == "F":
             docxedit.replace_string(
                 document, old_string="FemEstagiario", new_string="X"
+            )
+            docxedit.replace_string(
+                document, old_string="MascEstagiario", new_string=""
             )
         docxedit.replace_string(
             document,
@@ -323,6 +329,12 @@ def preencher_tceu(estagio, template_path):
             old_string="UFEmpresa",
             new_string=endereco_empresa.estado,
         )
+        docxedit.replace_string(
+            document, old_string="TelefoneEmpresa", new_string="" 
+        )
+        docxedit.replace_string(
+            document, old_string="EmailEmpresa", new_string="" if not empresa.email else empresa.email
+        )
 
         if supervisor:
             docxedit.replace_string(
@@ -334,10 +346,13 @@ def preencher_tceu(estagio, template_path):
                 document, old_string="RepresentanteEmpresa", new_string=supervisor.nome_completo
             )
             docxedit.replace_string(
-                document, old_string="CPFEmpresaRepresentante", new_string=supervisor.cpf
+                document, old_string="TelefoneSupervisor", new_string="" if not supervisor.telefone else supervisor.telefone
             )
             docxedit.replace_string(
-                document, old_string="CPFSupervisor", new_string=supervisor.cpf
+                document, old_string="CPFEmpresaRepresentante", new_string="" if not supervisor.cpf else supervisor.cpf
+            )
+            docxedit.replace_string(
+                document, old_string="CPFSupervisor", new_string="" if not supervisor.cpf else supervisor.cpf
             )
             docxedit.replace_string(
                 document,
@@ -350,6 +365,7 @@ def preencher_tceu(estagio, template_path):
                 old_string="Nome do Supervisor/Preceptor:",
                 new_string=f"Nome do Supervisor/Preceptor: {supervisor.nome_completo}",
             )
+
         
         if orientador:
             docxedit.replace_string(document, old_string="ProfessorOrientador", new_string=orientador.nome_completo)
@@ -365,18 +381,10 @@ def preencher_tceu(estagio, template_path):
             new_string=f"Término: {estagio.data_fim.strftime('%d/%m/%Y')}",
         )
 
-        carga_horaria_diaria = 6
-        carga_horaria_semanal = 30
-
-        docxedit.replace_string(
-            document,
-            old_string="Cg",
-            new_string=f"{carga_horaria_diaria} horas",
-        )
         docxedit.replace_string(
             document,
             old_string="CgSem",
-            new_string=f"{carga_horaria_semanal} horas",
+            new_string=f"{estagio.carga_horaria} horas",
         )
 
         bolsa_valor = estagio.bolsa_estagio or 0

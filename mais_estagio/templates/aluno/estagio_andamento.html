@@ -24,9 +24,9 @@
                 {% endif %}
 
                 {% if estagio.status == 'concluido' %}
-                    <span class="badge bg-success">{{ estagio.get_status_display }}</span>
+                    <span class="status-badge completed">{{ estagio.get_status_display }}</span>
                 {% else %}
-                    <span class="badge bg-info">{{ estagio.get_status_display }}</span>
+                    <span class="status-badge in-progress">{{ estagio.get_status_display }}</span>
                 {% endif %}
             </div>
         </div>

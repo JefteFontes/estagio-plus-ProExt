@@ -344,6 +344,13 @@ class Estagio(models.Model):
     data_inicio = models.DateField()
     data_fim = models.DateField()
     turno = models.TextField(choices=TurnoChoices.choices, default=TurnoChoices.MANHA)
+    carga_horaria = models.IntegerField(
+        validators=[
+            MinValueValidator(20, message="A carga horária deve ser pelo menos 20 horas semanais"),
+            MaxValueValidator(40, message="A carga horária não pode ser maior que 40 horas semanais"),
+        ],
+        default=20,
+    )
     auxilio_transporte = models.FloatField(blank=True, null=True, default=0)
     estagiario = models.ForeignKey(
         Aluno, on_delete=models.PROTECT, null=True, blank=False
@@ -400,11 +407,25 @@ class Estagio(models.Model):
                 'estagiario': 'O estudante precisa ter Índice de Rendimento Acadêmico (IRA) igual ou superior a 6.0'
             })
 
+        if self.tipo_estagio == TipoChoices.obrigatorio:
+            if self.carga_horaria > 40:
+                raise ValidationError({
+                    'carga_horaria': 'Para estágio obrigatório, a carga horária máxima é de 40 horas semanais'
+                })
+        else:
+            if self.carga_horaria > 30:
+                raise ValidationError({
+                    'carga_horaria': 'Para estágio não obrigatório, a carga horária máxima é de 30 horas semanais'
+                })
+
 
     def __str__(self):
         return f"Estágio: {self.estagiario.nome_completo} em {self.empresa.nome} ({self.get_status_display()})"
 
-
+class CargaHorariaChoices(models.IntegerChoices):
+    HORAS_20 = 20, "20 horas semanais"
+    HORAS_30 = 30, "30 horas semanais"
+    HORAS_40 = 40, "40 horas semanais"
 
 TIPOS_RELATORIO = [
     ("termo", "Termo de Compromisso"),

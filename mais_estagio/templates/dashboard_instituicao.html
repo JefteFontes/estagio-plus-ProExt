@@ -3,7 +3,7 @@
 {% block content %}
 {% if messages %}
     {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
             <strong>{{ message }}</strong>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -73,7 +73,6 @@
         </form>
     </div>
 
-    <!-- Listagem de estágios -->
     {% if estagios %}
     <div class="table-container">
         <table class="data-table">
@@ -99,7 +98,7 @@
                     <td>{{ estagio.data_inicio|date:"d/m/Y" }}</td>
                     <td>{{ estagio.data_fim|date:"d/m/Y" }}</td>
                     <td>
-                        <span class="status-badge {% if estagio.status == 'Concluído' %}completed{% else %}in-progress{% endif %}">
+                        <span class="status-badge {% if estagio.status == 'concluido' %}completed{% else %}in-progress{% endif %}">
                             {{ estagio.get_status_display }}
                         </span>
                     </td>

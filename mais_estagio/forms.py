@@ -19,6 +19,7 @@ from .models import (
     TurnoChoices,
     StatusChoices,
     Areachoices,
+    CargaHorariaChoices,
     Cursos,
     CoordenadorExtensao,
     Instituicao,
@@ -63,6 +64,10 @@ class CursosCadastroForm(forms.ModelForm):
 
 
 class EstagioCadastroForm(forms.ModelForm):
+    carga_horaria = forms.ChoiceField(
+        choices=CargaHorariaChoices.choices,
+        widget=forms.Select(attrs={"class": "form-select"})
+    )
     bolsa_estagio = forms.FloatField(
         required=False, 
         widget=forms.NumberInput(
@@ -153,7 +158,7 @@ class EstagioCadastroForm(forms.ModelForm):
     class Meta:
         model = Estagio
         fields = [
-            "bolsa_estagio", "auxilio_transporte", "area", "status", "descricao",
+            "carga_horaria", "bolsa_estagio", "auxilio_transporte", "area", "status", "descricao",
             "data_inicio", "data_fim", "turno", "estagiario", "empresa",
             "supervisor", "instituicao", "orientador", "tipo_estagio",
         ]

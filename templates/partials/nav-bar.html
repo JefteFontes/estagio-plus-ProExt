@@ -22,8 +22,21 @@
                 </div>
             </div>
             <div class="user-info">
-                <span class="initials-user">{{ request.user.username|slice:":2"|upper }}</span>
-                <span class="user-name">{{ request.user.username }}</span>
+                <span class="initials-user">
+                    {% if request.user.first_name %}
+                        {{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1"|default:"" }}
+                    {% else %}
+                        {{ request.user.username|slice:":2"|upper }}
+                    {% endif %}
+                </span>
+
+                <span class="user-name">
+                    {% if request.user.get_full_name %}
+                        {{ request.user.get_full_name }}
+                    {% else %}
+                        {{ request.user.username }}
+                    {% endif %}
+                </span>
                 <div class="user-dropdown">
                     <button title="User logout-edit" class="user-button" onclick="toggleDropdown()" id="userDropdownButton">
                         <i class="fa-solid fa-chevron-down"></i>
@@ -121,7 +134,7 @@
                             <div class="estagiario-header">
                                 <h4>{{ estagiario.nome }}</h4>
                                 <span class="estagiario-meta">
-                                    {{ estagiario.curso }} | {{ estagiario.empresa }}
+                                    {{ estagiario.curso }} <br> {{ estagiario.empresa }}
                                 </span>
                             </div>
                             

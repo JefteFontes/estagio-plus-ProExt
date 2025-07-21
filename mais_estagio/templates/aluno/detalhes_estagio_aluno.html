@@ -19,7 +19,7 @@
             <span class="badge bg-primary">
                 Faltam {{ tempo_falta }}
             </span>
-            {% if estagio.status == 'Concluído' %}
+            {% if estagio.status == 'concluido' %}
                 <span class="status-badge completed">{{ estagio.get_status_display }}</span>
             {% else %}
                 <span class="status-badge in-progress">{{ estagio.get_status_display }}</span>
@@ -32,12 +32,12 @@
             <div class="col-md-6">
                 <div class="info-item mb-3">
                     <h6 class="text-muted">Nome do Aluno</h6>
-                    <p class="fw-bold">{{ estagio.estagiario.nome }}</p>
+                    <p class="fw-bold">{{ estagio.estagiario.nome_completo }}</p>
                 </div>
                 
                 <div class="info-item mb-3">
                     <h6 class="text-muted">Supervisor de Estágio</h6>
-                    <p class="fw-bold">{{ estagio.supervisor.nome }}</p>
+                    <p class="fw-bold">{{ estagio.supervisor.nome_completo }}</p>
                 </div>
                 
                 <div class="info-item">
