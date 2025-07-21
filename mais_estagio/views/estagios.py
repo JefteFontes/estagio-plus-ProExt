@@ -96,18 +96,21 @@ def verificar_relatorios_atrasados(request):
     if not relatorios_por_estagiario:
         return False
 
+    # CORREÇÃO: Verifique se hoje não é None (não é necessário, mas mantenha o padrão)
+    hoje_str = hoje.strftime("%d/%m/%Y") if hoje else ""
+
     context = {
         'user_name': request.user.get_full_name() or request.user.username,
         'relatorios_por_estagiario': relatorios_por_estagiario,
         'site_name': settings.SITE_NAME,
         'site_url': request.build_absolute_uri('/'),
-        'hoje': hoje.strftime("%d/%m/%Y"),
+        'hoje': hoje_str,
     }
 
     email_content = render_to_string("emails/relatorio_notificacao_coordenador.txt", context)
 
     send_mail(
-        subject=_('Relatórios de estágio pendentes - {}').format(hoje.strftime("%d/%m/%Y")),
+        subject=_('Relatórios de estágio pendentes - {}').format(hoje_str),
         message=email_content,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[request.user.email],
@@ -141,19 +144,22 @@ def notificar_estagiarios_relatorios_pendentes(request):
                 })
 
         if relatorios_proximos_vencimento:
+            # CORREÇÃO: Use strftime só se hoje não for None
+            hoje_str = hoje.strftime("%d/%m/%Y") if hoje else ""
+            curso_nome = estagio.estagiario.curso.nome_curso if estagio.estagiario.curso else ''
             context = {
                 'estagiario_nome': estagio.estagiario.nome_completo,
                 'relatorios_pendentes': relatorios_proximos_vencimento,
                 'site_name': settings.SITE_NAME,
                 'site_url': request.build_absolute_uri('/'),
-                'hoje': hoje.strftime("%d/%m/%Y"),
-                'curso': estagio.estagiario.curso.nome_curso if estagio.estagiario.curso else '',
+                'hoje': hoje_str,
+                'curso': curso_nome,
             }
 
             email_content = render_to_string("emails/relatorio_notificacao_estagiario.txt", context)
 
             send_mail(
-                subject=f'Relatórios de estágio pendentes - {hoje.strftime("%d/%m/%Y")}',
+                subject=f'Relatórios de estágio pendentes - {hoje_str}',
                 message=email_content,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[estagio.estagiario.email],

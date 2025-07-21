@@ -287,9 +287,9 @@ class EstagioCadastroForm(forms.ModelForm):
 
         if estagiario_selecionado and estagiario_selecionado.curso:
             curso_nome = estagiario_selecionado.curso.nome_curso.lower()
-            if 'medicina' in curso_nome:
+            if 'medicina' in curso_nome or 'Medicina' in curso_nome:
                 periodo = estagiario_selecionado.periodo
-                
+
                 if tipo_estagio == TipoChoices.nao_obrigatorio and periodo > 8:
                     self.add_error(
                         None,
